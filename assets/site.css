@@ -110,7 +110,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .bg[data-k="ar"] { --tint: #0f1d42; --scrim: rgb(15 29 66 / .22); }
 .bg[data-k="tr"] { --tint: #0a2e28; --scrim: rgb(10 46 40 / .22); }
 .bg[data-k="da"] { --tint: #2c1610; --scrim: transparent; }
-.bg[data-k="wow"] { --tint: #2a200c; --scrim: transparent; }
+.bg[data-k="wow"] { --tint: #0f1a12; --scrim: rgb(15 26 18 / .12); }
 .bg.code { overflow: hidden; }
 .bg.code .run { padding-left: 36vw; animation: drift 18s linear infinite; }
 .bg.code pre { margin: 0; padding-bottom: 1.5em; font: 500 clamp(1.5rem, 3.4vw, 3.25rem)/1.5 var(--face); letter-spacing: -0.02em; white-space: pre; color: rgb(244 243 239 / .13); }
