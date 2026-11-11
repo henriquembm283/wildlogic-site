@@ -328,6 +328,36 @@ void main(){
   });
 
   /* ---------------- entrances ---------------- */
+  // ---------- game page ----------
+  // background film: plays only while on screen, never under reduced motion (the poster stays)
+  document.querySelectorAll("video[data-autoplay]").forEach((v) => {
+    if (reduce) return;
+    new IntersectionObserver(([e]) => { e.isIntersecting ? v.play().catch(() => {}) : v.pause(); }).observe(v);
+  });
+  // chapter bar: marks the part of the page you are reading
+  const chap = document.querySelector(".chapters");
+  if (chap) {
+    const row = chap.firstElementChild, links = [...chap.querySelectorAll('a[href^="#"]')];
+    const mark = (id) => links.forEach((a) => { const on = a.hash === "#" + id; on ? a.setAttribute("aria-current", "true") : a.removeAttribute("aria-current");
+      if (on && row.scrollWidth > row.clientWidth) row.scrollTo({ left: a.offsetLeft - 16, behavior: reduce ? "auto" : "smooth" }); });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) mark(e.target.id); }), { rootMargin: "-45% 0px -50% 0px" });
+    links.forEach((a) => { const t = document.getElementById(a.hash.slice(1)); if (t) io.observe(t); });
+  }
+  // screenshot viewer: a thumbnail swaps the big picture with a short cross-fade
+  document.querySelectorAll("[data-viewer]").forEach((root) => {
+    const fig = root.querySelector(".viewer"), img = fig.querySelector("img"), cap = fig.querySelector("figcaption"), tabs = [...root.querySelectorAll(".thumbs a")];
+    let want = "";
+    tabs.forEach((a) => a.addEventListener("click", (e) => {
+      e.preventDefault(); if (a.hasAttribute("aria-current")) return;
+      tabs.forEach((t) => t.removeAttribute("aria-current")); a.setAttribute("aria-current", "true");
+      const src = a.getAttribute("href"); want = src;
+      const next = new Image(); next.src = src;
+      const show = () => { if (want !== src) return; img.src = src; img.alt = a.dataset.cap; cap.textContent = a.dataset.cap; fig.classList.remove("swap"); };
+      fig.classList.add("swap");
+      Promise.all([next.decode().catch(() => {}), new Promise((r) => setTimeout(r, reduce ? 0 : 200))]).then(show);
+    }));
+  });
+
   if (M && !reduce) {
     document.querySelectorAll("[data-ins]").forEach((sec) => {
       const parts = sec.querySelectorAll("[data-in]");

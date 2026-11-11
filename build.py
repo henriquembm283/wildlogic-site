@@ -177,101 +177,94 @@ page('index.html', 'Wildlogic | Games and software from Portugal',
      home, home=True, scripts='<script src="assets/vendor/motion-12.43.0.js" defer></script>\n<script src="assets/site.js" defer></script>\n')
 
 # ------------------------------------------------------------------ spirekeeper
-shots = [('shot-spires', 'Towers of every element hold a bridge in the Crystal Spires.'),
-         ('shot-map', 'The world map: ten painted lands, from a quiet village to the heart of the storm.'),
-         ('shot-temple', 'Fusion towers defend the Sunken Temple.'),
-         ('shot-heroes', 'Pick a hero and grow their skill tree.'),
-         ('shot-story', 'Voiced story scenes between battles.'),
-         ('shot-final', 'The final battle against the Hollow King.')]
-figs = '\n'.join(f'    <figure><img src="{{R}}assets/img/{n}.webp" width="1600" height="900" alt="{c}" loading="lazy"><figcaption>{c}</figcaption></figure>' for n, c in shots)
+shots = [('shot-spires', 'Crystal Spires', 'Towers of every element hold a bridge in the Crystal Spires.'),
+         ('shot-map', 'World map', 'The world map: ten painted lands, from a quiet village to the heart of the storm.'),
+         ('shot-temple', 'Sunken Temple', 'Fusion towers defend the Sunken Temple.'),
+         ('shot-heroes', 'Heroes', 'Pick a hero and grow their skill tree.'),
+         ('shot-story', 'Story scene', 'Voiced story scenes between battles.'),
+         ('shot-final', 'Final battle', 'The final battle against the Hollow King.')]
+thumbs = '\n'.join(f'      <a href="{{R}}assets/img/{n}.webp" data-cap="{c}" aria-label="{s}"{" aria-current=\"true\"" if i == 0 else ""}><img src="{{R}}assets/img/{n}.webp" width="1600" height="900" alt="" loading="lazy"></a>' for i, (n, s, c) in enumerate(shots))
+HEROES = [('ember', 'Ember', 'Fire', 518, 'The apprentice who survived. Brave, cheerful, and talks too much.'),
+          ('ignis', 'Ignis', 'Fire', 554, 'Furious at everything. Complains about every job, then does it perfectly.'),
+          ('ysolde', 'Ysolde', 'Ice', 588, 'Last Warden of the Water Spire. Plans everything and hates risks.'),
+          ('volt', 'Volt', 'Lightning', 555, 'Sky-ship captain and storm chaser. Loves danger a little too much.'),
+          ('gorran', 'Gorran', 'Earth', 410, 'Warden of the Earth Spire. Slow, and impossible to move.')]
+band = '\n'.join(f'    <li data-in><div class="fig"><img src="{{R}}assets/img/sk/hero-{k}.webp" width="{w}" height="900" alt="{n}, painted portrait" loading="lazy"></div><h3>{n}</h3><p class="kind">{e}</p><p>{t}</p></li>' for k, n, e, w, t in HEROES)
+LANDS = ['Greenhollow', 'Old Road', 'Sunscar Dunes', 'Glass Flats', 'Frostmere', 'Cinder Throne', 'Mirewood', 'Sunken Temple', 'Crystal Spires', 'Heart of the Storm']
+lands = '\n'.join(f'    <li><img src="{{R}}assets/img/sk/land-{n.lower().replace(" ", "-")}.webp" width="800" height="446" alt="" loading="lazy"><span>{n}</span></li>' for n in LANDS)
 sk = f'''
-<section class="orbit world" data-on="trailer" aria-labelledby="sk-title">
-  <div class="orbit-stage">
-    <div class="orbit-bg" aria-hidden="true">
-      <div class="bg cover on" data-k="trailer"><video muted loop playsinline preload="none" poster="{{R}}assets/video/rift-poster.jpg" tabindex="-1"><source src="{{R}}assets/video/rift-loop.mp4" type="video/mp4"></video></div>
-      <div class="bg cover" data-k="look"><img src="{{R}}assets/img/shot-spires.webp" width="1600" height="900" alt="" loading="lazy"></div>
-      <div class="bg cover" data-k="story"><img src="{{R}}assets/img/shot-story.webp" width="1600" height="900" alt="" loading="lazy"></div>
-      <div class="bg cover" data-k="play"><img src="{{R}}assets/img/shot-temple.webp" width="1600" height="900" alt="" loading="lazy"></div>
-      <div class="bg cover" data-k="privacy"><img src="{{R}}assets/img/sk-sky.webp" width="2400" height="775" alt="" loading="lazy"></div>
-    </div>
-    <canvas class="globe" aria-hidden="true"></canvas>
-    <h1 class="orbit-h" id="sk-title"><img class="logo" src="{{R}}assets/img/sk-logo.webp" width="1280" height="720" alt="Spirekeeper"></h1>
-    <nav class="orbit-nav" aria-label="Parts of this page">
-      <button type="button" data-k="trailer"><i></i>Trailer</button>
-      <button type="button" data-k="look"><i></i>A look inside</button>
-      <button type="button" data-k="story"><i></i>The story</button>
-      <button type="button" data-k="play"><i></i>How it plays</button>
-      <button type="button" data-k="privacy"><i></i>Privacy</button>
-    </nav>
-    <ol class="orbit-list">
-      <li data-k="trailer" data-name="Trailer"><article>
-        <h2>Trailer</h2>
-        <p class="kind">Fifty seconds of the game</p>
-        <p class="desc">Watch the Rift open, the Spires wake and the Hollow King arrive.</p>
-        <a class="btn" href="#trailer">Watch the trailer</a>
-      </article></li>
-      <li data-k="look" data-name="A look inside"><article>
-        <h2>A look inside</h2>
-        <p class="kind">Six screens from the game</p>
-        <p class="desc">Battles, the world map, the heroes and the story scenes.</p>
-        <a class="btn" href="#look">See the screenshots</a>
-      </article></li>
-      <li data-k="story" data-name="The story"><article>
-        <h2>The story</h2>
-        <p class="kind">The Rift is open</p>
-        <p class="desc">For a thousand years five Elemental Spires kept the world in balance. Then the Hollow King tore the sky open.</p>
-        <a class="btn" href="#story">Read the story</a>
-      </article></li>
-      <li data-k="play" data-name="How it plays"><article>
-        <h2>How it plays</h2>
-        <p class="kind">Build, fuse, adapt</p>
-        <p class="desc">Seven elements, 9 fusions, 68 levels, heroes with skill trees and a villain who talks back.</p>
-        <a class="btn" href="#play">See how it plays</a>
-      </article></li>
-      <li data-k="privacy" data-name="Privacy"><article>
-        <h2>Privacy</h2>
-        <p class="kind">No data collected</p>
-        <p class="desc">Spirekeeper collects nothing about you. Your progress stays on your device.</p>
-        <a class="btn" href="privacy/">Read the privacy policy</a>
-      </article></li>
-    </ol>
-    <div class="orbit-turn"><button type="button" data-turn="prev" aria-label="Previous part">{ARROW_L}</button><button type="button" data-turn="next" aria-label="Next part">{ARROW_R}</button><p aria-hidden="true">Drag to turn</p></div>
+<section class="gk-hero" data-ins aria-labelledby="sk-title">
+  <video class="gk-bg" muted loop playsinline preload="none" data-autoplay poster="{{R}}assets/video/rift-poster.jpg" tabindex="-1" aria-hidden="true"><source src="{{R}}assets/video/rift-loop.mp4" type="video/mp4"></video>
+  <div class="gk-hero-in">
+    <h1 data-in id="sk-title"><img src="{{R}}assets/img/sk/logo.webp" width="1400" height="174" alt="Spirekeeper"></h1>
+    <p data-in class="gk-tag">A painted tower defense with a fully voiced story.</p>
+    <div data-in class="gk-row"><a class="btn" href="#trailer">Watch the trailer</a><a class="btn line" href="#play">See how it plays</a></div>
+  </div>
+  <p data-in class="gk-status"><i></i>Coming soon to Steam and Android</p>
+</section>
+<nav class="chapters" aria-label="Parts of this page"><div>
+  <a href="#trailer">Trailer</a><a href="#look">Screens</a><a href="#heroes">Heroes</a><a href="#story">Story</a><a href="#lands">Lands</a><a href="#play">Play</a>
+</div></nav>
+<section class="field on-ink gk" data-ins id="trailer" aria-labelledby="tr-h">
+  <div class="rail"><h2 data-in id="tr-h">Trailer</h2><p data-in>Fifty seconds of the game. Watch the Rift open, the Spires wake and the Hollow King arrive.</p></div>
+  <video data-in class="main trailer" controls playsinline preload="none" poster="{{R}}assets/video/trailer-poster.jpg" aria-label="Spirekeeper trailer"><source src="{{R}}assets/video/trailer.mp4" type="video/mp4"></video>
+</section>
+<section class="field gk" data-ins data-viewer id="look" aria-labelledby="look-h">
+  <div class="rail"><h2 data-in id="look-h">Screens</h2><p data-in>Battles, the world map, the heroes and the story scenes. Pick a picture.</p>
+    <div data-in class="thumbs">
+{thumbs}
+    </div></div>
+  <figure data-in class="main viewer"><img src="{{R}}assets/img/{shots[0][0]}.webp" width="1600" height="900" alt="{shots[0][2]}"><figcaption aria-live="polite">{shots[0][2]}</figcaption></figure>
+</section>
+<section class="field on-ink gk" data-ins id="heroes" aria-labelledby="he-h">
+  <div class="rail flat"><h2 data-in id="he-h">The band</h2></div>
+  <p data-in class="main gk-lead">Five heroes, each with their own powers and a skill tree. Pick one for every battle.</p>
+  <ul class="wide band">
+{band}
+  </ul>
+</section>
+<section class="gk-story" data-ins id="story" aria-labelledby="rift-h">
+  <img class="gk-bg" src="{{R}}assets/img/sk/throne.webp" width="1920" height="1072" alt="The Hollow King on his throne" loading="lazy">
+  <div class="gk-card">
+    <h2 data-in id="rift-h">The Rift is open</h2>
+    <p data-in class="gk-lead">For a thousand years five Elemental Spires kept the world in balance. Then the Hollow King tore the sky open.</p>
+    <p data-in>He is not a shouting villain. He is calm, sad and completely sure he is right. He calls the grey silence he spreads peace. Only you can wake the Spires again.</p>
   </div>
 </section>
-<section class="field on-ink" data-ins id="trailer" aria-labelledby="tr-h">
-  <h2 data-in class="g-h2" id="tr-h">Trailer</h2>
-  <video data-in class="trailer" controls playsinline preload="none" poster="{{R}}assets/video/trailer-poster.jpg" aria-label="Spirekeeper trailer"><source src="{{R}}assets/video/trailer.mp4" type="video/mp4"></video>
-  <p data-in class="trailer-note">A painted tower defense with a fully voiced story. Coming soon to Steam and Android. <a href="mailto:{{EMAIL}}?subject=Spirekeeper">Ask about the game</a></p>
+<section class="field gk" data-ins id="lands" aria-labelledby="la-h">
+  <div class="rail flat"><h2 data-in id="la-h">Ten painted lands</h2></div>
+  <p data-in class="main gk-lead">From a quiet village to the heart of the storm. Every land weakens one element and favours another.</p>
+  <ul data-in class="wide lands">
+{lands}
+  </ul>
 </section>
-<section class="field" data-ins id="look" aria-labelledby="look-h">
-  <h2 data-in class="g-h2" id="look-h">A look inside</h2>
-  <div data-in class="shots" tabindex="0" role="region" aria-label="Screenshots, scroll sideways">
-{figs}
-  </div>
-</section>
-<section class="field on-ink" data-ins id="story" aria-labelledby="rift-h">
-  <h2 data-in class="g-h2" id="rift-h">The Rift is open</h2>
-  <p data-in class="lede">For a thousand years five Elemental Spires kept the world in balance. Then the Hollow King tore the sky open. Only you can wake the Spires again.</p>
-</section>
-<section class="field" data-ins id="play" aria-labelledby="play-h">
-  <h2 data-in class="g-h2" id="play-h">How it plays</h2>
+<section class="field on-ink gk" data-ins id="play" aria-labelledby="play-h">
+  <div class="rail"><h2 data-in id="play-h">How it plays</h2><p data-in>Build towers, fuse them, and change your plan when the land or the King changes the rules.</p></div>
+  <div class="main">
+  <ul class="nums" data-in>
+    <li><b>7</b><span>elements</span></li><li><b>9</b><span>tower fusions</span></li><li><b>68</b><span>levels in 10 chapters</span></li><li><b>287</b><span>recorded voice lines</span></li>
+  </ul>
   <div class="cols">
     <div data-in><h3>Build, fuse, adapt</h3><ul>
       <li>Towers of seven elements: Fire, Water, Earth, Air, Lightning, Nature and Dark.</li>
       <li>Fuse two towers into one of 9 fusions, then into 6 super towers.</li>
-      <li>Three level 3 towers of one kind become a Paragon.</li>
-      <li>Every land weakens one element and favours another.</li></ul></div>
+      <li>Three level 3 towers of one kind become a Paragon.</li></ul></div>
     <div data-in><h3>A story to fight through</h3><ul>
-      <li>10 chapters and 68 levels.</li>
-      <li>287 recorded voice lines, and a villain who talks back while you play.</li>
+      <li>A villain who talks back while you play.</li>
       <li>Bosses, mini-bosses and the Hollow King, who curses your towers mid-battle.</li>
-      <li>Heroes Ember, Ignis, Ysolde, Volt and Gorran, each with powers and a skill tree.</li></ul></div>
+      <li>Voiced story scenes between battles.</li></ul></div>
     <div data-in><h3>Play your way</h3><ul>
       <li>Normal: earn stars and unlock the next land.</li>
       <li>Hard: pick the King's Pacts yourself for Heat and black skulls.</li>
       <li>20 Challenges, 26 draft cards, a talent tree and a shop.</li>
       <li>Survival mode with 1,000 waves after the campaign.</li></ul></div>
   </div>
+  </div>
+</section>
+<section class="field gk gk-cta" data-ins aria-labelledby="cta-h">
+  <h2 data-in class="wide" id="cta-h">Coming soon</h2>
+  <p data-in class="wide gk-lead">To Steam and Android. Want to know when it is out? Write to us.</p>
+  <div data-in class="wide gk-row"><a class="btn" href="mailto:{{EMAIL}}?subject=Spirekeeper">Ask about the game</a><a class="btn line" href="privacy/">Privacy policy</a></div>
 </section>
 '''
 page('spirekeeper/index.html', 'Spirekeeper | A painted tower defense by Wildlogic',
