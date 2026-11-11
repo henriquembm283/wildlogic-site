@@ -187,7 +187,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .company { position: relative; isolation: isolate; overflow: hidden; background: #1c1c1c; color: var(--paper); min-height: 86svh; padding: var(--gap) var(--m); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--m); row-gap: 48px; align-items: center; }
 .company > canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; opacity: 0; transition: opacity 600ms var(--out); }
 .company.gl > canvas { opacity: 1; }
-.company .mark { grid-column: 1 / span 5; }
+.company .mark { grid-column: 1 / span 6; }
 .company .mark svg { width: 100%; height: auto; }
 .company.gl .mark { opacity: 0; }
 .co-card { grid-column: 7 / -1; background: rgb(28 28 28 / .95); padding: clamp(24px, 3vw, 44px); }

@@ -35,7 +35,7 @@ precision highp float;
 #else
 precision mediump float;
 #endif
-uniform sampler2D uA,uM;uniform vec2 uRes,uLens;uniform float uCell,uR,uN,uT,uIn,uDis,uDisA,uDisB;
+uniform sampler2D uA,uM;uniform vec2 uRes,uLens;uniform float uCell,uR,uN,uT,uIn,uDis,uDisA,uDisB,uDim,uTex;
 float h(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
  return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+1.),f.x),f.y);}
@@ -57,14 +57,14 @@ void main(){
  vec2 c1=(i1+.5)*vec2(uCell,uCell*1.4);
  float m=smoothstep(uR,uR*.15,distance(c1,uLens*uRes));
  float a1=smoothstep(0.,.15,uIn*1.15-h1)*smoothstep(0.,.15,h1*.85+.15-uDis);
- float sp=step(.991-.06*m,h(i1+floor(uT*1.4+h1*9.)));
- vec3 lit=min(paper*(.16+.5*v1)*(1.+2.4*m),paper);
+ float sp=step(1.-(.009+.06*m)*uDim,h(i1+floor(uT*1.4+h1*9.)));
+ vec3 lit=min(paper*(.16+.5*v1)*(1.+2.4*m)*uDim,paper);
  vec3 outC=mix(ink,mix(lit,acc,sp),g1*a1);
  float in2=clamp(uIn*1.7-.7,0.,1.);
  float pres=smoothstep(0.,.15,uIn*1.15-h2)*smoothstep(0.,.15,h2*.85+.15-uDisB);
  float sol=smoothstep(0.,.15,in2*1.15-h2)*smoothstep(0.,.15,h2*.85+.15-uDisA);
  float sw=smoothstep(.1,0.,abs((px.x+px.y*.5)/uRes.x-(fract(uT/8.)*2.6-.7)));
- float k=min((.3+.62*v2)*(1.+.7*sw+.5*m),1.);
+ float k=min((.3+.62*v2)*(1.+.7*sw+.5*m),1.)*uTex;
  float grain=.94+.06*h(px+floor(uT*12.));
  vec3 solid=paper*grain*(1.-g2*k);
  vec3 loose=mix(ink,paper,g2);
@@ -93,7 +93,7 @@ void main(){
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
     const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    const U = {}; ["uA", "uM", "uRes", "uLens", "uCell", "uR", "uN", "uT", "uIn", "uDis", "uDisA", "uDisB"].forEach((k) => (U[k] = gl.getUniformLocation(pr, k)));
+    const U = {}; ["uA", "uM", "uRes", "uLens", "uCell", "uR", "uN", "uT", "uIn", "uDis", "uDisA", "uDisB", "uDim", "uTex"].forEach((k) => (U[k] = gl.getUniformLocation(pr, k)));
     const tex = (unit, src) => { const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -133,7 +133,7 @@ void main(){
       gl.uniform1f(U.uCell, (small ? opt.cell * 0.72 : opt.cell) * d);
       gl.uniform1f(U.uR, Math.min(w, hgt) * opt.r);
       gl.uniform1f(U.uT, reduce ? 3 : now / 1000);
-      gl.uniform1f(U.uIn, 1 - Math.pow(1 - tin, 3));
+      gl.uniform1f(U.uIn, 1 - Math.pow(1 - tin, 3)); gl.uniform1f(U.uDim, opt.dim || 1); gl.uniform1f(U.uTex, opt.tex == null ? 1 : opt.tex);
       gl.uniform1f(U.uDis, smooth(0.08, 0.9, p)); gl.uniform1f(U.uDisA, smooth(0.3, 0.82, p)); gl.uniform1f(U.uDisB, smooth(0.5, 1, p));
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       host.classList.add("gl");
@@ -175,7 +175,7 @@ void main(){
 
   /* ---------------- studio card ---------------- */
   const mark = document.querySelector(".company");
-  if (mark) codeField(mark.querySelector("canvas"), mark, [mark.querySelector("svg")], { cell: 13, r: 0.55, lx: 0.3, ly: 0.5, wx: 0.22, wy: 0.25 });
+  if (mark) codeField(mark.querySelector("canvas"), mark, [mark.querySelector("svg")], { cell: 14, r: 0.4, lx: 0.3, ly: 0.5, wx: 0.22, wy: 0.25, dim: 0.42, tex: 0.22 } /* quiet here: the facts are the point, the logo stays solid */);
 
   /* ---------------- orbit: a globe you turn to pick from ---------------- */
   document.querySelectorAll(".orbit").forEach((orbit) => {
