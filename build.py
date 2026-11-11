@@ -184,12 +184,12 @@ shots = [('shot-spires', 'Crystal Spires', 'Towers of every element hold a bridg
          ('shot-story', 'Story scene', 'Voiced story scenes between battles.'),
          ('shot-final', 'Final battle', 'The final battle against the Hollow King.')]
 thumbs = '\n'.join(f'      <a href="{{R}}assets/img/{n}.webp" data-cap="{c}" aria-label="{s}"{" aria-current=\"true\"" if i == 0 else ""}><img src="{{R}}assets/img/{n}.webp" width="1600" height="900" alt="" loading="lazy"></a>' for i, (n, s, c) in enumerate(shots))
-HEROES = [('ember', 'Ember', 'Fire', 518, 'The apprentice who survived. Brave, cheerful, and talks too much.'),
-          ('ignis', 'Ignis', 'Fire', 554, 'Furious at everything. Complains about every job, then does it perfectly.'),
-          ('ysolde', 'Ysolde', 'Ice', 588, 'Last Warden of the Water Spire. Plans everything and hates risks.'),
-          ('volt', 'Volt', 'Lightning', 555, 'Sky-ship captain and storm chaser. Loves danger a little too much.'),
-          ('gorran', 'Gorran', 'Earth', 410, 'Warden of the Earth Spire. Slow, and impossible to move.')]
-band = '\n'.join(f'    <li data-in><div class="fig"><img src="{{R}}assets/img/sk/hero-{k}.webp" width="{w}" height="900" alt="{n}, painted portrait" loading="lazy"></div><h3>{n}</h3><p class="kind">{e}</p><p>{t}</p></li>' for k, n, e, w, t in HEROES)
+HEROES = [('ember', 'greenhollow', 'Ember', 'Fire', 518, 'The apprentice who survived. Brave, cheerful, and talks too much.'),
+          ('ignis', 'cinder-throne', 'Ignis', 'Fire', 554, 'Furious at everything. Complains about every job, then does it perfectly.'),
+          ('ysolde', 'frostmere', 'Ysolde', 'Ice', 588, 'Last Warden of the Water Spire. Plans everything and hates risks.'),
+          ('volt', 'heart-of-the-storm', 'Volt', 'Lightning', 555, 'Sky-ship captain and storm chaser. Loves danger a little too much.'),
+          ('gorran', 'mirewood', 'Gorran', 'Earth', 410, 'Warden of the Earth Spire. Slow, and impossible to move.')]
+band = '\n'.join(f'    <li data-in><div class="fig"><img class="land" src="{{R}}assets/img/sk/land-{l}.webp" width="800" height="446" alt="" loading="lazy"><img src="{{R}}assets/img/sk/hero-{k}.webp" width="{w}" height="900" alt="{n}, painted portrait" loading="lazy"></div><h3>{n}</h3><p class="kind">{e}</p><p>{t}</p></li>' for k, l, n, e, w, t in HEROES)
 LANDS = ['Greenhollow', 'Old Road', 'Sunscar Dunes', 'Glass Flats', 'Frostmere', 'Cinder Throne', 'Mirewood', 'Sunken Temple', 'Crystal Spires', 'Heart of the Storm']
 lands = '\n'.join(f'    <li><img src="{{R}}assets/img/sk/land-{n.lower().replace(" ", "-")}.webp" width="800" height="446" alt="" loading="lazy"><span>{n}</span></li>' for n in LANDS)
 sk = f'''
