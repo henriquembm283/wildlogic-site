@@ -7,6 +7,10 @@ LEGAL = 'WILDLOGIC - Sistemas de Informática, Unipessoal, Lda'
 NIPC = '519107276'
 svg = lambda n: open(f'{OUT}/assets/img/{n}.svg').read().replace('<svg ', '<svg aria-hidden="true" focusable="false" ')
 
+ARROW_L = '<svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path d="M14.5 5 7.5 12l7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg>'
+ARROW_R = '<svg aria-hidden="true" viewBox="0 0 24 24" width="22" height="22"><path d="M9.5 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2"/></svg>'
+RIBBON = ''.join(f'<span>{w}</span>' for w in ['JavaScript','HTML Canvas','WebGL','PixiJS','Capacitor','PHP','Moodle','Lua'])
+
 def page(path, title, desc, body, nav_cur='', home=False, scripts=''):
     depth = path.count('/')
     r = '/' if path == '404.html' else '../' * depth
@@ -88,53 +92,61 @@ home = f'''
     </nav>
     <ol class="orbit-list">
       <li data-k="sk" data-name="Spirekeeper"><article>
-        <p class="kind">Game · Coming soon to Steam and Android</p>
         <h3>Spirekeeper</h3>
+        <p class="kind">Game · Coming soon to Steam and Android</p>
         <p class="desc">A painted tower defense with a fully voiced story. Build towers of seven elements, fuse them, and stop the Hollow King.</p>
-        <a class="btn" href="spirekeeper/">Open the Spirekeeper page</a>
+        <a class="btn" href="spirekeeper/">Enter the Spirekeeper world</a>
       </article></li>
       <li data-k="ar" data-name="Automation Rules"><article>
-        <p class="kind">Moodle plugin · Free and Pro</p>
         <h3>Automation Rules</h3>
+        <p class="kind">Moodle plugin · Free and Pro</p>
         <p class="desc">"When this happens, do that." Nudge learners who stop showing up, chase assignments before they are late, and enrol people in the next course on their path.</p>
         <a class="btn" href="mailto:{{EMAIL}}?subject=Automation%20Rules">Ask about this plugin</a>
       </article></li>
       <li data-k="tr" data-name="Team Reports"><article>
-        <p class="kind">Moodle plugin · Free and Pro</p>
         <h3>Team Reports</h3>
+        <p class="kind">Moodle plugin · Free and Pro</p>
         <p class="desc">Each manager gets a short email about their own team: who started, who is overdue, who went quiet. The full list arrives as a spreadsheet.</p>
         <a class="btn" href="mailto:{{EMAIL}}?subject=Team%20Reports">Ask about this plugin</a>
       </article></li>
       <li data-k="da" data-name="Domain Access"><article>
-        <p class="kind">Moodle plugin · Free and Pro</p>
         <h3>Domain Access</h3>
+        <p class="kind">Moodle plugin · Free and Pro</p>
         <p class="desc">People sign up with their work email. Lists of allowed, blocked and temporary email domains decide who gets an account, so nobody approves each one by hand.</p>
         <a class="btn" href="mailto:{{EMAIL}}?subject=Domain%20Access">Ask about this plugin</a>
       </article></li>
       <li data-k="wow" data-name="WoW add-ons"><article>
-        <p class="kind">World of Warcraft · List coming soon</p>
         <h3>WoW add-ons</h3>
+        <p class="kind">World of Warcraft · List coming soon</p>
         <p class="desc">Add-ons that make life in Azeroth a little easier. The list is on its way to this page.</p>
         <a class="btn" href="mailto:{{EMAIL}}?subject=WoW%20add-ons">Ask about the add-ons</a>
       </article></li>
     </ol>
-    <p class="orbit-hint" aria-hidden="true">Drag the globe, scroll, or pick a name</p>
+    <div class="orbit-turn"><button type="button" data-turn="prev" aria-label="Previous project">{ARROW_L}</button><button type="button" data-turn="next" aria-label="Next project">{ARROW_R}</button><p aria-hidden="true">Drag the globe to turn it</p></div>
   </div>
 </section>
 
-<section class="field" id="studio" aria-labelledby="studio-h">
-  <div class="studio" data-ins>
-    <h2 id="studio-h" data-in>One small studio</h2>
+<section class="field studio" id="studio" aria-labelledby="studio-h">
+  <h2 id="studio-h">The studio</h2>
+  <p class="statement">Wildlogic is a small software studio from Caldas da Rainha, Portugal. We design, build and publish our own games and tools. No ads in anything we make. No trackers. We never sell anyone's data.</p>
+  <ul class="nums" data-ins>
+    <li data-in><b data-count="68">68</b><span>levels in Spirekeeper</span></li>
+    <li data-in><b data-count="287">287</b><span>recorded voice lines</span></li>
+    <li data-in><b data-count="3">3</b><span>Moodle plugins</span></li>
+    <li data-in><b>0</b><span>ads or trackers, anywhere</span></li>
+  </ul>
+  <div class="ribbon" role="img" aria-label="What we build with: JavaScript, HTML Canvas, WebGL, PixiJS, Capacitor, PHP, Moodle, Lua">
+    <div aria-hidden="true">{RIBBON}{RIBBON}</div>
+  </div>
+  <div class="studio-row" data-ins>
     <div class="studio-mark" data-in><canvas aria-hidden="true"></canvas><span class="mark">{svg("wl")}</span></div>
-    <div class="studio-text">
-      <p data-in>Wildlogic designs, builds and publishes its own games and tools. No ads in anything we make, and we never sell anyone's data.</p>
-      <table class="facts" data-in>
-        <tr><th scope="row">Company</th><td>{{LEGAL}}</td></tr>
-        <tr><th scope="row">NIPC</th><td>{{NIPC}}</td></tr>
-        <tr><th scope="row">Based in</th><td>Caldas da Rainha, Portugal</td></tr>
-        <tr><th scope="row">Languages</th><td>English and Portuguese</td></tr>
-      </table>
-    </div>
+    <table class="facts" data-in>
+      <tr><th scope="row">Company</th><td>{{LEGAL}}</td></tr>
+      <tr><th scope="row">NIPC</th><td>{{NIPC}}</td></tr>
+      <tr><th scope="row">Based in</th><td>Caldas da Rainha, Portugal</td></tr>
+      <tr><th scope="row">We make</th><td>Games, Moodle plugins, World of Warcraft add-ons</td></tr>
+      <tr><th scope="row">Languages</th><td>English and Portuguese</td></tr>
+    </table>
   </div>
 </section>
 
@@ -166,35 +178,88 @@ shots = [('shot-spires', 'Towers of every element hold a bridge in the Crystal S
          ('shot-final', 'The final battle against the Hollow King.')]
 figs = '\n'.join(f'    <figure><img src="{{R}}assets/img/{n}.webp" width="1600" height="900" alt="{c}" loading="lazy"><figcaption>{c}</figcaption></figure>' for n, c in shots)
 sk = f'''
-<section class="g-hero" aria-labelledby="sk-title">
-  <img class="bg" src="{{R}}assets/img/sk-sky.webp" width="2400" height="775" alt="" fetchpriority="high">
-  <div>
-    <h1 id="sk-title"><img class="logo" src="{{R}}assets/img/sk-logo.webp" width="1280" height="720" alt="Spirekeeper"></h1>
-    <p>A painted tower defense with a fully voiced story. Coming soon to Steam and Android.</p>
-    <div class="row"><a class="btn" href="mailto:{{EMAIL}}?subject=Spirekeeper">Ask about the game</a><a href="privacy/">Privacy policy</a></div>
+<section class="orbit world" data-on="trailer" aria-labelledby="sk-title">
+  <div class="orbit-stage">
+    <div class="orbit-bg" aria-hidden="true">
+      <div class="bg cover on" data-k="trailer"><video muted loop playsinline preload="none" poster="{{R}}assets/video/rift-poster.jpg" tabindex="-1"><source src="{{R}}assets/video/rift-loop.mp4" type="video/mp4"></video></div>
+      <div class="bg cover" data-k="look"><img src="{{R}}assets/img/shot-spires.webp" width="1600" height="900" alt="" loading="lazy"></div>
+      <div class="bg cover" data-k="story"><img src="{{R}}assets/img/shot-story.webp" width="1600" height="900" alt="" loading="lazy"></div>
+      <div class="bg cover" data-k="play"><img src="{{R}}assets/img/shot-temple.webp" width="1600" height="900" alt="" loading="lazy"></div>
+      <div class="bg cover" data-k="privacy"><img src="{{R}}assets/img/sk-sky.webp" width="2400" height="775" alt="" loading="lazy"></div>
+    </div>
+    <canvas class="globe" aria-hidden="true"></canvas>
+    <h1 class="orbit-h" id="sk-title"><img class="logo" src="{{R}}assets/img/sk-logo.webp" width="1280" height="720" alt="Spirekeeper"><span>A painted tower defense with a voiced story</span></h1>
+    <nav class="orbit-nav" aria-label="Parts of this page">
+      <button type="button" data-k="trailer"><i></i>Trailer</button>
+      <button type="button" data-k="look"><i></i>A look inside</button>
+      <button type="button" data-k="story"><i></i>The story</button>
+      <button type="button" data-k="play"><i></i>How it plays</button>
+      <button type="button" data-k="privacy"><i></i>Privacy</button>
+    </nav>
+    <ol class="orbit-list">
+      <li data-k="trailer" data-name="Trailer"><article>
+        <h2>Trailer</h2>
+        <p class="kind">Fifty seconds of the game</p>
+        <p class="desc">Watch the Rift open, the Spires wake and the Hollow King arrive.</p>
+        <a class="btn" href="#trailer">Watch the trailer</a>
+      </article></li>
+      <li data-k="look" data-name="A look inside"><article>
+        <h2>A look inside</h2>
+        <p class="kind">Six screens from the game</p>
+        <p class="desc">Battles, the world map, the heroes and the story scenes.</p>
+        <a class="btn" href="#look">See the screenshots</a>
+      </article></li>
+      <li data-k="story" data-name="The story"><article>
+        <h2>The story</h2>
+        <p class="kind">The Rift is open</p>
+        <p class="desc">For a thousand years five Elemental Spires kept the world in balance. Then the Hollow King tore the sky open.</p>
+        <a class="btn" href="#story">Read the story</a>
+      </article></li>
+      <li data-k="play" data-name="How it plays"><article>
+        <h2>How it plays</h2>
+        <p class="kind">Build, fuse, adapt</p>
+        <p class="desc">Seven elements, 9 fusions, 68 levels, heroes with skill trees and a villain who talks back.</p>
+        <a class="btn" href="#play">See how it plays</a>
+      </article></li>
+      <li data-k="privacy" data-name="Privacy"><article>
+        <h2>Privacy</h2>
+        <p class="kind">No data collected</p>
+        <p class="desc">Spirekeeper collects nothing about you. Your progress stays on your device.</p>
+        <a class="btn" href="privacy/">Read the privacy policy</a>
+      </article></li>
+    </ol>
+    <div class="orbit-turn"><button type="button" data-turn="prev" aria-label="Previous part">{ARROW_L}</button><button type="button" data-turn="next" aria-label="Next part">{ARROW_R}</button><p aria-hidden="true">Drag the globe to turn it</p></div>
   </div>
 </section>
-<section class="field on-ink" aria-labelledby="look-h">
-  <h2 class="g-h2" id="look-h">A look inside</h2>
-  <div class="shots" tabindex="0" role="region" aria-label="Screenshots, scroll sideways">
+<section class="field on-ink" data-ins id="trailer" aria-labelledby="tr-h">
+  <h2 data-in class="g-h2" id="tr-h">Trailer</h2>
+  <video data-in class="trailer" controls playsinline preload="none" poster="{{R}}assets/video/trailer-poster.jpg" aria-label="Spirekeeper trailer"><source src="{{R}}assets/video/trailer.mp4" type="video/mp4"></video>
+  <p data-in class="trailer-note">A painted tower defense with a fully voiced story. Coming soon to Steam and Android. <a href="mailto:{{EMAIL}}?subject=Spirekeeper">Ask about the game</a></p>
+</section>
+<section class="field" data-ins id="look" aria-labelledby="look-h">
+  <h2 data-in class="g-h2" id="look-h">A look inside</h2>
+  <div data-in class="shots" tabindex="0" role="region" aria-label="Screenshots, scroll sideways">
 {figs}
   </div>
 </section>
-<section class="field" aria-labelledby="rift-h">
-  <h2 class="g-h2" id="rift-h">The Rift is open</h2>
-  <p class="lede">For a thousand years five Elemental Spires kept the world in balance. Then the Hollow King tore the sky open. Only you can wake the Spires again.</p>
+<section class="field on-ink" data-ins id="story" aria-labelledby="rift-h">
+  <h2 data-in class="g-h2" id="rift-h">The Rift is open</h2>
+  <p data-in class="lede">For a thousand years five Elemental Spires kept the world in balance. Then the Hollow King tore the sky open. Only you can wake the Spires again.</p>
+</section>
+<section class="field" data-ins id="play" aria-labelledby="play-h">
+  <h2 data-in class="g-h2" id="play-h">How it plays</h2>
   <div class="cols">
-    <div><h3>Build, fuse, adapt</h3><ul>
+    <div data-in><h3>Build, fuse, adapt</h3><ul>
       <li>Towers of seven elements: Fire, Water, Earth, Air, Lightning, Nature and Dark.</li>
       <li>Fuse two towers into one of 9 fusions, then into 6 super towers.</li>
       <li>Three level 3 towers of one kind become a Paragon.</li>
       <li>Every land weakens one element and favours another.</li></ul></div>
-    <div><h3>A story to fight through</h3><ul>
+    <div data-in><h3>A story to fight through</h3><ul>
       <li>10 chapters and 68 levels.</li>
       <li>287 recorded voice lines, and a villain who talks back while you play.</li>
       <li>Bosses, mini-bosses and the Hollow King, who curses your towers mid-battle.</li>
       <li>Heroes Ember, Ignis, Ysolde, Volt and Gorran, each with powers and a skill tree.</li></ul></div>
-    <div><h3>Play your way</h3><ul>
+    <div data-in><h3>Play your way</h3><ul>
       <li>Normal: earn stars and unlock the next land.</li>
       <li>Hard: pick the King's Pacts yourself for Heat and black skulls.</li>
       <li>20 Challenges, 26 draft cards, a talent tree and a shop.</li>
@@ -203,7 +268,7 @@ sk = f'''
 </section>
 '''
 page('spirekeeper/index.html', 'Spirekeeper | A painted tower defense by Wildlogic',
-     'Spirekeeper is a story-driven tower defense with seven elements, tower fusions, heroes and a fully voiced campaign. Coming soon to Steam and Android.', sk, nav_cur='sk')
+     'Spirekeeper is a story-driven tower defense with seven elements, tower fusions, heroes and a fully voiced campaign. Coming soon to Steam and Android.', sk, nav_cur='sk', scripts='<script src="../assets/vendor/motion-12.43.0.js" defer></script>\n<script src="../assets/site.js" defer></script>\n')
 
 skp = '''
 <article class="doc">
