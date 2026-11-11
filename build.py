@@ -65,7 +65,7 @@ home = f'''
     <div class="words" role="img" aria-label="Wild Logic"><span class="word word-wild">{svg("wild")}</span><span class="word word-logic">{svg("logic")}</span></div>
     <div class="hero-say">
       <h1 id="title">Wildlogic makes games and tools</h1>
-      <p>A software studio in Caldas da Rainha, Portugal: one painted game, three Moodle plugins and add-ons for World of Warcraft.</p>
+      <p>A software studio in Caldas da Rainha, Portugal: one painted game, three Moodle plugins and a World of Warcraft add-on.</p>
       <a class="btn" href="#work">See what we make</a>
     </div>
     <p class="hero-turn">Half of what we make is wild. The other half is logic.</p>
@@ -79,7 +79,7 @@ home = f'''
       <div class="bg" data-k="ar"><img src="assets/img/ui-autorules.webp" width="1280" height="880" alt="" loading="lazy"></div>
       <div class="bg" data-k="tr"><img src="assets/img/ui-teamreports.webp" width="1300" height="890" alt="" loading="lazy"></div>
       <div class="bg code" data-k="da"><div class="run"><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre></div></div>
-      <div class="bg code" data-k="wow"><div class="run"><pre data-ui>local addon = CreateFrame("Frame")\naddon:RegisterEvent("PLAYER_LOGIN")\naddon:SetScript("OnEvent", function(self, event)\n  print("Wildlogic add-on loaded")\nend)\n\nSLASH_WILD1 = "/wild"\nSlashCmdList.WILD = function(msg)\n  addon:Toggle(msg)\nend</pre><pre data-ui>local addon = CreateFrame("Frame")\naddon:RegisterEvent("PLAYER_LOGIN")\naddon:SetScript("OnEvent", function(self, event)\n  print("Wildlogic add-on loaded")\nend)\n\nSLASH_WILD1 = "/wild"\nSlashCmdList.WILD = function(msg)\n  addon:Toggle(msg)\nend</pre><pre data-ui>local addon = CreateFrame("Frame")\naddon:RegisterEvent("PLAYER_LOGIN")\naddon:SetScript("OnEvent", function(self, event)\n  print("Wildlogic add-on loaded")\nend)\n\nSLASH_WILD1 = "/wild"\nSlashCmdList.WILD = function(msg)\n  addon:Toggle(msg)\nend</pre><pre data-ui>local addon = CreateFrame("Frame")\naddon:RegisterEvent("PLAYER_LOGIN")\naddon:SetScript("OnEvent", function(self, event)\n  print("Wildlogic add-on loaded")\nend)\n\nSLASH_WILD1 = "/wild"\nSlashCmdList.WILD = function(msg)\n  addon:Toggle(msg)\nend</pre><pre data-ui>local addon = CreateFrame("Frame")\naddon:RegisterEvent("PLAYER_LOGIN")\naddon:SetScript("OnEvent", function(self, event)\n  print("Wildlogic add-on loaded")\nend)\n\nSLASH_WILD1 = "/wild"\nSlashCmdList.WILD = function(msg)\n  addon:Toggle(msg)\nend</pre><pre data-ui>local addon = CreateFrame("Frame")\naddon:RegisterEvent("PLAYER_LOGIN")\naddon:SetScript("OnEvent", function(self, event)\n  print("Wildlogic add-on loaded")\nend)\n\nSLASH_WILD1 = "/wild"\nSlashCmdList.WILD = function(msg)\n  addon:Toggle(msg)\nend</pre></div></div>
+      <div class="bg code" data-k="wow"><div class="run"><pre data-ui>local QuickBuff = CreateFrame("Frame")\nQuickBuff:RegisterEvent("PLAYER_LOGIN")\nQuickBuff:SetScript("OnEvent", function(self, event)\n  self:FindPlayersMissingBuff()\nend)\n\nSLASH_QUICKBUFF1 = "/qb"\nSlashCmdList.QUICKBUFF = function(msg)\n  QuickBuff:Options(msg)\nend</pre><pre data-ui>local QuickBuff = CreateFrame("Frame")\nQuickBuff:RegisterEvent("PLAYER_LOGIN")\nQuickBuff:SetScript("OnEvent", function(self, event)\n  self:FindPlayersMissingBuff()\nend)\n\nSLASH_QUICKBUFF1 = "/qb"\nSlashCmdList.QUICKBUFF = function(msg)\n  QuickBuff:Options(msg)\nend</pre><pre data-ui>local QuickBuff = CreateFrame("Frame")\nQuickBuff:RegisterEvent("PLAYER_LOGIN")\nQuickBuff:SetScript("OnEvent", function(self, event)\n  self:FindPlayersMissingBuff()\nend)\n\nSLASH_QUICKBUFF1 = "/qb"\nSlashCmdList.QUICKBUFF = function(msg)\n  QuickBuff:Options(msg)\nend</pre><pre data-ui>local QuickBuff = CreateFrame("Frame")\nQuickBuff:RegisterEvent("PLAYER_LOGIN")\nQuickBuff:SetScript("OnEvent", function(self, event)\n  self:FindPlayersMissingBuff()\nend)\n\nSLASH_QUICKBUFF1 = "/qb"\nSlashCmdList.QUICKBUFF = function(msg)\n  QuickBuff:Options(msg)\nend</pre><pre data-ui>local QuickBuff = CreateFrame("Frame")\nQuickBuff:RegisterEvent("PLAYER_LOGIN")\nQuickBuff:SetScript("OnEvent", function(self, event)\n  self:FindPlayersMissingBuff()\nend)\n\nSLASH_QUICKBUFF1 = "/qb"\nSlashCmdList.QUICKBUFF = function(msg)\n  QuickBuff:Options(msg)\nend</pre><pre data-ui>local QuickBuff = CreateFrame("Frame")\nQuickBuff:RegisterEvent("PLAYER_LOGIN")\nQuickBuff:SetScript("OnEvent", function(self, event)\n  self:FindPlayersMissingBuff()\nend)\n\nSLASH_QUICKBUFF1 = "/qb"\nSlashCmdList.QUICKBUFF = function(msg)\n  QuickBuff:Options(msg)\nend</pre></div></div>
     </div>
     <canvas class="globe" aria-hidden="true"></canvas>
     <h2 class="orbit-h" id="work-h">What we make</h2>
@@ -88,7 +88,7 @@ home = f'''
       <button type="button" data-k="ar"><i></i>Automation Rules</button>
       <button type="button" data-k="tr"><i></i>Team Reports</button>
       <button type="button" data-k="da"><i></i>Domain Access</button>
-      <button type="button" data-k="wow"><i></i>WoW add-ons</button>
+      <button type="button" data-k="wow"><i></i>Quick Buffs</button>
     </nav>
     <ol class="orbit-list">
       <li data-k="sk" data-name="Spirekeeper"><article>
@@ -115,11 +115,11 @@ home = f'''
         <p class="desc">People sign up with their work email. Lists of allowed, blocked and temporary email domains decide who gets an account, so nobody approves each one by hand.</p>
         <a class="btn" href="mailto:{{EMAIL}}?subject=Domain%20Access">Ask about this plugin</a>
       </article></li>
-      <li data-k="wow" data-name="WoW add-ons"><article>
-        <h3>WoW add-ons</h3>
-        <p class="kind">World of Warcraft · List coming soon</p>
-        <p class="desc">Add-ons that make life in Azeroth a little easier. The list is on its way to this page.</p>
-        <a class="btn" href="mailto:{{EMAIL}}?subject=WoW%20add-ons">Ask about the add-ons</a>
+      <li data-k="wow" data-name="Quick Buffs"><article>
+        <h3>Quick Buffs</h3>
+        <p class="kind">World of Warcraft add-on · Free</p>
+        <p class="desc">One key buffs the nearest player who is missing your buff, and refreshes the ones about to run out. No clicking, no targeting.</p>
+        <a class="btn" href="https://www.curseforge.com/wow/addons/quick-buffs" rel="noopener">Get it on CurseForge</a>
       </article></li>
     </ol>
     <div class="orbit-turn"><button type="button" data-turn="prev" aria-label="Previous project">{ARROW_L}</button><button type="button" data-turn="next" aria-label="Next project">{ARROW_R}</button><p aria-hidden="true">Drag to turn</p></div>
@@ -149,7 +149,7 @@ home = f'''
       <div data-in><dt>Legal name</dt><dd>{{LEGAL}}</dd></div>
       <div data-in><dt>NIPC</dt><dd>{{NIPC}}</dd></div>
       <div data-in><dt>Based in</dt><dd>Caldas da Rainha, Portugal</dd></div>
-      <div data-in><dt>We make</dt><dd>Games, Moodle plugins, World of Warcraft add&#8209;ons</dd></div>
+      <div data-in><dt>We make</dt><dd>Games, Moodle plugins, a World of Warcraft add&#8209;on</dd></div>
       <div data-in><dt>Where it runs</dt><dd>Steam and Android (coming soon), Moodle 4.1 or later</dd></div>
       <div data-in><dt>Languages</dt><dd>English and Portuguese</dd></div>
       <div data-in><dt>Privacy</dt><dd>No ads, no trackers, no data sold. <a href="privacy/">Read the policy</a></dd></div>
@@ -173,7 +173,7 @@ home = f'''
 </section>
 '''
 page('index.html', 'Wildlogic | Games and software from Portugal',
-     'Wildlogic is a studio in Caldas da Rainha, Portugal. We make Spirekeeper, Moodle plugins and World of Warcraft add-ons.',
+     'Wildlogic is a studio in Caldas da Rainha, Portugal. We make Spirekeeper, Moodle plugins and the Quick Buffs add-on for World of Warcraft.',
      home, home=True, scripts='<script src="assets/vendor/motion-12.43.0.js" defer></script>\n<script src="assets/site.js" defer></script>\n')
 
 # ------------------------------------------------------------------ spirekeeper
