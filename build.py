@@ -12,7 +12,7 @@ def page(path, title, desc, body, nav_cur='', home=False, scripts=''):
     r = '/' if path == '404.html' else '../' * depth
     url = DOMAIN + '/' + path.replace('index.html', '')
     cur = lambda k: ' aria-current="page"' if k == nav_cur else ''
-    links = f'<a href="{r}spirekeeper/"{cur("sk")}>Spirekeeper</a><a href="{r or "./"}{"" if home else "index.html" if r != "/" else ""}#plugins">Plugins</a><a href="{r or "./"}{"" if home else "index.html" if r != "/" else ""}#contact">Contact</a>'
+    links = f'<a href="{r}spirekeeper/"{cur("sk")}>Spirekeeper</a><a href="{r or "./"}{"" if home else "index.html" if r != "/" else ""}#work">Projects</a><a href="{r or "./"}{"" if home else "index.html" if r != "/" else ""}#contact">Contact</a>'
     nav = f'<nav class="nav" aria-label="Main">{links}</nav>' if home else \
           f'<nav class="nav dark" aria-label="Main"><a class="home" href="{r or "./"}" aria-label="Wildlogic home">{svg("wl")}</a><span class="links">{links}</span></nav>'
     html = f'''<!doctype html>
@@ -57,95 +57,75 @@ def page(path, title, desc, body, nav_cur='', home=False, scripts=''):
 home = f'''
 <section class="hero" aria-labelledby="title">
   <div class="hero-stage">
-    <video muted loop playsinline preload="auto" poster="assets/video/rift-poster.jpg" aria-hidden="true" tabindex="-1"><source src="assets/video/rift-loop.mp4" type="video/mp4"></video>
     <canvas aria-hidden="true"></canvas>
-    <div role="img" aria-label="Wild Logic"><span class="word word-wild">{svg("wild")}</span><span class="word word-logic">{svg("logic")}</span></div>
+    <div class="words" role="img" aria-label="Wild Logic"><span class="word word-wild">{svg("wild")}</span><span class="word word-logic">{svg("logic")}</span></div>
     <div class="hero-say">
       <h1 id="title">Wildlogic makes games and tools</h1>
-      <p>A studio in Caldas da Rainha, Portugal: one painted game, three Moodle plugins and add-ons for World of Warcraft.</p>
+      <p>A software studio in Caldas da Rainha, Portugal: one painted game, three Moodle plugins and add-ons for World of Warcraft.</p>
       <a class="btn" href="#work">See what we make</a>
     </div>
     <p class="hero-turn">Half of what we make is wild. The other half is logic.</p>
   </div>
 </section>
 
-<section class="show" id="spirekeeper" data-stage="0" aria-labelledby="show-h">
-  <div class="show-stage">
-    <h2 class="show-h" id="show-h"><span class="a">Spirekeeper is</span> <span class="b">the wild half</span></h2>
-    <div class="show-frame"><img src="assets/img/sk-poster.webp" width="716" height="896" alt="Spirekeeper key art: the heroes Ysolde, Ignis, Ember and Volt under a torn violet sky"></div>
-    <ul class="show-side show-facts">
-      <li><b>68</b><span>levels across ten painted lands</span></li>
-      <li><b>7</b><span>elements to build and fuse</span></li>
-      <li><b>287</b><span>recorded voice lines</span></li>
-    </ul>
-    <div class="show-side show-cap">
-      <p>A tower defense with a fully voiced story. Build towers of seven elements, fuse them, and stop the Hollow King. Coming soon to Steam and Android.</p>
-      <a class="btn" href="spirekeeper/">Open the Spirekeeper page</a>
+<section class="orbit" id="work" data-on="sk" aria-labelledby="work-h">
+  <div class="orbit-stage">
+    <div class="orbit-bg" aria-hidden="true">
+      <div class="bg on" data-k="sk"><video muted loop playsinline preload="none" poster="assets/video/rift-poster.jpg" tabindex="-1"><source src="assets/video/rift-loop.mp4" type="video/mp4"></video></div>
+      <div class="bg" data-k="ar"><img src="assets/img/ui-autorules.webp" width="1280" height="880" alt="" loading="lazy"></div>
+      <div class="bg" data-k="tr"><img src="assets/img/ui-teamreports.webp" width="1300" height="890" alt="" loading="lazy"></div>
+      <div class="bg code" data-k="da"><div class="run"><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre></div></div>
+      <div class="bg code" data-k="wow"><div class="run"><pre data-ui>local addon = CreateFrame("Frame")\naddon:RegisterEvent("PLAYER_LOGIN")\naddon:SetScript("OnEvent", function(self, event)\n  print("Wildlogic add-on loaded")\nend)\n\nSLASH_WILD1 = "/wild"\nSlashCmdList.WILD = function(msg)\n  addon:Toggle(msg)\nend</pre><pre data-ui>local addon = CreateFrame("Frame")\naddon:RegisterEvent("PLAYER_LOGIN")\naddon:SetScript("OnEvent", function(self, event)\n  print("Wildlogic add-on loaded")\nend)\n\nSLASH_WILD1 = "/wild"\nSlashCmdList.WILD = function(msg)\n  addon:Toggle(msg)\nend</pre><pre data-ui>local addon = CreateFrame("Frame")\naddon:RegisterEvent("PLAYER_LOGIN")\naddon:SetScript("OnEvent", function(self, event)\n  print("Wildlogic add-on loaded")\nend)\n\nSLASH_WILD1 = "/wild"\nSlashCmdList.WILD = function(msg)\n  addon:Toggle(msg)\nend</pre><pre data-ui>local addon = CreateFrame("Frame")\naddon:RegisterEvent("PLAYER_LOGIN")\naddon:SetScript("OnEvent", function(self, event)\n  print("Wildlogic add-on loaded")\nend)\n\nSLASH_WILD1 = "/wild"\nSlashCmdList.WILD = function(msg)\n  addon:Toggle(msg)\nend</pre><pre data-ui>local addon = CreateFrame("Frame")\naddon:RegisterEvent("PLAYER_LOGIN")\naddon:SetScript("OnEvent", function(self, event)\n  print("Wildlogic add-on loaded")\nend)\n\nSLASH_WILD1 = "/wild"\nSlashCmdList.WILD = function(msg)\n  addon:Toggle(msg)\nend</pre><pre data-ui>local addon = CreateFrame("Frame")\naddon:RegisterEvent("PLAYER_LOGIN")\naddon:SetScript("OnEvent", function(self, event)\n  print("Wildlogic add-on loaded")\nend)\n\nSLASH_WILD1 = "/wild"\nSlashCmdList.WILD = function(msg)\n  addon:Toggle(msg)\nend</pre></div></div>
     </div>
-  </div>
-</section>
-
-<section class="field work" id="work" aria-labelledby="work-h">
-  <div class="work-rail" aria-hidden="true"><div class="work-hold">
-  <div class="work-sq">
-    <div class="pics">
-      <img data-k="sk" src="assets/img/sq-spirekeeper.webp" width="900" height="900" alt="" loading="lazy">
-      <img data-k="ar" src="assets/img/sq-autorules.webp" width="900" height="900" alt="" loading="lazy">
-      <img data-k="tr" src="assets/img/sq-teamreports.webp" width="900" height="900" alt="" loading="lazy">
-      <div class="tile" data-k="da">{svg("wl")}</div>
-      <div class="tile" data-k="wow">{svg("wl")}</div>
-    </div>
-  </div>
-  <span class="work-fact l"></span><span class="work-fact r"></span>
-  </div></div>
-  <h2 id="work-h">Everything</h2>
-  <ul class="work-list">
-    <li data-k="sk" data-kind="Game" data-state="Coming soon"><a href="spirekeeper/">Spirekeeper</a></li>
-    <li data-k="ar" data-kind="Moodle plugin" data-state="Free and Pro"><a href="#plugins">Automation Rules</a></li>
-    <li data-k="tr" data-kind="Moodle plugin" data-state="Free and Pro"><a href="#plugins">Team Reports</a></li>
-    <li data-k="da" data-kind="Moodle plugin" data-state="Free and Pro"><a href="#plugins">Domain Access</a></li>
-    <li data-k="wow" data-kind="World of Warcraft" data-state="List coming soon"><a href="#contact">WoW add-ons</a></li>
-  </ul>
-</section>
-
-<section class="field on-ink" id="plugins" aria-labelledby="plug-h">
-  <div class="plug" data-ins>
-    <div class="plug-pic" data-in>
-      <img class="on" data-k="ar" data-ui src="assets/img/ui-autorules.webp" width="1280" height="880" alt="Automation Rules: a rule that messages learners who have not opened a course for 7 days" loading="lazy">
-      <img data-k="tr" data-ui src="assets/img/ui-teamreports.webp" width="1300" height="890" alt="Team Reports: preview of a weekly report listing learners with overdue courses" loading="lazy">
-      <div class="ui" data-k="da" data-ui>
-        <p class="ui-h">Pending signups</p>
-        <table>
-          <tr><th>Email</th><th>Domain list</th><th>Result</th></tr>
-          <tr><td>ana@example.org</td><td>Allow</td><td><span class="tag ok">Approved</span></td></tr>
-          <tr><td>rui@partner.example</td><td>Temporary</td><td><span class="tag tmp">30 days</span></td></tr>
-          <tr><td>x@spam.example</td><td>Deny</td><td><span class="tag no">Refused</span></td></tr>
-          <tr><td>eva@other.example</td><td>No list</td><td><span class="tag wait">Waits for approver</span></td></tr>
-        </table>
-      </div>
-      <div class="tile-wl" data-k="wow">{svg("wl")}</div>
-    </div>
-    <div class="plug-body">
-      <h2 id="plug-h" data-in>The logic half</h2>
-      <p data-in>Plugins for schools and training teams that run Moodle 4.1 or later. Each has a free edition and a Pro edition.</p>
-      <ul class="plug-list" data-in>
-        <li class="on" data-k="ar"><button type="button" aria-expanded="true">Automation Rules <small>Moodle</small></button>
-          <div class="plug-desc"><div><p>"When this happens, do that." Nudge learners who stop showing up, chase assignments before they are late, and enrol people in the next course on their path.</p></div></div></li>
-        <li data-k="tr"><button type="button" aria-expanded="false">Team Reports <small>Moodle</small></button>
-          <div class="plug-desc"><div><p>Each manager gets a short email about their own team: who started, who is overdue, who went quiet. The full list arrives as a spreadsheet. No report builder needed.</p></div></div></li>
-        <li data-k="da"><button type="button" aria-expanded="false">Domain Access <small>Moodle</small></button>
-          <div class="plug-desc"><div><p>People sign up with their work email. Lists of allowed, blocked and temporary email domains decide who gets an account, so nobody approves each one by hand.</p></div></div></li>
-        <li data-k="wow"><button type="button" aria-expanded="false">WoW add-ons <small>World of Warcraft</small></button>
-          <div class="plug-desc"><div><p>Add-ons that make life in Azeroth a little easier. The list is on its way to this page.</p></div></div></li>
-      </ul>
-    </div>
+    <canvas class="globe" aria-hidden="true"></canvas>
+    <h2 class="orbit-h" id="work-h">What we make</h2>
+    <nav class="orbit-nav" aria-label="Projects">
+      <button type="button" data-k="sk"><i></i>Spirekeeper</button>
+      <button type="button" data-k="ar"><i></i>Automation Rules</button>
+      <button type="button" data-k="tr"><i></i>Team Reports</button>
+      <button type="button" data-k="da"><i></i>Domain Access</button>
+      <button type="button" data-k="wow"><i></i>WoW add-ons</button>
+    </nav>
+    <ol class="orbit-list">
+      <li data-k="sk" data-name="Spirekeeper"><article>
+        <p class="kind">Game · Coming soon to Steam and Android</p>
+        <h3>Spirekeeper</h3>
+        <p class="desc">A painted tower defense with a fully voiced story. Build towers of seven elements, fuse them, and stop the Hollow King.</p>
+        <a class="btn" href="spirekeeper/">Open the Spirekeeper page</a>
+      </article></li>
+      <li data-k="ar" data-name="Automation Rules"><article>
+        <p class="kind">Moodle plugin · Free and Pro</p>
+        <h3>Automation Rules</h3>
+        <p class="desc">"When this happens, do that." Nudge learners who stop showing up, chase assignments before they are late, and enrol people in the next course on their path.</p>
+        <a class="btn" href="mailto:{{EMAIL}}?subject=Automation%20Rules">Ask about this plugin</a>
+      </article></li>
+      <li data-k="tr" data-name="Team Reports"><article>
+        <p class="kind">Moodle plugin · Free and Pro</p>
+        <h3>Team Reports</h3>
+        <p class="desc">Each manager gets a short email about their own team: who started, who is overdue, who went quiet. The full list arrives as a spreadsheet.</p>
+        <a class="btn" href="mailto:{{EMAIL}}?subject=Team%20Reports">Ask about this plugin</a>
+      </article></li>
+      <li data-k="da" data-name="Domain Access"><article>
+        <p class="kind">Moodle plugin · Free and Pro</p>
+        <h3>Domain Access</h3>
+        <p class="desc">People sign up with their work email. Lists of allowed, blocked and temporary email domains decide who gets an account, so nobody approves each one by hand.</p>
+        <a class="btn" href="mailto:{{EMAIL}}?subject=Domain%20Access">Ask about this plugin</a>
+      </article></li>
+      <li data-k="wow" data-name="WoW add-ons"><article>
+        <p class="kind">World of Warcraft · List coming soon</p>
+        <h3>WoW add-ons</h3>
+        <p class="desc">Add-ons that make life in Azeroth a little easier. The list is on its way to this page.</p>
+        <a class="btn" href="mailto:{{EMAIL}}?subject=WoW%20add-ons">Ask about the add-ons</a>
+      </article></li>
+    </ol>
+    <p class="orbit-hint" aria-hidden="true">Drag the globe, scroll, or pick a name</p>
   </div>
 </section>
 
 <section class="field" id="studio" aria-labelledby="studio-h">
   <div class="studio" data-ins>
     <h2 id="studio-h" data-in>One small studio</h2>
-    <div class="studio-mark" data-in>{svg("wl")}</div>
+    <div class="studio-mark" data-in><canvas aria-hidden="true"></canvas><span class="mark">{svg("wl")}</span></div>
     <div class="studio-text">
       <p data-in>Wildlogic designs, builds and publishes its own games and tools. No ads in anything we make, and we never sell anyone's data.</p>
       <table class="facts" data-in>
@@ -158,18 +138,18 @@ home = f'''
   </div>
 </section>
 
-<section class="contact" id="contact" aria-labelledby="contact-h">
-  <img src="assets/img/sk-sky.webp" width="2400" height="775" alt="Painted night sky from Spirekeeper, with a violet rift above two glowing spires" loading="lazy">
-  <div class="card">
-    <h2 id="contact-h">Say hello</h2>
-    <a class="mail" href="mailto:{{EMAIL}}">{{EMAIL}}</a>
-    <p>Questions about our games or plugins, press, or working together.</p>
-    <dl>
-      <div><dt>Where</dt><dd>Caldas da Rainha, Portugal</dd></div>
-      <div><dt>We reply in</dt><dd>English, Português</dd></div>
-      <div><dt>NIPC</dt><dd>{{NIPC}}</dd></div>
-    </dl>
-    <a class="btn" href="mailto:{{EMAIL}}?subject=Hello%20Wildlogic">Write to us</a>
+<section class="field on-ink contact" id="contact" aria-labelledby="contact-h">
+  <div data-ins>
+    <h2 id="contact-h" data-in>Say hello</h2>
+    <a class="mail" data-in href="mailto:{{EMAIL}}?subject=Hello%20Wildlogic">{{EMAIL}}</a>
+    <div class="contact-row" data-in>
+      <p>Questions about our games or plugins, press, or working together.</p>
+      <dl>
+        <div><dt>Where</dt><dd>Caldas da Rainha, Portugal</dd></div>
+        <div><dt>We reply in</dt><dd>English, Português</dd></div>
+        <div><dt>NIPC</dt><dd>{{NIPC}}</dd></div>
+      </dl>
+    </div>
   </div>
 </section>
 '''
