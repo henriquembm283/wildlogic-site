@@ -6,7 +6,7 @@
    - Hero scroll: characters drop out one by one over the whole scroll, then the logo breaks into characters and
      goes. The scroll value is smoothed each frame so a mouse wheel does not make it jump.
    - Logo sweep: a band of denser texture crosses the letters every 8s. Keeps the still logo alive.
-   - Globe: turns freely by drag (with inertia), arrow keys, arrow buttons, sideways wheel, or by picking a name.
+   - Globe (a small dial docked beside the project list): turns freely by drag (with inertia), arrow keys, arrow buttons, sideways wheel, or by picking a name.
      It settles on the nearest project so one always faces you. It is the menu, so it answers the hand directly.
    - Project background: 500ms crossfade + 1.4s ease-out settle from 106%. Says "you arrived somewhere new".
    - Project text: out in 160ms, in over 420ms with the name rising .22em. Exits are faster than entrances.
@@ -174,8 +174,8 @@ void main(){
   }
 
   /* ---------------- studio card ---------------- */
-  const mark = document.querySelector(".studio-mark");
-  if (mark) codeField(mark.querySelector("canvas"), mark, [mark.querySelector("svg")], { cell: 11, r: 0.5, lx: 0.5, ly: 0.5, wx: 0.32, wy: 0.25 });
+  const mark = document.querySelector(".company");
+  if (mark) codeField(mark.querySelector("canvas"), mark, [mark.querySelector("svg")], { cell: 13, r: 0.55, lx: 0.3, ly: 0.5, wx: 0.22, wy: 0.25 });
 
   /* ---------------- orbit: a globe you turn to pick from ---------------- */
   document.querySelectorAll(".orbit").forEach((orbit) => {
@@ -189,7 +189,7 @@ void main(){
     const vec = (lat, lon) => [Math.cos(lat) * Math.sin(lon), Math.sin(lat), Math.cos(lat) * Math.cos(lon)];
     const pins = items.map((li, i) => ({ k: li.dataset.k, name: li.dataset.name, lat: LAT[i % LAT.length], lon: i * STEP, v: vec(LAT[i % LAT.length], i * STEP), link: li.querySelector("a.btn"), sx: 0, sy: 0, z: -1 }));
     // points on a sphere; the ones near a pin are that entry's "land"
-    const COUNT = innerWidth < 700 ? 2400 : 4600, pts = new Float32Array(COUNT * 3), land = new Int8Array(COUNT);
+    const COUNT = 1700, pts = new Float32Array(COUNT * 3), land = new Int8Array(COUNT);
     for (let i = 0; i < COUNT; i++) {
       const y = 1 - (2 * (i + 0.5)) / COUNT, r = Math.sqrt(1 - y * y), th = i * 2.399963229728653;
       const x = Math.cos(th) * r, z = Math.sin(th) * r; pts.set([x, y, z], i * 3); land[i] = -1;
@@ -211,17 +211,16 @@ void main(){
     const playVideo = () => { if (!video) return; vis && bgs.indexOf(video.parentElement) === active && !reduce && !document.hidden ? video.play().catch(() => {}) : video.pause(); };
     const go = (i) => { i = ((i % n) + n) % n; vel = 0; goal = goalFor(i); if (reduce) { rot = goal; setActive(i); draw(0); } };
     const size = () => {
-      D = Math.min(1.5, devicePixelRatio || 1); W = stage.clientWidth; H = stage.clientHeight;
+      D = Math.min(2, devicePixelRatio || 1); W = canvas.clientWidth; H = canvas.clientHeight;
       canvas.width = Math.round(W * D); canvas.height = Math.round(H * D);
-      const small = W < 900;
-      cx = small ? W * 0.5 : W * 0.68; cy = small ? H * 0.34 : H * 0.5; R = small ? Math.min(W * 0.36, H * 0.21) : Math.min(W * 0.25, H * 0.36);
+      cx = W / 2; cy = H / 2; R = Math.min(W, H) * 0.36; // a small dial, docked in a corner by the stylesheet
     };
     const turnPt = (x, y, z, ca, sa, cb, sb) => { const x1 = x * ca + z * sa, z1 = -x * sa + z * ca; return [x1, y * cb - z1 * sb, y * sb + z1 * cb]; };
     function draw(now) {
       const wob = reduce ? 0 : 1, a = rot + wob * 0.04 * Math.sin(now * 0.0004), b = tilt + tiltAdd + wob * 0.03 * Math.sin(now * 0.0006 + 1);
       const ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
       ctx.setTransform(D, 0, 0, D, 0, 0); ctx.clearRect(0, 0, W, H);
-      const small = W < 900, ink = "rgb(28,28,28)", paper = `rgb(${paperRGB})`;
+      const sc = Math.max(0.55, R / 150), ink = "rgb(28,28,28)", paper = `rgb(${paperRGB})`;
       // orbit ring with one satellite: back half first, so the globe hides it
       const ringT = -0.32, rx = R * 1.34, ry = R * 0.3, sat = (reduce ? 0.6 : now * 0.00012) % TAU;
       const ring = (from, to) => { ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, ringT, from, to); ctx.stroke(); };
@@ -231,7 +230,7 @@ void main(){
       ctx.strokeStyle = `rgba(${paperRGB},.4)`; ctx.stroke();
       // rim ticks turn with the globe, like a dial
       ctx.strokeStyle = `rgba(${paperRGB},.45)`; ctx.beginPath();
-      for (let t = 0; t < 72; t++) { const an = (t / 72) * TAU - rot, r0 = R + 6, r1 = R + (t % 6 ? 11 : 18); ctx.moveTo(cx + Math.cos(an) * r0, cy + Math.sin(an) * r0); ctx.lineTo(cx + Math.cos(an) * r1, cy + Math.sin(an) * r1); }
+      for (let t = 0; t < 72; t++) { const an = (t / 72) * TAU - rot, r0 = R + 3, r1 = R + (t % 6 ? 6 : 10); ctx.moveTo(cx + Math.cos(an) * r0, cy + Math.sin(an) * r0); ctx.lineTo(cx + Math.cos(an) * r1, cy + Math.sin(an) * r1); }
       ctx.stroke();
       // latitude rings
       ctx.strokeStyle = `rgba(${paperRGB},.14)`;
@@ -246,7 +245,7 @@ void main(){
         const lit = Math.max(0, -0.45 * p[0] + 0.5 * p[1] + 0.74 * p[2]), on = l === active;
         ctx.fillStyle = on ? ACC : paper;
         ctx.globalAlpha = (l < 0 ? 0.3 : on ? 1 : 0.62) * (0.25 + 0.75 * lit);
-        const s = l < 0 ? 1.3 : on ? 2.9 : 2.1;
+        const s = (l < 0 ? 1.3 : on ? 2.9 : 2.1) * sc;
         ctx.fillRect(cx + p[0] * R - s / 2, cy - p[1] * R - s / 2, s, s);
       }
       ctx.globalAlpha = 1; ctx.strokeStyle = `rgba(${paperRGB},.28)`; ctx.lineWidth = 1; ring(0, Math.PI); if (sat <= Math.PI) satDot();
@@ -259,16 +258,10 @@ void main(){
         const on = i === active, x0 = cx + p[0] * R, y0 = cy - p[1] * R, k = on ? 1 : 1.16, x1 = cx + p[0] * R * k, y1 = cy - p[1] * R * k - (on ? R * 0.3 : 0);
         ctx.globalAlpha = on ? 1 : 0.45 + 0.5 * p[2]; ctx.strokeStyle = ctx.fillStyle = paper; ctx.lineWidth = on ? 2 : 1;
         ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
-        if (on) { const t = reduce ? 0.5 : (now % 2400) / 2400; ctx.strokeStyle = ACC; ctx.globalAlpha = 1 - t; ctx.beginPath(); ctx.arc(x0, y0, 6 + t * 24, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(x0, y0, 4.5, 0, 7); ctx.fill(); ctx.strokeStyle = paper; }
-        const fs = on ? (small ? 15 : 17) : 13, padX = on ? 12 : 9, hgt = on ? 34 : small ? 14 : 26;
-        ctx.font = `${on ? 600 : 500} ${fs}px "Bricolage Grotesque", sans-serif`;
-        const label = small && !on ? "" : pin.name + (on && pin.link ? "  →" : ""), tw = label ? ctx.measureText(label).width + padX * 2 : 14;
-        let tx = on ? x1 - tw / 2 : p[0] < 0 ? x1 - tw : x1; tx = Math.max(8, Math.min(W - tw - 8, tx));
-        const ty = y1 - hgt / 2 - (on ? hgt / 2 : 0);
-        pin.sx = tx + tw / 2; pin.sy = ty + hgt / 2; pin.hw = tw / 2 + 10;
-        ctx.fillStyle = on ? paper : ink; ctx.fillRect(tx, ty, tw, hgt);
-        if (!on) ctx.strokeRect(tx + 0.5, ty + 0.5, tw - 1, hgt - 1);
-        ctx.fillStyle = on ? ink : paper; ctx.fillText(label, tx + padX, ty + hgt / 2 + 1);
+        if (on) { const t = reduce ? 0.5 : (now % 2400) / 2400; ctx.strokeStyle = ACC; ctx.globalAlpha = 1 - t; ctx.beginPath(); ctx.arc(x0, y0, 4 + t * 13, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(x0, y0, 3, 0, 7); ctx.fill(); ctx.strokeStyle = paper; }
+        const q = on ? 5 : 3.5; // pin head; the names live in the list beside the dial
+        pin.sx = x1; pin.sy = y1; pin.hw = 16;
+        ctx.fillStyle = on ? ACC : paper; ctx.fillRect(x1 - q, y1 - q, q * 2, q * 2);
       }
       ctx.globalAlpha = 1;
     }
@@ -300,7 +293,7 @@ void main(){
 
     const onGlobe = (e) => { const r = canvas.getBoundingClientRect(); return Math.hypot(e.clientX - r.left - cx, e.clientY - r.top - cy) < R * 1.2; };
     const pinAt = (e) => { const r = canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
-      let best = -1; pins.forEach((p, i) => { if (p.z >= 0.15 && Math.abs(x - p.sx) < (p.hw || 30) && Math.abs(y - p.sy) < 26) best = i; }); return best; };
+      let best = -1; pins.forEach((p, i) => { if (p.z >= 0.15 && Math.abs(x - p.sx) < 16 && Math.abs(y - p.sy) < 16) best = i; }); return best; };
     canvas.addEventListener("pointerdown", (e) => { if (!onGlobe(e) && pinAt(e) < 0) return; drag = { x: e.clientX, y: e.clientY, moved: 0, last: 0 }; vel = 0; canvas.setPointerCapture(e.pointerId); canvas.style.cursor = "grabbing"; });
     canvas.addEventListener("pointermove", (e) => {
       if (!drag) { canvas.style.cursor = pinAt(e) >= 0 ? "pointer" : onGlobe(e) ? "grab" : ""; return; }

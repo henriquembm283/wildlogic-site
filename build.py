@@ -122,7 +122,7 @@ home = f'''
         <a class="btn" href="mailto:{{EMAIL}}?subject=WoW%20add-ons">Ask about the add-ons</a>
       </article></li>
     </ol>
-    <div class="orbit-turn"><button type="button" data-turn="prev" aria-label="Previous project">{ARROW_L}</button><button type="button" data-turn="next" aria-label="Next project">{ARROW_R}</button><p aria-hidden="true">Drag the globe to turn it</p></div>
+    <div class="orbit-turn"><button type="button" data-turn="prev" aria-label="Previous project">{ARROW_L}</button><button type="button" data-turn="next" aria-label="Next project">{ARROW_R}</button><p aria-hidden="true">Drag to turn</p></div>
   </div>
 </section>
 
@@ -138,15 +138,22 @@ home = f'''
   <div class="ribbon" role="img" aria-label="What we build with: JavaScript, HTML Canvas, WebGL, PixiJS, Capacitor, PHP, Moodle, Lua">
     <div aria-hidden="true">{RIBBON}{RIBBON}</div>
   </div>
-  <div class="studio-row" data-ins>
-    <div class="studio-mark" data-in><canvas aria-hidden="true"></canvas><span class="mark">{svg("wl")}</span></div>
-    <table class="facts" data-in>
-      <tr><th scope="row">Company</th><td>{{LEGAL}}</td></tr>
-      <tr><th scope="row">NIPC</th><td>{{NIPC}}</td></tr>
-      <tr><th scope="row">Based in</th><td>Caldas da Rainha, Portugal</td></tr>
-      <tr><th scope="row">We make</th><td>Games, Moodle plugins, World of Warcraft add-ons</td></tr>
-      <tr><th scope="row">Languages</th><td>English and Portuguese</td></tr>
-    </table>
+</section>
+
+<section class="company" aria-labelledby="co-h">
+  <canvas aria-hidden="true"></canvas>
+  <span class="mark">{svg("wl")}</span>
+  <div class="co-card" data-ins>
+    <h2 id="co-h" data-in>The company</h2>
+    <dl>
+      <div data-in><dt>Legal name</dt><dd>{{LEGAL}}</dd></div>
+      <div data-in><dt>NIPC</dt><dd>{{NIPC}}</dd></div>
+      <div data-in><dt>Based in</dt><dd>Caldas da Rainha, Portugal</dd></div>
+      <div data-in><dt>We make</dt><dd>Games, Moodle plugins, World of Warcraft add&#8209;ons</dd></div>
+      <div data-in><dt>Where it runs</dt><dd>Steam and Android (coming soon), Moodle 4.1 or later</dd></div>
+      <div data-in><dt>Languages</dt><dd>English and Portuguese</dd></div>
+      <div data-in><dt>Privacy</dt><dd>No ads, no trackers, no data sold. <a href="privacy/">Read the policy</a></dd></div>
+    </dl>
   </div>
 </section>
 
@@ -188,7 +195,7 @@ sk = f'''
       <div class="bg cover" data-k="privacy"><img src="{{R}}assets/img/sk-sky.webp" width="2400" height="775" alt="" loading="lazy"></div>
     </div>
     <canvas class="globe" aria-hidden="true"></canvas>
-    <h1 class="orbit-h" id="sk-title"><img class="logo" src="{{R}}assets/img/sk-logo.webp" width="1280" height="720" alt="Spirekeeper"><span>A painted tower defense with a voiced story</span></h1>
+    <h1 class="orbit-h" id="sk-title"><img class="logo" src="{{R}}assets/img/sk-logo.webp" width="1280" height="720" alt="Spirekeeper"></h1>
     <nav class="orbit-nav" aria-label="Parts of this page">
       <button type="button" data-k="trailer"><i></i>Trailer</button>
       <button type="button" data-k="look"><i></i>A look inside</button>
@@ -228,7 +235,7 @@ sk = f'''
         <a class="btn" href="privacy/">Read the privacy policy</a>
       </article></li>
     </ol>
-    <div class="orbit-turn"><button type="button" data-turn="prev" aria-label="Previous part">{ARROW_L}</button><button type="button" data-turn="next" aria-label="Next part">{ARROW_R}</button><p aria-hidden="true">Drag the globe to turn it</p></div>
+    <div class="orbit-turn"><button type="button" data-turn="prev" aria-label="Previous part">{ARROW_L}</button><button type="button" data-turn="next" aria-label="Next part">{ARROW_R}</button><p aria-hidden="true">Drag to turn</p></div>
   </div>
 </section>
 <section class="field on-ink" data-ins id="trailer" aria-labelledby="tr-h">
