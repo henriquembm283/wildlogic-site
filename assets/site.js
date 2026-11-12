@@ -314,16 +314,26 @@ void main(){
       const parts = sec.querySelectorAll("[data-in]");
       M.inView(sec, () => { M.animate(parts, { opacity: [0, 1], y: [24, 0] }, { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: M.stagger(0.08) }); }, { amount: 0.2 });
     });
-    // project pictures open like a shutter while the picture settles back, so each topic arrives instead of just scrolling past
-    document.querySelectorAll("[data-reveal]").forEach((fig) => {
-      M.inView(fig.parentElement, () => {   // watch the panel: a fully clipped picture never counts as "in view"
-        const ease = [0.22, 1, 0.36, 1];
-        M.animate(fig, { clipPath: ["inset(0 0 100% 0)", "inset(0 0 0% 0)"] }, { duration: 0.9, ease });
-        const pic = fig.classList.contains("duo") ? null : fig.querySelector("img, video"), inset = fig.querySelector(".inset");
-        if (pic) M.animate(pic, { scale: [1.14, 1] }, { duration: 1.4, ease });
-        if (inset) M.animate(inset, { opacity: [0, 1], y: [36, 0] }, { duration: 0.7, ease, delay: 0.4 });
-      }, { amount: 0.25 });
-    });
+    // morph between topics, tied to the scroll: each picture opens from a star-sized dot into the full frame as it nears the
+    // middle of the screen and closes back to a dot as it leaves, while its text dissolves. With the colour blend behind,
+    // one topic turns into the next instead of sliding past.
+    const morphs = [...document.querySelectorAll("[data-reveal]")].map((fig) => ({ fig, text: fig.parentElement.querySelector(".proj-text") }));
+    if (morphs.length) {
+      const ease = (t) => t * t * (3 - 2 * t), amt = (el, vh, a, b) => { const r = el.getBoundingClientRect(); return [ease(clamp01(1 - (Math.abs(r.top + r.height / 2 - vh / 2) / vh - a) / (b - a))), r]; };
+      let tick = 0;
+      const paint = () => {
+        tick = 0; const vh = innerHeight;
+        morphs.forEach(({ fig, text }) => {
+          const pr = fig.parentElement.getBoundingClientRect();
+          if (pr.bottom < 0 || pr.top > vh) { fig.style.clipPath = "none"; if (text) { text.style.opacity = ""; text.style.transform = "none"; } return; }   // off screen: rest open, so print and full-page captures are whole
+          const [e, r] = amt(fig, vh, 0.2, 0.62), k = 1 - e;
+          fig.style.clipPath = e > 0.999 ? "none" : `inset(${((r.height / 2 - 9) * k).toFixed(1)}px ${((r.width / 2 - 9) * k).toFixed(1)}px round ${(Math.min(r.width, r.height) / 2 * k).toFixed(1)}px)`;
+          if (text) { const [t] = amt(text, vh, 0.34, 0.62); text.style.opacity = t.toFixed(3); text.style.transform = t > 0.999 ? "none" : `translateY(${((1 - t) * 28 * (text.getBoundingClientRect().top > vh / 2 ? 1 : -1)).toFixed(1)}px)`; }
+        });
+      };
+      const ask = () => { if (!tick) tick = requestAnimationFrame(paint); };
+      addEventListener("scroll", ask, { passive: true }); addEventListener("resize", ask); paint();
+    }
     const intro = document.querySelectorAll(".hero-say > *, .nav:not(.dark) a");
     if (intro.length) M.animate(intro, { opacity: [0, 1] }, { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: M.stagger(0.08, { startDelay: 0.1 }) });
   } else {

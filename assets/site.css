@@ -130,7 +130,6 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .js .projects { background: #17102a; transition: background-color 700ms linear; }
 .js .proj { background: transparent; }
 .proj-media:not(.duo) { overflow: hidden; }
-.js.motion [data-reveal] { clip-path: inset(0 0 100% 0); }
 .duo { position: relative; padding: 0 8% 11% 0; }
 .proj .duo img { aspect-ratio: 1178 / 666; }
 .proj .duo.wide img { aspect-ratio: 1280 / 724; } .proj .duo.wide .inset { aspect-ratio: 1280 / 800; }
