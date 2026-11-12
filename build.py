@@ -65,7 +65,7 @@ home = f'''
     <div class="words" role="img" aria-label="Wild Logic"><span class="word word-wild">{svg("wild")}</span><span class="word word-logic">{svg("logic")}</span></div>
     <div class="hero-say">
       <h1 id="title">Wildlogic makes games and tools</h1>
-      <p>A software studio in Caldas da Rainha, Portugal: one painted game, three Moodle plugins and a World of Warcraft add-on.</p>
+      <p>A software studio in Caldas da Rainha, Portugal: a painted game, Moodle plugins, a World of Warcraft add-on, an IT training app and websites.</p>
       <a class="btn" href="#work">See what we make</a>
     </div>
     <p class="hero-turn">Half of what we make is wild. The other half is logic.</p>
@@ -74,13 +74,15 @@ home = f'''
 
 <section class="galaxy" id="work" aria-labelledby="work-h">
   <canvas aria-hidden="true"></canvas>
-  <div class="galaxy-head"><h2 id="work-h">What we make</h2><p>Five things from one small studio. Pick a star.</p></div>
+  <div class="galaxy-head"><h2 id="work-h">What we make</h2><p>Seven things, one small studio. Pick a star.</p></div>
   <nav class="stars" aria-label="Projects">
     <a href="#p-sk" data-d=".50,.53" data-m=".14,.50"><i></i><span><b>Spirekeeper</b><small>Game</small></span></a>
     <a href="#p-ar" data-d=".27,.31" data-m=".10,.24"><i></i><span><b>Automation Rules</b><small>Moodle plugin</small></span></a>
     <a href="#p-tr" data-d=".71,.27" data-m=".42,.37"><i></i><span><b>Team Reports</b><small>Moodle plugin</small></span></a>
     <a href="#p-da" data-d=".75,.73" data-m=".40,.64"><i></i><span><b>Domain Access</b><small>Moodle plugin</small></span></a>
     <a href="#p-wow" data-d=".26,.77" data-m=".12,.78"><i></i><span><b>Quick Buffs</b><small>WoW add-on</small></span></a>
+    <a href="#p-it" data-d=".52,.86" data-m=".38,.90"><i></i><span><b>We can do IT</b><small>Training app</small></span></a>
+    <a href="#p-web" data-d=".50,.20" data-m=".46,.15"><i></i><span><b>Websites</b><small>For local shops</small></span></a>
   </nav>
 </section>
 <div class="projects">
@@ -135,6 +137,23 @@ temporary  guest.example       14 days</pre></figure>
       <a data-in class="btn" href="https://www.curseforge.com/wow/addons/quick-buffs" rel="noopener">Get it on CurseForge</a>
     </div>
     <figure class="proj-media duo" data-reveal><img src="assets/img/ui-quickbuffs.webp" width="1178" height="666" alt="Quick Buffs in the game: its icon and a box showing Mark of the Wild, buffs cast 1" loading="lazy"><img class="inset" src="assets/img/ui-quickbuffs-page.webp" width="947" height="592" alt="The Quick Buffs page on CurseForge" loading="lazy"></figure>
+  </article>
+  <article class="proj" id="p-it" data-k="it" data-ins>
+    <div class="proj-text">
+      <h3 data-in>We can do IT</h3>
+      <p data-in class="kind">IT support training · In development</p>
+      <p data-in class="desc">Learn IT support by working real tickets in a safe lab: a built-in Linux terminal, a 3D bench for hardware jobs, and a story about your first year on a help desk.</p>
+    </div>
+    <figure class="proj-media duo wide" data-reveal><img src="assets/img/ui-wecandoit.webp" width="1280" height="724" alt="We can do IT: a ticket about an intranet that is down, with a Linux terminal showing a full disk" loading="lazy"><img class="inset" src="assets/img/ui-wecandoit-bench.webp" width="1280" height="800" alt="A hardware ticket: a 3D desktop PC on a bench, ready for a RAM upgrade" loading="lazy"></figure>
+  </article>
+  <article class="proj" id="p-web" data-k="web" data-ins>
+    <div class="proj-text">
+      <h3 data-in>Websites</h3>
+      <p data-in class="kind">Web design · For local shops</p>
+      <p data-in class="desc">One page, made by hand, quick on a phone, with one moment people remember. Shown here: our design for Foto Franco, a photo studio in Caldas da Rainha since 1949.</p>
+      <a data-in class="btn" href="mailto:{{EMAIL}}">Ask for a website</a>
+    </div>
+    <figure class="proj-media duo wide" data-reveal><img src="assets/img/web-fotofranco.webp" width="1280" height="724" alt="The Foto Franco site: a big 1949 and a few lines about the studio, in Portuguese" loading="lazy"><img class="inset" src="assets/img/web-fotofranco-2.webp" width="1280" height="800" alt="The services list on the Foto Franco site" loading="lazy"></figure>
   </article>
 </div>
 
