@@ -226,6 +226,42 @@ void main(){
     size(); draw(0);
   }
 
+  /* ---------------- projects ---------------- */
+  // the ground colour blends from one project to the next instead of cutting
+  const projWrap = document.querySelector(".projects");
+  if (projWrap) {
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) projWrap.style.backgroundColor = getComputedStyle(e.target).getPropertyValue("--tint").trim(); }), { rootMargin: "-50% 0px -50% 0px" });
+    projWrap.querySelectorAll(".proj").forEach((p) => io.observe(p));
+  }
+  // Domain Access: made-up sign-ups arrive one by one; the lists decide and a stamp lands
+  document.querySelectorAll("[data-desk]").forEach((fig) => {
+    const NAMES = ["ana.silva", "rui.costa", "marta.reis", "joao.pinto", "ines.lopes", "tiago.sousa", "sofia.melo", "pedro.alves", "carla.nunes", "bruno.dias", "rita.gomes", "nuno.faria"];
+    const RULES = [["escola.example", "ok", "Approved", "is on the allowed list"], ["campus.edu.example", "ok", "Approved", "matches *.edu.example, allowed"], ["formacao.example", "ok", "Approved", "is on the allowed list"],
+      ["partner.example", "ok", "30 days", "is on the temporary list"], ["guest.example", "ok", "14 days", "is on the temporary list"],
+      ["spam.example", "no", "Denied", "is on the blocked list"], ["throwaway.example", "no", "Denied", "is on the blocked list"], ["other.example", "wait", "Waiting", "is on no list, an approver decides"]];
+    const el = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; if (txt) n.textContent = txt; return n; };
+    const desk = el("div", "desk"), mail = el("p", "desk-mail"), rule = el("p", "desk-rule"), stamp = el("span", "stamp"), log = el("ul", "desk-log");
+    desk.setAttribute("role", "img"); desk.setAttribute("aria-label", "Example: sign-ups arrive and are approved, denied or held, depending on the email domain lists");
+    desk.dataset.ui = ""; desk.append(el("p", "desk-h", "New sign-up"), mail, rule, stamp, log); fig.append(desk);
+    let cur = null, last = -1, timer = 0, vis = false, t2 = 0;
+    const pick = () => { let i; do { i = Math.floor(Math.random() * RULES.length); } while (i === last); last = i; return [NAMES[Math.floor(Math.random() * NAMES.length)] + "@" + RULES[i][0], RULES[i]]; };
+    const logIt = (c, quiet) => { const li = el("li"); const b = el("b", c[1][1], c[1][2].toLowerCase()); li.append(el("span", "", c[0]), b); log.prepend(li); while (log.children.length > 4) log.lastChild.remove();
+      if (M && !reduce && !quiet) M.animate(li, { opacity: [0, 1] }, { duration: 0.3 }); };
+    const step = () => {
+      if (cur) logIt(cur);
+      cur = pick(); mail.textContent = cur[0]; rule.textContent = cur[1][0] + " " + cur[1][3]; stamp.textContent = cur[1][2]; stamp.className = "stamp " + cur[1][1];
+      if (!M || reduce) { stamp.style.opacity = 1; return; }
+      stamp.style.opacity = 0;
+      M.animate([mail, rule], { opacity: [0, 1], y: [10, 0] }, { duration: 0.28, ease: [0.22, 1, 0.36, 1], delay: M.stagger(0.06) });
+      clearTimeout(t2); t2 = setTimeout(() => M.animate(stamp, { opacity: [0, 1], scale: [1.7, 1] }, { duration: 0.18, ease: [0.22, 1, 0.36, 1] }), 650);
+    };
+    for (let i = 0; i < 3; i++) logIt(pick(), true);
+    step();
+    const sync = () => { const on = vis && !document.hidden && !reduce; if (on && !timer) timer = setInterval(step, 2600); if (!on && timer) { clearInterval(timer); timer = 0; } };
+    new IntersectionObserver(([e]) => { vis = e.isIntersecting; sync(); }, { threshold: 0.3 }).observe(fig);
+    document.addEventListener("visibilitychange", sync);
+  });
+
   /* ---------------- studio ---------------- */
   const say2 = document.querySelector(".statement");
   if (say2) {
@@ -277,6 +313,16 @@ void main(){
     document.querySelectorAll("[data-ins]").forEach((sec) => {
       const parts = sec.querySelectorAll("[data-in]");
       M.inView(sec, () => { M.animate(parts, { opacity: [0, 1], y: [24, 0] }, { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: M.stagger(0.08) }); }, { amount: 0.2 });
+    });
+    // project pictures open like a shutter while the picture settles back, so each topic arrives instead of just scrolling past
+    document.querySelectorAll("[data-reveal]").forEach((fig) => {
+      M.inView(fig.parentElement, () => {   // watch the panel: a fully clipped picture never counts as "in view"
+        const ease = [0.22, 1, 0.36, 1];
+        M.animate(fig, { clipPath: ["inset(0 0 100% 0)", "inset(0 0 0% 0)"] }, { duration: 0.9, ease });
+        const pic = fig.classList.contains("duo") ? null : fig.querySelector("img, video"), inset = fig.querySelector(".inset");
+        if (pic) M.animate(pic, { scale: [1.14, 1] }, { duration: 1.4, ease });
+        if (inset) M.animate(inset, { opacity: [0, 1], y: [36, 0] }, { duration: 0.7, ease, delay: 0.4 });
+      }, { amount: 0.25 });
     });
     const intro = document.querySelectorAll(".hero-say > *, .nav:not(.dark) a");
     if (intro.length) M.animate(intro, { opacity: [0, 1] }, { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: M.stagger(0.08, { startDelay: 0.1 }) });
