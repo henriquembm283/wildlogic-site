@@ -177,139 +177,54 @@ void main(){
   const mark = document.querySelector(".company");
   if (mark) codeField(mark.querySelector("canvas"), mark, [mark.querySelector("svg")], { cell: 14, r: 0.4, lx: 0.3, ly: 0.5, wx: 0.22, wy: 0.25, dim: 0.42, tex: 0.22 } /* quiet here: the facts are the point, the logo stays solid */);
 
-  /* ---------------- orbit: a globe you turn to pick from ---------------- */
-  document.querySelectorAll(".orbit").forEach((orbit) => {
-    const stage = orbit.querySelector(".orbit-stage");
-    const canvas = orbit.querySelector(".globe"), ctx = canvas.getContext("2d");
-    const items = [...orbit.querySelectorAll(".orbit-list li")];
-    const bgs = [...orbit.querySelectorAll(".bg")], btns = [...orbit.querySelectorAll(".orbit-nav button")];
-    const video = orbit.querySelector(".bg video");
-    const n = items.length, TAU = Math.PI * 2, STEP = TAU / n, RAD = Math.PI / 180;
-    const LAT = [16, -14, 24, -20, 6, -8].map((d) => d * RAD);
-    const vec = (lat, lon) => [Math.cos(lat) * Math.sin(lon), Math.sin(lat), Math.cos(lat) * Math.cos(lon)];
-    const pins = items.map((li, i) => ({ k: li.dataset.k, name: li.dataset.name, lat: LAT[i % LAT.length], lon: i * STEP, v: vec(LAT[i % LAT.length], i * STEP), link: li.querySelector("a.btn"), sx: 0, sy: 0, z: -1 }));
-    // points on a sphere; the ones near a pin are that entry's "land"
-    const COUNT = 1700, pts = new Float32Array(COUNT * 3), land = new Int8Array(COUNT);
-    for (let i = 0; i < COUNT; i++) {
-      const y = 1 - (2 * (i + 0.5)) / COUNT, r = Math.sqrt(1 - y * y), th = i * 2.399963229728653;
-      const x = Math.cos(th) * r, z = Math.sin(th) * r; pts.set([x, y, z], i * 3); land[i] = -1;
-      const wob = 0.11 * Math.sin(x * 9 + y * 4) * Math.sin(y * 11 - z * 5) + 0.07 * Math.sin(z * 17 + x * 6);
-      for (let j = 0; j < n; j++) { const p = pins[j].v; if (Math.acos(Math.min(1, x * p[0] + y * p[1] + z * p[2])) < 0.47 + wob) { land[i] = j; break; } }
+  /* ---------------- galaxy: a slow spiral of stars; five of them are links ---------------- */
+  const gal = document.querySelector(".galaxy");
+  if (gal) {
+    const cv = gal.querySelector("canvas"), ctx = cv.getContext("2d"), links = [...gal.querySelectorAll(".stars a")];
+    const TAU = Math.PI * 2, small = innerWidth < 700;
+    let seed = 7; const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+    const pts = [];
+    for (let i = 0, n = small ? 2200 : 4600; i < n; i++) {
+      const kind = rnd();
+      let r, a;
+      if (kind < 0.2) { r = Math.pow(rnd(), 2) * 0.2; a = rnd() * TAU; }                                   // the bright middle
+      else if (kind < 0.9) { r = 0.06 + Math.pow(rnd(), 0.85) * 0.98; a = (i % 2) * Math.PI + 2.3 * Math.log(1 + r * 6) + (rnd() + rnd() + rnd() - 1.5) * (0.75 - 0.3 * r); } // two arms
+      else { r = Math.pow(rnd(), 0.5) * 1.25; a = rnd() * TAU; }                                          // loose stars around
+      pts.push({ r, a, s: rnd(), acc: rnd() < 0.035 });
     }
-    // rot = how far the globe is turned; it eases to `goal` unless the hand holds it or it is still spinning
-    let active = -1, rot = 0, goal = 0, vel = 0, tilt = LAT[0], tiltAdd = 0, drag = null, vis = false, raf = 0, W = 0, H = 0, D = 1, cx = 0, cy = 0, R = 1;
-    const paperRGB = "244,243,239", ACC = "#ccff3d";
-    const nearest = () => ((Math.round(-rot / STEP) % n) + n) % n;
-    const goalFor = (i) => { const base = -i * STEP; return base + Math.round((rot - base) / TAU) * TAU; };
-    const setActive = (i) => {
-      if (i === active) return; active = i; orbit.dataset.on = pins[i].k;
-      items.forEach((el, j) => el.classList.toggle("on", j === i));
-      bgs.forEach((el) => el.classList.toggle("on", el.dataset.k === pins[i].k));
-      btns.forEach((b, j) => (j === i ? b.setAttribute("aria-current", "true") : b.removeAttribute("aria-current")));
-      playVideo();
-    };
-    const playVideo = () => { if (!video) return; vis && bgs.indexOf(video.parentElement) === active && !reduce && !document.hidden ? video.play().catch(() => {}) : video.pause(); };
-    const go = (i) => { i = ((i % n) + n) % n; vel = 0; goal = goalFor(i); if (reduce) { rot = goal; setActive(i); draw(0); } };
-    const size = () => {
-      D = Math.min(2, devicePixelRatio || 1); W = canvas.clientWidth; H = canvas.clientHeight;
-      canvas.width = Math.round(W * D); canvas.height = Math.round(H * D);
-      cx = W / 2; cy = H / 2; R = Math.min(W, H) * 0.36; // a small dial, docked in a corner by the stylesheet
-    };
-    const turnPt = (x, y, z, ca, sa, cb, sb) => { const x1 = x * ca + z * sa, z1 = -x * sa + z * ca; return [x1, y * cb - z1 * sb, y * sb + z1 * cb]; };
-    function draw(now) {
-      const wob = reduce ? 0 : 1, a = rot + wob * 0.04 * Math.sin(now * 0.0004), b = tilt + tiltAdd + wob * 0.03 * Math.sin(now * 0.0006 + 1);
-      const ca = Math.cos(a), sa = Math.sin(a), cb = Math.cos(b), sb = Math.sin(b);
-      ctx.setTransform(D, 0, 0, D, 0, 0); ctx.clearRect(0, 0, W, H);
-      const sc = Math.max(0.55, R / 150), ink = "rgb(28,28,28)", paper = `rgb(${paperRGB})`;
-      // orbit ring with one satellite: back half first, so the globe hides it
-      const ringT = -0.32, rx = R * 1.34, ry = R * 0.3, sat = (reduce ? 0.6 : now * 0.00012) % TAU;
-      const ring = (from, to) => { ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, ringT, from, to); ctx.stroke(); };
-      const satDot = () => { const ex = Math.cos(sat) * rx, ey = Math.sin(sat) * ry; ctx.fillStyle = ACC; ctx.fillRect(cx + ex * Math.cos(ringT) - ey * Math.sin(ringT) - 3, cy + ex * Math.sin(ringT) + ey * Math.cos(ringT) - 3, 6, 6); };
-      ctx.lineWidth = 1; ctx.strokeStyle = `rgba(${paperRGB},.28)`; ring(Math.PI, TAU); if (sat > Math.PI) satDot();
-      ctx.fillStyle = "rgba(18,18,18,.72)"; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 7); ctx.fill();
-      ctx.strokeStyle = `rgba(${paperRGB},.4)`; ctx.stroke();
-      // rim ticks turn with the globe, like a dial
-      ctx.strokeStyle = `rgba(${paperRGB},.45)`; ctx.beginPath();
-      for (let t = 0; t < 72; t++) { const an = (t / 72) * TAU - rot, r0 = R + 3, r1 = R + (t % 6 ? 6 : 10); ctx.moveTo(cx + Math.cos(an) * r0, cy + Math.sin(an) * r0); ctx.lineTo(cx + Math.cos(an) * r1, cy + Math.sin(an) * r1); }
-      ctx.stroke();
-      // latitude rings
-      ctx.strokeStyle = `rgba(${paperRGB},.14)`;
-      for (const la of [-50, -25, 0, 25, 50]) { ctx.beginPath(); let pen = false;
-        for (let s = 0; s <= 72; s++) { const v = vec(la * RAD, (s / 72) * TAU), p = turnPt(v[0], v[1], v[2], ca, sa, cb, sb);
-          if (p[2] < 0) { pen = false; continue; } const X = cx + p[0] * R, Y = cy - p[1] * R; pen ? ctx.lineTo(X, Y) : ctx.moveTo(X, Y); pen = true; }
-        ctx.stroke(); }
-      // points, lit from the upper left so the ball has volume
-      for (let i = 0; i < COUNT; i++) {
-        const p = turnPt(pts[i * 3], pts[i * 3 + 1], pts[i * 3 + 2], ca, sa, cb, sb), l = land[i];
-        if (p[2] < 0) { if (l >= 0) { ctx.fillStyle = paper; ctx.globalAlpha = 0.07; ctx.fillRect(cx + p[0] * R - 0.6, cy - p[1] * R - 0.6, 1.2, 1.2); } continue; }
-        const lit = Math.max(0, -0.45 * p[0] + 0.5 * p[1] + 0.74 * p[2]), on = l === active;
-        ctx.fillStyle = on ? ACC : paper;
-        ctx.globalAlpha = (l < 0 ? 0.3 : on ? 1 : 0.62) * (0.25 + 0.75 * lit);
-        const s = (l < 0 ? 1.3 : on ? 2.9 : 2.1) * sc;
-        ctx.fillRect(cx + p[0] * R - s / 2, cy - p[1] * R - s / 2, s, s);
-      }
-      ctx.globalAlpha = 1; ctx.strokeStyle = `rgba(${paperRGB},.28)`; ctx.lineWidth = 1; ring(0, Math.PI); if (sat <= Math.PI) satDot();
-      // pins and name tags
-      ctx.textBaseline = "middle"; ctx.textAlign = "left";
-      const order = pins.map((_, i) => i).sort((i, j) => (i === active) - (j === active));
-      for (const i of order) {
-        const pin = pins[i], p = turnPt(pin.v[0], pin.v[1], pin.v[2], ca, sa, cb, sb); pin.z = p[2];
-        if (p[2] < 0.15) continue;
-        const on = i === active, x0 = cx + p[0] * R, y0 = cy - p[1] * R, k = on ? 1 : 1.16, x1 = cx + p[0] * R * k, y1 = cy - p[1] * R * k - (on ? R * 0.3 : 0);
-        ctx.globalAlpha = on ? 1 : 0.45 + 0.5 * p[2]; ctx.strokeStyle = ctx.fillStyle = paper; ctx.lineWidth = on ? 2 : 1;
-        ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
-        if (on) { const t = reduce ? 0.5 : (now % 2400) / 2400; ctx.strokeStyle = ACC; ctx.globalAlpha = 1 - t; ctx.beginPath(); ctx.arc(x0, y0, 4 + t * 13, 0, 7); ctx.stroke(); ctx.globalAlpha = 1; ctx.beginPath(); ctx.arc(x0, y0, 3, 0, 7); ctx.fill(); ctx.strokeStyle = paper; }
-        const q = on ? 5 : 3.5; // pin head; the names live in the list beside the dial
-        pin.sx = x1; pin.sy = y1; pin.hw = 16;
-        ctx.fillStyle = on ? ACC : paper; ctx.fillRect(x1 - q, y1 - q, q * 2, q * 2);
+    const pins = links.map((l) => ({ l, d: l.dataset.d.split(",").map(Number), m: l.dataset.m.split(",").map(Number) }));
+    let W = 0, H = 0, dpr = 1, rx = 0, ry = 0, raf = 0, vis = false, born = 0, mx = 0, my = 0, ox = 0, oy = 0;
+    const size = () => { W = gal.clientWidth; H = gal.clientHeight; dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr;
+      const tall = H > W; rx = tall ? W * 0.7 : Math.min(W * 0.47, H * 0.98); ry = tall ? H * 0.3 : rx * 0.5; };
+    const draw = (now) => {
+      const f = reduce || !born ? 1 : clamp01((now - born) / 1700), e = 1 - Math.pow(1 - f, 3);            // forms once, ease-out
+      const rot = (reduce ? 0.6 : now * 0.000021) - (1 - e) * 0.9, grow = 0.5 + 0.5 * e, tilt = H > W ? -0.95 : -0.28, ct = Math.cos(tilt), st = Math.sin(tilt);
+      ox += (mx - ox) * 0.05; oy += (my - oy) * 0.05;
+      const cx = W * 0.5 + ox * 18, cy = H * (H > W ? 0.54 : 0.53) + oy * 12;
+      const at = (r, a) => { const x = Math.cos(a + rot) * r * rx * grow, y = Math.sin(a + rot) * r * ry * grow; return [cx + x * ct - y * st, cy + x * st + y * ct]; };
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+      for (const p of pts) {
+        const [x, y] = at(p.r, p.a + (1 - p.r) * rot * 0.35);                                              // the middle turns a little faster
+        if (x < -4 || y < -4 || x > W + 4 || y > H + 4) continue;
+        const tw = reduce ? 1 : 0.75 + 0.25 * Math.sin(now * 0.0012 * (0.5 + p.s) + p.s * 40);
+        const al = e * tw * (p.acc ? 0.95 : 0.2 + 0.75 * p.s * (1.2 - Math.min(1, p.r)));
+        const d = p.acc ? 3 : 1.1 + p.s * 2.1;
+        ctx.globalAlpha = al; ctx.fillStyle = p.acc ? "#ccff3d" : "#f4f3ef"; ctx.fillRect(x - d / 2, y - d / 2, d, d);
       }
       ctx.globalAlpha = 1;
-    }
-    const loop = (now) => {
-      if (!drag) {
-        if (Math.abs(vel) > 0.0015) { rot += vel; vel *= 0.94; goal = goalFor(nearest()); } // still spinning from a throw
-        else { vel = 0; rot += (goal - rot) * 0.1; }
-        tiltAdd *= 0.9;
-      }
-      setActive(nearest());
-      tilt += (pins[active].lat - tilt) * 0.08;
-      draw(now); raf = requestAnimationFrame(loop);
+      for (const p of pins) { const q = H > W ? p.m : p.d, k = reduce ? 0 : now * 0.0004 + q[0] * 9;
+        const x = W * q[0] + Math.sin(k) * 5 + ox * 30 + (1 - e) * (W * 0.5 - W * q[0]) * 0.5, y = H * q[1] + Math.cos(k * 0.8) * 5 + oy * 20 + (1 - e) * (H * 0.5 - H * q[1]) * 0.5, flip = q[0] > 0.6;
+        p.l.classList.toggle("flip", flip); p.l.style.opacity = e;
+        p.l.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)" + (flip ? " translateX(-100%)" : ""); }
     };
-    const sync = () => { const on = vis && !document.hidden; if (on && !raf && !reduce) raf = requestAnimationFrame(loop); if (!on && raf) { cancelAnimationFrame(raf); raf = 0; } playVideo(); if (on && reduce) draw(0); };
-    new IntersectionObserver(([e]) => { vis = e.isIntersecting; sync(); }, { threshold: 0.05 }).observe(orbit);
+    const loop = (now) => { raf = 0; draw(now); if (vis && !document.hidden && !reduce) raf = requestAnimationFrame(loop); };
+    const sync = () => { const on = vis && !document.hidden; if (on && !born) born = performance.now(); if (on && !raf && !reduce) raf = requestAnimationFrame(loop); if (on && reduce) draw(0); };
+    new IntersectionObserver(([en]) => { vis = en.isIntersecting; sync(); }, { threshold: 0.05 }).observe(gal);
     document.addEventListener("visibilitychange", sync);
     addEventListener("resize", () => { size(); if (reduce) draw(0); });
-    btns.forEach((b, i) => b.addEventListener("click", () => go(i)));
-    orbit.querySelectorAll("[data-turn]").forEach((b) => b.addEventListener("click", () => go(nearest() + (b.dataset.turn === "next" ? 1 : -1))));
-    addEventListener("keydown", (e) => { // arrow keys turn it while it fills most of the screen
-      if ((e.key !== "ArrowLeft" && e.key !== "ArrowRight") || /INPUT|TEXTAREA|SELECT|VIDEO/.test(document.activeElement.tagName)) return;
-      const r = orbit.getBoundingClientRect(); if (r.top > innerHeight * 0.4 || r.bottom < innerHeight * 0.6) return;
-      e.preventDefault(); go(nearest() + (e.key === "ArrowRight" ? 1 : -1));
-    });
-    canvas.addEventListener("wheel", (e) => { // a sideways swipe on a trackpad turns it; up and down still scrolls the page
-      if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return; e.preventDefault();
-      rot -= e.deltaX / (R * 2.2); vel = 0; goal = goalFor(nearest()); if (reduce) { rot = goal; setActive(nearest()); draw(0); }
-    }, { passive: false });
-
-    const onGlobe = (e) => { const r = canvas.getBoundingClientRect(); return Math.hypot(e.clientX - r.left - cx, e.clientY - r.top - cy) < R * 1.2; };
-    const pinAt = (e) => { const r = canvas.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
-      let best = -1; pins.forEach((p, i) => { if (p.z >= 0.15 && Math.abs(x - p.sx) < 16 && Math.abs(y - p.sy) < 16) best = i; }); return best; };
-    canvas.addEventListener("pointerdown", (e) => { if (!onGlobe(e) && pinAt(e) < 0) return; drag = { x: e.clientX, y: e.clientY, moved: 0, last: 0 }; vel = 0; canvas.setPointerCapture(e.pointerId); canvas.style.cursor = "grabbing"; });
-    canvas.addEventListener("pointermove", (e) => {
-      if (!drag) { canvas.style.cursor = pinAt(e) >= 0 ? "pointer" : onGlobe(e) ? "grab" : ""; return; }
-      const dx = e.clientX - drag.x, dy = e.clientY - drag.y; drag.x = e.clientX; drag.y = e.clientY; drag.moved += Math.abs(dx) + Math.abs(dy);
-      rot += dx / R; drag.last = dx / R; tiltAdd = Math.max(-0.5, Math.min(0.5, tiltAdd + dy / R));
-      if (reduce) { setActive(nearest()); draw(0); }
-    });
-    const end = (e) => { if (!drag) return; const d = drag; drag = null; canvas.style.cursor = "";
-      if (d.moved < 6) { const i = pinAt(e); if (i >= 0) { if (i === active && pins[i].link) pins[i].link.click(); else go(i); } return; }
-      vel = reduce ? 0 : Math.max(-0.12, Math.min(0.12, d.last)); goal = goalFor(nearest());
-      if (reduce) { rot = goal; setActive(nearest()); draw(0); } };
-    canvas.addEventListener("pointerup", end); canvas.addEventListener("pointercancel", end);
-
-    size(); setActive(0); draw(0);
-    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => draw(performance.now()));
-  });
+    gal.addEventListener("pointermove", (ev) => { if (ev.pointerType === "touch") return; const r = gal.getBoundingClientRect(); mx = (ev.clientX - r.left) / r.width - 0.5; my = (ev.clientY - r.top) / r.height - 0.5; }, { passive: true });
+    size(); draw(0);
+  }
 
   /* ---------------- studio ---------------- */
   const say2 = document.querySelector(".statement");

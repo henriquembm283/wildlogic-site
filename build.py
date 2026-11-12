@@ -72,59 +72,71 @@ home = f'''
   </div>
 </section>
 
-<section class="orbit" id="work" data-on="sk" aria-labelledby="work-h">
-  <div class="orbit-stage">
-    <div class="orbit-bg" aria-hidden="true">
-      <div class="bg on" data-k="sk"><video muted loop playsinline preload="none" poster="assets/video/rift-poster.jpg" tabindex="-1"><source src="assets/video/rift-loop.mp4" type="video/mp4"></video></div>
-      <div class="bg" data-k="ar"><img src="assets/img/ui-autorules.webp" width="1280" height="880" alt="" loading="lazy"></div>
-      <div class="bg" data-k="tr"><img src="assets/img/ui-teamreports.webp" width="1300" height="890" alt="" loading="lazy"></div>
-      <div class="bg code" data-k="da"><div class="run"><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre><pre data-ui>allow      escola.example      approved\nallow      *.edu.example       approved\ntemporary  partner.example     30 days\ndeny       spam.example        refused\nno list    other.example       waits for approver\nallow      formacao.example    approved\ndeny       throwaway.example   refused\ntemporary  guest.example       14 days</pre></div></div>
-      <div class="bg" data-k="wow"><img src="assets/img/ui-quickbuffs.webp" width="1178" height="666" alt="" loading="lazy"></div>
-    </div>
-    <canvas class="globe" aria-hidden="true"></canvas>
-    <h2 class="orbit-h" id="work-h">What we make</h2>
-    <nav class="orbit-nav" aria-label="Projects">
-      <button type="button" data-k="sk"><i></i>Spirekeeper</button>
-      <button type="button" data-k="ar"><i></i>Automation Rules</button>
-      <button type="button" data-k="tr"><i></i>Team Reports</button>
-      <button type="button" data-k="da"><i></i>Domain Access</button>
-      <button type="button" data-k="wow"><i></i>Quick Buffs</button>
-    </nav>
-    <ol class="orbit-list">
-      <li data-k="sk" data-name="Spirekeeper"><article>
-        <h3>Spirekeeper</h3>
-        <p class="kind">Game · Coming soon to Steam and Android</p>
-        <p class="desc">A painted tower defense with a fully voiced story. Build towers of seven elements, fuse them, and stop the Hollow King.</p>
-        <a class="btn" href="spirekeeper/">Enter the Spirekeeper world</a>
-      </article></li>
-      <li data-k="ar" data-name="Automation Rules"><article>
-        <h3>Automation Rules</h3>
-        <p class="kind">Moodle plugin · Free and Pro</p>
-        <p class="desc">"When this happens, do that." Nudge learners who stop showing up, chase assignments before they are late, and enrol people in the next course on their path.</p>
-        <a class="btn" href="mailto:{{EMAIL}}?subject=Automation%20Rules">Ask about this plugin</a>
-      </article></li>
-      <li data-k="tr" data-name="Team Reports"><article>
-        <h3>Team Reports</h3>
-        <p class="kind">Moodle plugin · Free and Pro</p>
-        <p class="desc">Each manager gets a short email about their own team: who started, who is overdue, who went quiet. The full list arrives as a spreadsheet.</p>
-        <a class="btn" href="mailto:{{EMAIL}}?subject=Team%20Reports">Ask about this plugin</a>
-      </article></li>
-      <li data-k="da" data-name="Domain Access"><article>
-        <h3>Domain Access</h3>
-        <p class="kind">Moodle plugin · Free and Pro</p>
-        <p class="desc">People sign up with their work email. Lists of allowed, blocked and temporary email domains decide who gets an account, so nobody approves each one by hand.</p>
-        <a class="btn" href="mailto:{{EMAIL}}?subject=Domain%20Access">Ask about this plugin</a>
-      </article></li>
-      <li data-k="wow" data-name="Quick Buffs"><article>
-        <h3>Quick Buffs</h3>
-        <p class="kind">World of Warcraft add-on · Free</p>
-        <p class="desc">One key buffs the nearest player who is missing your buff, and refreshes the ones about to run out. No clicking, no targeting.</p>
-        <a class="btn" href="https://www.curseforge.com/wow/addons/quick-buffs" rel="noopener">Get it on CurseForge</a>
-      </article></li>
-    </ol>
-    <div class="orbit-turn"><button type="button" data-turn="prev" aria-label="Previous project">{ARROW_L}</button><button type="button" data-turn="next" aria-label="Next project">{ARROW_R}</button><p aria-hidden="true">Drag to turn</p></div>
-  </div>
+<section class="galaxy" id="work" aria-labelledby="work-h">
+  <canvas aria-hidden="true"></canvas>
+  <div class="galaxy-head"><h2 id="work-h">What we make</h2><p>Five things from one small studio. Pick a star.</p></div>
+  <nav class="stars" aria-label="Projects">
+    <a href="#p-sk" data-d=".50,.53" data-m=".14,.50"><i></i><span><b>Spirekeeper</b><small>Game</small></span></a>
+    <a href="#p-ar" data-d=".27,.31" data-m=".10,.24"><i></i><span><b>Automation Rules</b><small>Moodle plugin</small></span></a>
+    <a href="#p-tr" data-d=".71,.27" data-m=".42,.37"><i></i><span><b>Team Reports</b><small>Moodle plugin</small></span></a>
+    <a href="#p-da" data-d=".75,.73" data-m=".40,.64"><i></i><span><b>Domain Access</b><small>Moodle plugin</small></span></a>
+    <a href="#p-wow" data-d=".26,.77" data-m=".12,.78"><i></i><span><b>Quick Buffs</b><small>WoW add-on</small></span></a>
+  </nav>
 </section>
+<div class="projects">
+  <article class="proj" id="p-sk" data-k="sk" data-ins>
+    <div class="proj-text">
+      <h3 data-in>Spirekeeper</h3>
+      <p data-in class="kind">Game · Coming soon to Steam and Android</p>
+      <p data-in class="desc">A painted tower defense with a fully voiced story. Build towers of seven elements, fuse them, and stop the Hollow King.</p>
+      <a data-in class="btn" href="spirekeeper/">Enter the Spirekeeper world</a>
+    </div>
+    <figure data-in class="proj-media"><video muted loop playsinline preload="none" data-autoplay poster="assets/video/rift-poster.jpg" tabindex="-1" aria-hidden="true"><source src="assets/video/rift-loop.mp4" type="video/mp4"></video></figure>
+  </article>
+  <article class="proj" id="p-ar" data-k="ar" data-ins>
+    <div class="proj-text">
+      <h3 data-in>Automation Rules</h3>
+      <p data-in class="kind">Moodle plugin · Free and Pro</p>
+      <p data-in class="desc">"When this happens, do that." Nudge learners who stop showing up, chase assignments before they are late, and enrol people in the next course on their path.</p>
+      <a data-in class="btn" href="mailto:{{EMAIL}}?subject=Automation%20Rules">Ask about this plugin</a>
+    </div>
+    <figure data-in class="proj-media"><img src="assets/img/ui-autorules.webp" width="1280" height="880" alt="The Automation Rules screen in Moodle" loading="lazy"></figure>
+  </article>
+  <article class="proj" id="p-tr" data-k="tr" data-ins>
+    <div class="proj-text">
+      <h3 data-in>Team Reports</h3>
+      <p data-in class="kind">Moodle plugin · Free and Pro</p>
+      <p data-in class="desc">Each manager gets a short email about their own team: who started, who is overdue, who went quiet. The full list arrives as a spreadsheet.</p>
+      <a data-in class="btn" href="mailto:{{EMAIL}}?subject=Team%20Reports">Ask about this plugin</a>
+    </div>
+    <figure data-in class="proj-media"><img src="assets/img/ui-teamreports.webp" width="1300" height="890" alt="A Team Reports email and report in Moodle" loading="lazy"></figure>
+  </article>
+  <article class="proj" id="p-da" data-k="da" data-ins>
+    <div class="proj-text">
+      <h3 data-in>Domain Access</h3>
+      <p data-in class="kind">Moodle plugin · Free and Pro</p>
+      <p data-in class="desc">People sign up with their work email. Lists of allowed, blocked and temporary email domains decide who gets an account, so nobody approves each one by hand.</p>
+      <a data-in class="btn" href="mailto:{{EMAIL}}?subject=Domain%20Access">Ask about this plugin</a>
+    </div>
+    <figure data-in class="proj-media"><pre data-ui role="img" aria-label="An example list of allowed, temporary and blocked email domains">allow      escola.example      approved
+allow      *.edu.example       approved
+temporary  partner.example     30 days
+deny       spam.example        refused
+no list    other.example       waits for approver
+allow      formacao.example    approved
+deny       throwaway.example   refused
+temporary  guest.example       14 days</pre></figure>
+  </article>
+  <article class="proj" id="p-wow" data-k="wow" data-ins>
+    <div class="proj-text">
+      <h3 data-in>Quick Buffs</h3>
+      <p data-in class="kind">World of Warcraft add-on · Free</p>
+      <p data-in class="desc">One key buffs the nearest player who is missing your buff, and refreshes the ones about to run out. No clicking, no targeting.</p>
+      <a data-in class="btn" href="https://www.curseforge.com/wow/addons/quick-buffs" rel="noopener">Get it on CurseForge</a>
+    </div>
+    <figure data-in class="proj-media"><img src="assets/img/ui-quickbuffs.webp" width="1178" height="666" alt="Quick Buffs in the game: its icon and a box showing Mark of the Wild, buffs cast 1" loading="lazy"></figure>
+  </article>
+</div>
 
 <section class="field studio" id="studio" aria-labelledby="studio-h">
   <h2 id="studio-h">The studio</h2>
