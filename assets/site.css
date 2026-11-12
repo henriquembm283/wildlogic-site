@@ -124,7 +124,6 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .proj .btn { --fg: var(--paper); --bg: var(--ink); margin-top: 8px; }
 .proj-media { grid-column: 6 / -1; grid-row: 1; margin: 0; }
 .proj-media img, .proj-media video { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: 0 0; background: #111; }
-.proj[data-k="wow"] .proj-media img { object-position: 0 100%; }
 .proj-media pre { margin: 0; aspect-ratio: 16 / 10; overflow: hidden; display: grid; align-content: center; padding: clamp(16px, 3vw, 48px); background: rgb(0 0 0 / .28); font: 500 clamp(.6875rem, 1.45vw, 1.375rem)/1.75 ui-monospace, "SF Mono", Menlo, Consolas, monospace; white-space: pre; color: rgb(244 243 239 / .86); }
 
 @media (max-width: 900px) { .proj-text, .proj-media { grid-column: 1 / -1; grid-row: auto; } .proj-media { order: -1; margin: 0 calc(var(--m) * -.5); } }

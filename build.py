@@ -134,7 +134,7 @@ temporary  guest.example       14 days</pre></figure>
       <p data-in class="desc">One key buffs the nearest player who is missing your buff, and refreshes the ones about to run out. No clicking, no targeting.</p>
       <a data-in class="btn" href="https://www.curseforge.com/wow/addons/quick-buffs" rel="noopener">Get it on CurseForge</a>
     </div>
-    <figure data-in class="proj-media"><img src="assets/img/ui-quickbuffs.webp" width="1178" height="666" alt="Quick Buffs in the game: its icon and a box showing Mark of the Wild, buffs cast 1" loading="lazy"></figure>
+    <figure data-in class="proj-media"><img src="assets/img/ui-quickbuffs-page.webp" width="947" height="592" alt="The Quick Buffs page on CurseForge, with a screenshot of the add-on in the game" loading="lazy"></figure>
   </article>
 </div>
 
