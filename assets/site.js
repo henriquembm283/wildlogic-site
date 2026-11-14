@@ -177,51 +177,84 @@ void main(){
   const mark = document.querySelector(".company");
   if (mark) codeField(mark.querySelector("canvas"), mark, [mark.querySelector("svg")], { cell: 14, r: 0.4, lx: 0.3, ly: 0.5, wx: 0.22, wy: 0.25, dim: 0.42, tex: 0.22 } /* quiet here: the facts are the point, the logo stays solid */);
 
-  /* ---------------- galaxy: a slow spiral of stars; five of them are links ---------------- */
+  /* ---------------- galaxy: a two-armed spiral whose stars drift slowly outward along the arms; seven of them are links ---------------- */
   const gal = document.querySelector(".galaxy");
   if (gal) {
-    const cv = gal.querySelector("canvas"), ctx = cv.getContext("2d"), links = [...gal.querySelectorAll(".stars a")];
-    const TAU = Math.PI * 2, small = innerWidth < 700;
+    const cv = gal.querySelector("canvas"), ctx = cv.getContext("2d"), links = [...gal.querySelectorAll(".stars a")], head = gal.querySelector(".galaxy-head");
+    const TAU = Math.PI * 2, small = innerWidth < 700, WIND = 4.6;
     let seed = 7; const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+    const gauss = () => rnd() + rnd() + rnd() - 1.5;
+    const armR = (u) => 0.05 + Math.pow(u, 0.9) * 1.0, armA = (arm, r) => arm * Math.PI + WIND * Math.pow(r, 0.72);
     const pts = [];
-    for (let i = 0, n = small ? 2200 : 4600; i < n; i++) {
-      const kind = rnd();
-      let r, a;
-      if (kind < 0.2) { r = Math.pow(rnd(), 2) * 0.2; a = rnd() * TAU; }                                   // the bright middle
-      else if (kind < 0.9) { r = 0.06 + Math.pow(rnd(), 0.85) * 0.98; a = (i % 2) * Math.PI + 2.3 * Math.log(1 + r * 6) + (rnd() + rnd() + rnd() - 1.5) * (0.75 - 0.3 * r); } // two arms
-      else { r = Math.pow(rnd(), 0.5) * 1.25; a = rnd() * TAU; }                                          // loose stars around
-      pts.push({ r, a, s: rnd(), acc: rnd() < 0.035 });
+    for (let i = 0, n = small ? 3600 : 9000; i < n; i++) {
+      const kind = rnd(), p = { s: rnd(), acc: rnd() < 0.03, k: 0, u: rnd(), arm: i % 2, ja: 0, jr: 0, r: 0, a: 0 };
+      if (kind < 0.15) { p.k = 1; p.r = Math.pow(rnd(), 1.6) * 0.2; p.a = rnd() * TAU; }                          // the bright middle
+      else if (kind < 0.62) { p.ja = gauss() * 0.3; p.jr = gauss() * 0.035; }                                      // the crisp ridge of each arm
+      else if (kind < 0.95) { p.ja = gauss() * 0.8; p.jr = gauss() * 0.09; }                                       // the softer body around it
+      else { p.k = 2; p.r = 0.2 + Math.pow(rnd(), 0.6) * 1.15; p.a = rnd() * TAU; }                                 // loose stars around
+      p.big = p.k !== 2 && rnd() < 0.005;                                                                           // a few bright ones get a small cross
+      pts.push(p);
     }
-    const pins = links.map((l) => ({ l, d: l.dataset.d.split(",").map(Number), m: l.dataset.m.split(",").map(Number) }));
-    let W = 0, H = 0, dpr = 1, rx = 0, ry = 0, raf = 0, vis = false, born = 0, mx = 0, my = 0, ox = 0, oy = 0;
+    const pins = links.map((l) => ({ l, g: l.dataset.g.split(",").map(Number), m: l.dataset.m.split(",").map(Number), x: 0, y: 0, w: 0, h: 0, flip: false }));
+    let W = 0, H = 0, dpr = 1, rx = 0, ry = 0, raf = 0, vis = false, born = 0, mx = 0, my = 0, ox = 0, oy = 0, tilt = 0, cx0 = 0, cy0 = 0;
+    const spot = (r, a, rot, grow) => { const x = Math.cos(a + rot) * r * rx * grow, y = Math.sin(a + rot) * r * ry * grow, ct = Math.cos(tilt), st = Math.sin(tilt); return [x * ct - y * st, x * st + y * ct]; };
+    // where the seven names sit: on the arms, then nudged apart so no two names, the heading or the edges ever touch, at any window size
+    const place = () => {
+      const tall = H > W, m = 20, pad = 16, hr = head.getBoundingClientRect(), gr = gal.getBoundingClientRect(), hRight = hr.right - gr.left + pad, hBottom = hr.bottom - gr.top + pad;
+      pins.forEach((p) => {
+        { const r = p.g[1] ? armR(p.g[1]) : 0, q = spot(r, armA(p.g[0], r), 0, 1); p.x = cx0 + q[0]; p.y = cy0 + q[1]; }
+        p.l.classList.remove("flip"); p.w = p.l.offsetWidth; p.h = p.l.offsetHeight;
+        p.flip = p.x > W * 0.6 || p.x + p.w > W - m; p.l.classList.toggle("flip", p.flip);
+      });
+      const L = (p) => (p.flip ? p.x - p.w + 22 : p.x - 22), T = (p) => p.y - 22;
+      const keep = (p) => {
+        let l = L(p), t = T(p);
+        const dl = Math.max(m, Math.min(W - m - p.w, l)) - l; p.x += dl; l += dl;
+        const top = l < hRight ? hBottom : m, dt = Math.max(top, Math.min(H - m - p.h, t)) - t; p.y += dt;
+      };
+      for (let it = 0; it < 60; it++) {
+        pins.forEach(keep);
+        for (let i = 0; i < pins.length; i++) for (let j = i + 1; j < pins.length; j++) {
+          const a = pins[i], b = pins[j], ox2 = Math.min(L(a) + a.w, L(b) + b.w) - Math.max(L(a), L(b)) + pad, oy2 = Math.min(T(a) + a.h, T(b) + b.h) - Math.max(T(a), T(b)) + pad;
+          if (ox2 <= 0 || oy2 <= 0) continue;
+          if (oy2 <= ox2) { const d = oy2 / 2 * (T(a) <= T(b) ? 1 : -1); a.y -= d; b.y += d; } else { const d = ox2 / 2 * (L(a) <= L(b) ? 1 : -1); a.x -= d; b.x += d; }
+        }
+      }
+      pins.forEach(keep);
+    };
     const size = () => { W = gal.clientWidth; H = gal.clientHeight; dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr;
-      const tall = H > W; rx = tall ? W * 0.7 : Math.min(W * 0.47, H * 0.98); ry = tall ? H * 0.3 : rx * 0.5; };
+      const tall = H > W; rx = tall ? Math.min(H * 0.5, W * 1.25) : Math.min(W * 0.46, H * 0.94); ry = tall ? Math.min(W * 0.47, rx * 0.62) : rx * 0.52; tilt = tall ? -1.25 : -0.3; cx0 = W * 0.5; cy0 = H * (tall ? 0.56 : 0.54); place(); };
     const draw = (now) => {
       const f = reduce || !born ? 1 : clamp01((now - born) / 1700), e = 1 - Math.pow(1 - f, 3);            // forms once, ease-out
-      const rot = (reduce ? 0.6 : now * 0.000021) - (1 - e) * 0.9, grow = 0.5 + 0.5 * e, tilt = H > W ? -0.95 : -0.28, ct = Math.cos(tilt), st = Math.sin(tilt);
+      const rot = -(1 - e) * 0.9, grow = 0.5 + 0.5 * e, flow = reduce ? 0 : now * 0.0000045, spin = reduce ? 0 : now * 0.00003;
       ox += (mx - ox) * 0.05; oy += (my - oy) * 0.05;
-      const cx = W * 0.5 + ox * 18, cy = H * (H > W ? 0.54 : 0.53) + oy * 12;
-      const at = (r, a) => { const x = Math.cos(a + rot) * r * rx * grow, y = Math.sin(a + rot) * r * ry * grow; return [cx + x * ct - y * st, cy + x * st + y * ct]; };
+      const cx = cx0 + ox * 18, cy = cy0 + oy * 12;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
       for (const p of pts) {
-        const [x, y] = at(p.r, p.a + (1 - p.r) * rot * 0.35);                                              // the middle turns a little faster
-        if (x < -4 || y < -4 || x > W + 4 || y > H + 4) continue;
-        const tw = reduce ? 1 : 0.75 + 0.25 * Math.sin(now * 0.0012 * (0.5 + p.s) + p.s * 40);
-        const al = e * tw * (p.acc ? 0.95 : 0.2 + 0.75 * p.s * (1.2 - Math.min(1, p.r)));
-        const d = p.acc ? 3 : 1.1 + p.s * 2.1;
-        ctx.globalAlpha = al; ctx.fillStyle = p.acc ? "#ccff3d" : "#f4f3ef"; ctx.fillRect(x - d / 2, y - d / 2, d, d);
+        let r = p.r, a = p.a, fade = 1;
+        if (p.k === 0) { const u = (p.u + flow * (0.6 + 0.8 * p.s)) % 1; r = armR(u) + p.jr; a = armA(p.arm, r) + p.ja * (1 - 0.45 * u); fade = Math.min(1, u * 14, (1 - u) * 18); }   // drifts out along its arm, fading in and out at the ends
+        else if (p.k === 1) a += spin * (1.4 - p.r * 4);                                                     // the middle turns on itself
+        const q = spot(r, a, rot, grow), x = cx + q[0], y = cy + q[1];
+        if (x < -6 || y < -6 || x > W + 6 || y > H + 6) continue;
+        const tw = reduce ? 1 : 0.72 + 0.28 * Math.sin(now * 0.0011 * (0.5 + p.s) + p.s * 40);
+        const al = e * fade * tw * (p.acc || p.big ? 0.95 : p.k === 2 ? 0.12 + 0.3 * p.s : 0.2 + 0.8 * p.s * (1.3 - 0.55 * Math.min(1, r)));
+        const d = p.acc ? 2.6 : p.big ? 2.8 : p.k === 2 ? 0.9 + p.s * 1.1 : 0.8 + p.s * p.s * 1.9;
+        ctx.globalAlpha = al; ctx.fillStyle = p.acc ? "#ccff3d" : "#f4f3ef";
+        if (d > 1.7) { ctx.beginPath(); ctx.arc(x, y, d / 2, 0, TAU); ctx.fill(); } else ctx.fillRect(x - d / 2, y - d / 2, d, d);
+        if (p.big) { const n = 5 + 4 * tw; ctx.globalAlpha = al * 0.55; ctx.fillRect(x - n, y - 0.5, n * 2, 1); ctx.fillRect(x - 0.5, y - n, 1, n * 2); }
       }
       ctx.globalAlpha = 1;
-      for (const p of pins) { const q = H > W ? p.m : p.d, k = reduce ? 0 : now * 0.0004 + q[0] * 9;
-        const x = W * q[0] + Math.sin(k) * 5 + ox * 30 + (1 - e) * (W * 0.5 - W * q[0]) * 0.5, y = H * q[1] + Math.cos(k * 0.8) * 5 + oy * 20 + (1 - e) * (H * 0.5 - H * q[1]) * 0.5, flip = q[0] > 0.6;
-        p.l.classList.toggle("flip", flip); p.l.style.opacity = e;
-        p.l.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)" + (flip ? " translateX(-100%)" : ""); }
+      for (const p of pins) { const k = reduce ? 0 : now * 0.0004 + p.m[0] * 9;
+        const x = p.x + Math.sin(k) * 4 + ox * 18 + (1 - e) * (cx0 - p.x) * 0.5, y = p.y + Math.cos(k * 0.8) * 4 + oy * 12 + (1 - e) * (cy0 - p.y) * 0.5;
+        p.l.style.opacity = e;
+        p.l.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)" + (p.flip ? " translateX(-100%)" : ""); }
     };
     const loop = (now) => { raf = 0; draw(now); if (vis && !document.hidden && !reduce) raf = requestAnimationFrame(loop); };
     const sync = () => { const on = vis && !document.hidden; if (on && !born) born = performance.now(); if (on && !raf && !reduce) raf = requestAnimationFrame(loop); if (on && reduce) draw(0); };
     new IntersectionObserver(([en]) => { vis = en.isIntersecting; sync(); }, { threshold: 0.05 }).observe(gal);
     document.addEventListener("visibilitychange", sync);
     addEventListener("resize", () => { size(); if (reduce) draw(0); });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { place(); if (reduce) draw(0); });   // names are measured, so measure again once the typeface is in
     gal.addEventListener("pointermove", (ev) => { if (ev.pointerType === "touch") return; const r = gal.getBoundingClientRect(); mx = (ev.clientX - r.left) / r.width - 0.5; my = (ev.clientY - r.top) / r.height - 0.5; }, { passive: true });
     size(); draw(0);
   }

@@ -76,13 +76,13 @@ home = f'''
   <canvas aria-hidden="true"></canvas>
   <div class="galaxy-head"><h2 id="work-h">What we make</h2><p>Seven things, one small studio. Pick a star.</p></div>
   <nav class="stars" aria-label="Projects">
-    <a href="#p-sk" data-d=".50,.53" data-m=".14,.50"><i></i><span><b>Spirekeeper</b><small>Game</small></span></a>
-    <a href="#p-ar" data-d=".27,.31" data-m=".10,.24"><i></i><span><b>Automation Rules</b><small>Moodle plugin</small></span></a>
-    <a href="#p-tr" data-d=".71,.27" data-m=".42,.37"><i></i><span><b>Team Reports</b><small>Moodle plugin</small></span></a>
-    <a href="#p-da" data-d=".75,.73" data-m=".40,.64"><i></i><span><b>Domain Access</b><small>Moodle plugin</small></span></a>
-    <a href="#p-wow" data-d=".26,.77" data-m=".12,.78"><i></i><span><b>Quick Buffs</b><small>WoW add-on</small></span></a>
-    <a href="#p-it" data-d=".52,.86" data-m=".38,.90"><i></i><span><b>We can do IT</b><small>Training app</small></span></a>
-    <a href="#p-web" data-d=".50,.20" data-m=".50,.17"><i></i><span><b>Websites</b><small>For local shops</small></span></a>
+    <a href="#p-sk" data-g="0,0" data-m=".14,.50"><i></i><span><b>Spirekeeper</b><small>Game</small></span></a>
+    <a href="#p-ar" data-g="0,.44" data-m=".10,.24"><i></i><span><b>Automation Rules</b><small>Moodle plugin</small></span></a>
+    <a href="#p-tr" data-g="0,.7" data-m=".42,.37"><i></i><span><b>Team Reports</b><small>Moodle plugin</small></span></a>
+    <a href="#p-da" data-g="1,.44" data-m=".40,.64"><i></i><span><b>Domain Access</b><small>Moodle plugin</small></span></a>
+    <a href="#p-wow" data-g="1,.7" data-m=".12,.78"><i></i><span><b>Quick Buffs</b><small>WoW add-on</small></span></a>
+    <a href="#p-it" data-g="1,.92" data-m=".38,.90"><i></i><span><b>We can do IT</b><small>Training app</small></span></a>
+    <a href="#p-web" data-g="0,.92" data-m=".50,.17"><i></i><span><b>Websites</b><small>For local shops</small></span></a>
   </nav>
 </section>
 <div class="projects">
