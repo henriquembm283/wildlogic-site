@@ -108,6 +108,11 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .stars a:focus-visible { outline: 3px solid var(--paper); outline-offset: 2px; }
 .js .galaxy { height: 100svh; min-height: 620px; padding: 0; display: block; overflow: hidden; isolation: isolate; }
 .js .galaxy canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+.galaxy-back { position: absolute; inset: 0; z-index: -2; pointer-events: none; }
+.galaxy-back img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 260ms var(--out); }
+.galaxy-back img.on { opacity: .26; transition-duration: 420ms; }
+.galaxy-back img.inv { filter: invert(1) hue-rotate(180deg); } .galaxy-back img.inv.on { opacity: .34; }   /* white screens are flipped to dark so the section stays dark */
+@media (prefers-reduced-motion: reduce) { .galaxy-back img { transition: none; } }
 .js .galaxy-head { position: absolute; left: var(--m); top: var(--m); }
 .js .stars { display: block; }
 .js .stars a { position: absolute; left: 0; top: 0; margin: -22px 0 0 -22px; will-change: transform; }

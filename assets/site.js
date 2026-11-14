@@ -196,6 +196,16 @@ void main(){
       pts.push(p);
     }
     const pins = links.map((l) => ({ l, g: l.dataset.g.split(",").map(Number), m: l.dataset.m.split(",").map(Number), x: 0, y: 0, w: 0, h: 0, flip: false }));
+    // with a mouse: pointing at a star brings that project's picture up, faded, behind the galaxy, so you see what the name is before you click
+    if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      const back = document.createElement("div"); back.className = "galaxy-back"; back.setAttribute("aria-hidden", "true"); gal.prepend(back);
+      links.forEach((l) => {
+        if (!l.dataset.bg) return; let img = null;
+        const on = () => { if (!img) { img = new Image(); img.alt = ""; img.decoding = "async"; img.src = l.dataset.bg; if (l.dataset.bgInv !== undefined) img.className = "inv"; back.append(img); } requestAnimationFrame(() => requestAnimationFrame(() => img.classList.add("on"))); };
+        const off = () => { if (img) img.classList.remove("on"); };
+        l.addEventListener("pointerenter", on); l.addEventListener("pointerleave", off); l.addEventListener("focus", on); l.addEventListener("blur", off);
+      });
+    }
     let W = 0, H = 0, dpr = 1, rx = 0, ry = 0, raf = 0, vis = false, born = 0, mx = 0, my = 0, ox = 0, oy = 0, tilt = 0, cx0 = 0, cy0 = 0;
     const spot = (r, a, rot, grow) => { const x = Math.cos(a + rot) * r * rx * grow, y = Math.sin(a + rot) * r * ry * grow, ct = Math.cos(tilt), st = Math.sin(tilt); return [x * ct - y * st, x * st + y * ct]; };
     // where the seven names sit: on the arms, then nudged apart so no two names, the heading or the edges ever touch, at any window size
