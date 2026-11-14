@@ -65,7 +65,7 @@ home = f'''
     <div class="words" role="img" aria-label="Wild Logic"><span class="word word-wild">{svg("wild")}</span><span class="word word-logic">{svg("logic")}</span></div>
     <div class="hero-say">
       <h1 id="title">Wildlogic makes games and tools</h1>
-      <p>A software studio in Caldas da Rainha, Portugal: a painted game, Moodle plugins, a World of Warcraft add-on, an IT training app and websites.</p>
+      <p>A software studio in Caldas da Rainha, Portugal<span class="more">: a painted game, Moodle plugins, a World of Warcraft add-on, an IT training app and websites</span>.</p>
       <a class="btn" href="#work">See what we make</a>
     </div>
     <p class="hero-turn">Half of what we make is wild. The other half is logic.</p>
@@ -82,7 +82,7 @@ home = f'''
     <a href="#p-da" data-d=".75,.73" data-m=".40,.64"><i></i><span><b>Domain Access</b><small>Moodle plugin</small></span></a>
     <a href="#p-wow" data-d=".26,.77" data-m=".12,.78"><i></i><span><b>Quick Buffs</b><small>WoW add-on</small></span></a>
     <a href="#p-it" data-d=".52,.86" data-m=".38,.90"><i></i><span><b>We can do IT</b><small>Training app</small></span></a>
-    <a href="#p-web" data-d=".50,.20" data-m=".46,.15"><i></i><span><b>Websites</b><small>For local shops</small></span></a>
+    <a href="#p-web" data-d=".50,.20" data-m=".50,.17"><i></i><span><b>Websites</b><small>For local shops</small></span></a>
   </nav>
 </section>
 <div class="projects">

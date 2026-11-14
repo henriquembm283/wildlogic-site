@@ -79,10 +79,11 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .hero .btn { --fg: rgb(244 243 239 / .97); --bg: var(--ink); }
 .hero-turn { position: absolute; right: var(--m); top: calc(var(--m) + 64px); width: min(24ch, 32vw); padding: 14px 18px; background: rgb(28 28 28 / .92); text-align: right; font-size: var(--step-lead); line-height: 1.2; font-weight: 500; letter-spacing: -0.01em; opacity: 0; }
 @media (max-width: 760px) {
-  .hero-say { padding: 20px 20px 0; width: calc(100vw - 2 * var(--m)); } .hero-say .btn { margin: 8px -20px 0; width: calc(100% + 40px); }
+  .hero-say { padding: 14px 16px 0; gap: 6px; width: calc(100vw - 2 * var(--m)); } .hero-say .btn { margin: 8px -16px 0; width: calc(100% + 32px); min-height: 44px; }
+  .hero h1 { font-size: 1.25rem; } .hero-say p { font-size: .9375rem; } .hero-say .more { display: none; }
   .word-wild { width: 80vw; top: calc(var(--m) + 56px); }
   .word-logic { width: 86vw; bottom: auto; top: calc(var(--m) + 56px + 34vw); right: var(--m); }
-  .hero-turn { top: auto; bottom: calc(var(--m) + 250px); right: var(--m); width: 60vw; }
+  .hero-turn { top: auto; bottom: calc(var(--m) + 150px); right: var(--m); width: 60vw; }
   .hero { height: 135svh; }
 }
 
