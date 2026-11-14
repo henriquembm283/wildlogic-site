@@ -109,9 +109,9 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .js .galaxy { height: 100svh; min-height: 620px; padding: 0; display: block; overflow: hidden; isolation: isolate; }
 .js .galaxy canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
 .galaxy-back { position: absolute; inset: 0; z-index: -2; pointer-events: none; }
-.galaxy-back img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 260ms var(--out); }
-.galaxy-back img.on { opacity: .26; transition-duration: 420ms; }
-.galaxy-back img.inv { filter: invert(1) hue-rotate(180deg); } .galaxy-back img.inv.on { opacity: .34; }   /* white screens are flipped to dark so the section stays dark */
+.galaxy-back img { position: absolute; left: 50%; top: 54%; translate: -50% -50%; width: min(40vw, 560px); aspect-ratio: 16 / 10; height: auto; object-fit: cover; opacity: 0; transition: opacity 260ms var(--out); }
+.galaxy-back img.on { opacity: .34; transition-duration: 420ms; }
+.galaxy-back img.inv { filter: invert(1) hue-rotate(180deg); } .galaxy-back img.inv.on { opacity: .42; }   /* white screens are flipped to dark so the section stays dark */
 @media (prefers-reduced-motion: reduce) { .galaxy-back img { transition: none; } }
 .js .galaxy-head { position: absolute; left: var(--m); top: var(--m); }
 .js .stars { display: block; }
