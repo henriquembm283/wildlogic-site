@@ -188,7 +188,7 @@ void main(){
     const pts = [];
     for (let i = 0, n = small ? 3600 : 9000; i < n; i++) {
       const kind = rnd(), p = { s: rnd(), acc: rnd() < 0.03, k: 0, u: rnd(), arm: i % 2, ja: 0, jr: 0, r: 0, a: 0 };
-      if (kind < 0.15) { p.k = 1; p.r = Math.pow(rnd(), 1.6) * 0.2; p.a = rnd() * TAU; }                          // the bright middle
+      if (kind < 0.19) { p.k = 1; p.r = Math.pow(rnd(), 1.6) * 0.2; p.a = rnd() * TAU; }                          // the bright middle
       else if (kind < 0.62) { p.ja = gauss() * 0.3; p.jr = gauss() * 0.035; }                                      // the crisp ridge of each arm
       else if (kind < 0.95) { p.ja = gauss() * 0.8; p.jr = gauss() * 0.09; }                                       // the softer body around it
       else { p.k = 2; p.r = 0.2 + Math.pow(rnd(), 0.6) * 1.15; p.a = rnd() * TAU; }                                 // loose stars around
@@ -200,8 +200,15 @@ void main(){
     if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
       const back = document.createElement("div"); back.className = "galaxy-back"; back.setAttribute("aria-hidden", "true"); gal.prepend(back);
       links.forEach((l) => {
-        if (!l.dataset.bg) return; let img = null;
-        const on = () => { if (!img) { img = new Image(); img.alt = ""; img.decoding = "async"; img.src = l.dataset.bg; if (l.dataset.bgInv !== undefined) img.className = "inv"; back.append(img); } requestAnimationFrame(() => requestAnimationFrame(() => img.classList.add("on"))); };
+        if (!l.dataset.bg) return; let img = null; const pin = pins.find((q) => q.l === l);
+        const on = () => {
+          if (!img) { img = new Image(); img.alt = ""; img.decoding = "async"; img.src = l.dataset.bg; if (l.dataset.bgInv !== undefined) img.className = "inv"; back.append(img); }
+          // the picture hangs off its own star: under the name when there is room, above it when there is not, and never past the edges
+          const w = Math.min(340, W * 0.27), h = w * 0.625, up = pin.y + pin.h + h > H - 16;
+          const left = Math.max(16, Math.min(W - 16 - w, pin.flip ? pin.x + 12 - w : pin.x - 12)), top = up ? pin.y - 34 - h : pin.y + pin.h - 14;
+          img.style.width = w + "px"; img.style.left = left + "px"; img.style.top = top + "px"; img.style.transformOrigin = (pin.flip ? "100% " : "0% ") + (up ? "100%" : "0%");
+          requestAnimationFrame(() => requestAnimationFrame(() => img.classList.add("on")));
+        };
         const off = () => { if (img) img.classList.remove("on"); };
         l.addEventListener("pointerenter", on); l.addEventListener("pointerleave", off); l.addEventListener("focus", on); l.addEventListener("blur", off);
       });
@@ -210,11 +217,11 @@ void main(){
     const spot = (r, a, rot, grow) => { const x = Math.cos(a + rot) * r * rx * grow, y = Math.sin(a + rot) * r * ry * grow, ct = Math.cos(tilt), st = Math.sin(tilt); return [x * ct - y * st, x * st + y * ct]; };
     // where the seven names sit: on the arms, then nudged apart so no two names, the heading or the edges ever touch, at any window size
     const place = () => {
-      const tall = H > W, m = 20, pad = 16, hr = head.getBoundingClientRect(), gr = gal.getBoundingClientRect(), hRight = hr.right - gr.left + pad, hBottom = hr.bottom - gr.top + pad;
+      const tall = H > W, m = W < 480 ? 12 : 20, pad = W < 480 ? 10 : 16, hr = head.getBoundingClientRect(), gr = gal.getBoundingClientRect(), hRight = hr.right - gr.left + pad, hBottom = hr.bottom - gr.top + pad;
       pins.forEach((p) => {
         { const r = p.g[1] ? armR(p.g[1]) : 0, q = spot(r, armA(p.g[0], r), 0, 1); p.x = cx0 + q[0]; p.y = cy0 + q[1]; }
         p.l.classList.remove("flip"); p.w = p.l.offsetWidth; p.h = p.l.offsetHeight;
-        p.flip = p.x > W * 0.6 || p.x + p.w > W - m; p.l.classList.toggle("flip", p.flip);
+        p.flip = p.x > W * 0.6 || p.x + p.w > W - m; p.l.classList.toggle("flip", p.flip); p.l.classList.toggle("core", !p.g[1]);
       });
       const L = (p) => (p.flip ? p.x - p.w + 22 : p.x - 22), T = (p) => p.y - 22;
       const keep = (p) => {
@@ -222,12 +229,12 @@ void main(){
         const dl = Math.max(m, Math.min(W - m - p.w, l)) - l; p.x += dl; l += dl;
         const top = l < hRight ? hBottom : m, dt = Math.max(top, Math.min(H - m - p.h, t)) - t; p.y += dt;
       };
-      for (let it = 0; it < 60; it++) {
+      for (let it = 0; it < 240; it++) {
         pins.forEach(keep);
         for (let i = 0; i < pins.length; i++) for (let j = i + 1; j < pins.length; j++) {
           const a = pins[i], b = pins[j], ox2 = Math.min(L(a) + a.w, L(b) + b.w) - Math.max(L(a), L(b)) + pad, oy2 = Math.min(T(a) + a.h, T(b) + b.h) - Math.max(T(a), T(b)) + pad;
           if (ox2 <= 0 || oy2 <= 0) continue;
-          if (oy2 <= ox2) { const d = oy2 / 2 * (T(a) <= T(b) ? 1 : -1); a.y -= d; b.y += d; } else { const d = ox2 / 2 * (L(a) <= L(b) ? 1 : -1); a.x -= d; b.x += d; }
+          if (oy2 <= ox2 || W < 480) { const d = oy2 / 2 * (T(a) <= T(b) ? 1 : -1); a.y -= d; b.y += d; } else { const d = ox2 / 2 * (L(a) <= L(b) ? 1 : -1); a.x -= d; b.x += d; }
         }
       }
       pins.forEach(keep);
@@ -238,7 +245,7 @@ void main(){
       const f = reduce || !born ? 1 : clamp01((now - born) / 1700), e = 1 - Math.pow(1 - f, 3);            // forms once, ease-out
       const rot = -(1 - e) * 0.9, grow = 0.5 + 0.5 * e, flow = reduce ? 0 : now * 0.0000045, spin = reduce ? 0 : now * 0.00003;
       ox += (mx - ox) * 0.05; oy += (my - oy) * 0.05;
-      const cx = cx0 + ox * 18, cy = cy0 + oy * 12;
+      const dk = W < 480 ? 0 : 1, cx = cx0 + ox * 18 * dk, cy = cy0 + oy * 12 * dk;   // no drift on a narrow screen: there is no room to spare at the edges
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
       for (const p of pts) {
         let r = p.r, a = p.a, fade = 1;
@@ -247,15 +254,15 @@ void main(){
         const q = spot(r, a, rot, grow), x = cx + q[0], y = cy + q[1];
         if (x < -6 || y < -6 || x > W + 6 || y > H + 6) continue;
         const tw = reduce ? 1 : 0.72 + 0.28 * Math.sin(now * 0.0011 * (0.5 + p.s) + p.s * 40);
-        const al = e * fade * tw * (p.acc || p.big ? 0.95 : p.k === 2 ? 0.12 + 0.3 * p.s : 0.2 + 0.8 * p.s * (1.3 - 0.55 * Math.min(1, r)));
-        const d = p.acc ? 2.6 : p.big ? 2.8 : p.k === 2 ? 0.9 + p.s * 1.1 : 0.8 + p.s * p.s * 1.9;
+        const al = e * fade * tw * (p.acc || p.big ? 0.95 : p.k === 2 ? 0.12 + 0.3 * p.s : 0.26 + 0.8 * p.s * (1.3 - 0.5 * Math.min(1, r)));
+        const d = p.acc ? 2.6 : p.big ? 2.8 : p.k === 2 ? 0.9 + p.s * 1.1 : 0.9 + p.s * p.s * 2.1;
         ctx.globalAlpha = al; ctx.fillStyle = p.acc ? "#ccff3d" : "#f4f3ef";
         if (d > 1.7) { ctx.beginPath(); ctx.arc(x, y, d / 2, 0, TAU); ctx.fill(); } else ctx.fillRect(x - d / 2, y - d / 2, d, d);
         if (p.big) { const n = 5 + 4 * tw; ctx.globalAlpha = al * 0.55; ctx.fillRect(x - n, y - 0.5, n * 2, 1); ctx.fillRect(x - 0.5, y - n, 1, n * 2); }
       }
       ctx.globalAlpha = 1;
       for (const p of pins) { const k = reduce ? 0 : now * 0.0004 + p.m[0] * 9;
-        const x = p.x + Math.sin(k) * 4 + ox * 18 + (1 - e) * (cx0 - p.x) * 0.5, y = p.y + Math.cos(k * 0.8) * 4 + oy * 12 + (1 - e) * (cy0 - p.y) * 0.5;
+        const x = p.x + Math.sin(k) * 4 + ox * 18 * dk + (1 - e) * (cx0 - p.x) * 0.5, y = p.y + Math.cos(k * 0.8) * 4 + oy * 12 * dk + (1 - e) * (cy0 - p.y) * 0.5;
         p.l.style.opacity = e;
         p.l.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)" + (p.flip ? " translateX(-100%)" : ""); }
     };

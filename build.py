@@ -65,7 +65,7 @@ home = f'''
     <div class="words" role="img" aria-label="Wild Logic"><span class="word word-wild">{svg("wild")}</span><span class="word word-logic">{svg("logic")}</span></div>
     <div class="hero-say">
       <h1 id="title">Wildlogic makes games and tools</h1>
-      <p>A software studio in Caldas da Rainha, Portugal<span class="more">: a painted game, Moodle plugins, a World of Warcraft add-on, an IT training app and websites</span>.</p>
+      <p>A software studio in Caldas da Rainha, Portugal<span class="more">: a painted game, Moodle plugins, a World of Warcraft add-on, an IT training app, websites and a house in 3D</span>.</p>
       <a class="btn" href="#work">See what we make</a>
     </div>
     <p class="hero-turn">Half of what we make is wild. The other half is logic.</p>
@@ -74,15 +74,16 @@ home = f'''
 
 <section class="galaxy" id="work" aria-labelledby="work-h">
   <canvas aria-hidden="true"></canvas>
-  <div class="galaxy-head"><h2 id="work-h">What we make</h2><p>Seven things, one small studio. Pick a star.</p></div>
+  <div class="galaxy-head"><h2 id="work-h">What we make</h2><p>Eight things, one small studio. Pick a star.</p></div>
   <nav class="stars" aria-label="Projects">
     <a href="#p-sk" data-bg="assets/img/shot-spires.webp" data-g="0,0" data-m=".14,.50"><i></i><span><b>Spirekeeper</b><small>Game</small></span></a>
     <a href="#p-ar" data-bg="assets/img/ui-autorules.webp" data-bg-inv data-g="0,.44" data-m=".10,.24"><i></i><span><b>Automation Rules</b><small>Moodle plugin</small></span></a>
     <a href="#p-tr" data-bg="assets/img/ui-teamreports.webp" data-bg-inv data-g="0,.7" data-m=".42,.37"><i></i><span><b>Team Reports</b><small>Moodle plugin</small></span></a>
-    <a href="#p-da" data-bg="assets/img/ui-domainaccess.webp" data-g="1,.44" data-m=".40,.64"><i></i><span><b>Domain Access</b><small>Moodle plugin</small></span></a>
-    <a href="#p-wow" data-bg="assets/img/ui-quickbuffs.webp" data-g="1,.7" data-m=".12,.78"><i></i><span><b>Quick Buffs</b><small>WoW add-on</small></span></a>
-    <a href="#p-it" data-bg="assets/img/ui-wecandoit-bench.webp" data-g="1,.92" data-m=".38,.90"><i></i><span><b>We can do IT</b><small>Training app</small></span></a>
+    <a href="#p-da" data-bg="assets/img/ui-domainaccess.webp" data-g="1,.36" data-m=".40,.64"><i></i><span><b>Domain Access</b><small>Moodle plugin</small></span></a>
+    <a href="#p-wow" data-bg="assets/img/ui-quickbuffs.webp" data-g="1,.56" data-m=".12,.78"><i></i><span><b>Quick Buffs</b><small>WoW add-on</small></span></a>
+    <a href="#p-it" data-bg="assets/img/ui-wecandoit-bench.webp" data-g="1,.76" data-m=".38,.90"><i></i><span><b>We can do IT</b><small>Training app</small></span></a>
     <a href="#p-web" data-bg="assets/img/web-fotofranco.webp" data-g="0,.92" data-m=".50,.17"><i></i><span><b>Websites</b><small>For local shops</small></span></a>
+    <a href="#p-casa" data-bg="assets/img/casa-exterior.webp" data-g="1,.95" data-m=".3,.9"><i></i><span><b>House in 3D</b><small>3D visualisation</small></span></a>
   </nav>
 </section>
 <div class="projects">
@@ -155,6 +156,15 @@ temporary  guest.example       14 days</pre></figure>
     </div>
     <figure class="proj-media duo wide" data-reveal><img src="assets/img/web-fotofranco.webp" width="1280" height="724" alt="The Foto Franco site opens like a camera viewfinder, with focus marks, exposure numbers and a shutter button" loading="lazy"><img class="inset" src="assets/img/web-fotofranco-2.webp" width="1280" height="800" alt="A gift voucher you build on the Foto Franco site" loading="lazy"></figure>
   </article>
+  <article class="proj" id="p-casa" data-k="casa" data-ins>
+    <div class="proj-text">
+      <h3 data-in>House in 3D</h3>
+      <p data-in class="kind">3D visualisation · Blender</p>
+      <p data-in class="desc">A whole house modelled 1:1 from its plans, garden and pool included: 29 photo-real views by day and at dusk, a two-minute video tour and a walk-through for a VR headset.</p>
+      <a data-in class="btn" href="mailto:{{EMAIL}}?subject=3D%20visualisation">Ask about a 3D model</a>
+    </div>
+    <figure class="proj-media duo wide" data-reveal><img src="assets/img/casa-exterior.webp" width="1600" height="905" alt="A rendered modern house seen from its pool deck, with a parasol, sun loungers and a car under the terrace" loading="lazy"><img class="inset" src="assets/img/casa-sala.webp" width="1280" height="800" alt="The same house inside: an open living room and kitchen with white sofas and oak cabinets" loading="lazy"></figure>
+  </article>
 </div>
 
 <section class="field studio" id="studio" aria-labelledby="studio-h">
@@ -189,10 +199,10 @@ temporary  guest.example       14 days</pre></figure>
 </section>
 
 <section class="field on-ink contact" id="contact" aria-labelledby="contact-h">
-  <div data-ins>
-    <h2 id="contact-h" data-in>Say hello</h2>
-    <a class="mail" data-in href="mailto:{{EMAIL}}?subject=Hello%20Wildlogic">{{EMAIL}}</a>
-    <div class="contact-row" data-in>
+  <div>
+    <h2 id="contact-h">Say hello</h2>
+    <a class="mail" href="mailto:{{EMAIL}}?subject=Hello%20Wildlogic">{{EMAIL}}</a>
+    <div class="contact-row">
       <p>Questions about our games or plugins, press, or working together.</p>
       <dl>
         <div><dt>Where</dt><dd>Caldas da Rainha, Portugal</dd></div>
