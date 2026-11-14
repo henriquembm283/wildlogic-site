@@ -163,7 +163,7 @@ void main(){
     const fieldH = codeField(stage.querySelector("canvas"), stage, [...stage.querySelectorAll(".word svg")],
       innerWidth < 700 ? { cell: 15, r: 0.42, lx: 0.55, ly: 0.52, wx: 0.3, wy: 0.12 } : { cell: 15, r: 0.34, lx: 0.66, ly: 0.42, wx: 0.24, wy: 0.2 });
     const onScroll = () => {
-      const prog = progressOf(hero);
+      const prog = hero.offsetHeight <= innerHeight + 2 ? 0 : progressOf(hero);   // phone: the hero is one screen tall and does not dissolve
       if (fieldH) { fieldH.progT = prog; if (reduce) fieldH.render(0); }
       else stage.querySelector(".words").style.opacity = 1 - smooth(0.5, 0.95, prog);
       turn.style.opacity = smooth(0.52, 0.68, prog) * (1 - smooth(0.86, 0.98, prog));
@@ -196,20 +196,18 @@ void main(){
       pts.push(p);
     }
     const pins = links.map((l) => ({ l, g: l.dataset.g.split(",").map(Number), m: l.dataset.m.split(",").map(Number), x: 0, y: 0, w: 0, h: 0, flip: false }));
-    // with a mouse: pointing at a star brings that project's picture up, faded, behind the galaxy, so you see what the name is before you click
+    // with a mouse: pointing at a star turns it into a small round picture of that project, so you see what the name is before you click.
+    // The name steps aside to make room; where the edge of the screen leaves no room, the picture steps the other way instead.
     if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
-      const back = document.createElement("div"); back.className = "galaxy-back"; back.setAttribute("aria-hidden", "true"); gal.prepend(back);
       links.forEach((l) => {
         if (!l.dataset.bg) return; let img = null; const pin = pins.find((q) => q.l === l);
         const on = () => {
-          if (!img) { img = new Image(); img.alt = ""; img.decoding = "async"; img.src = l.dataset.bg; if (l.dataset.bgInv !== undefined) img.className = "inv"; back.append(img); }
-          // the picture hangs off its own star: under the name when there is room, above it when there is not, and never past the edges
-          const w = Math.min(340, W * 0.27), h = w * 0.625, up = pin.y + pin.h + h > H - 16;
-          const left = Math.max(16, Math.min(W - 16 - w, pin.flip ? pin.x + 12 - w : pin.x - 12)), top = up ? pin.y - 34 - h : pin.y + pin.h - 14;
-          img.style.width = w + "px"; img.style.left = left + "px"; img.style.top = top + "px"; img.style.transformOrigin = (pin.flip ? "100% " : "0% ") + (up ? "100%" : "0%");
-          requestAnimationFrame(() => requestAnimationFrame(() => img.classList.add("on")));
+          if (!img) { img = new Image(); img.alt = ""; img.decoding = "async"; img.src = l.dataset.bg; if (l.dataset.bgInv !== undefined) img.className = "inv"; l.querySelector("i").append(img); }
+          const m = 20, dir = pin.flip ? -1 : 1, room = pin.flip ? pin.x - pin.w + 22 - m : W - m - (pin.x - 22 + pin.w), nx = Math.max(0, Math.min(34, room));
+          l.style.setProperty("--nx", nx * dir + "px"); l.style.setProperty("--cx", -(34 - nx) * dir + "px");
+          requestAnimationFrame(() => requestAnimationFrame(() => l.classList.add("pic")));
         };
-        const off = () => { if (img) img.classList.remove("on"); };
+        const off = () => l.classList.remove("pic");
         l.addEventListener("pointerenter", on); l.addEventListener("pointerleave", off); l.addEventListener("focus", on); l.addEventListener("blur", off);
       });
     }
@@ -376,9 +374,9 @@ void main(){
         morphs.forEach(({ fig, text }) => {
           const pr = fig.parentElement.getBoundingClientRect();
           if (pr.bottom < 0 || pr.top > vh) { fig.style.clipPath = "none"; if (text) { text.style.opacity = ""; text.style.transform = "none"; } return; }   // off screen: rest open, so print and full-page captures are whole
-          const [e, r] = amt(fig, vh, 0.2, 0.62), k = 1 - e;
+          const st = innerWidth <= 900, [e, r] = amt(fig, vh, st ? 0.36 : 0.2, st ? 0.68 : 0.62), k = 1 - e;   // stacked on a phone: the picture is open as soon as it is properly on screen
           fig.style.clipPath = e > 0.999 ? "none" : `inset(${((r.height / 2 - 9) * k).toFixed(1)}px ${((r.width / 2 - 9) * k).toFixed(1)}px round ${(Math.min(r.width, r.height) / 2 * k).toFixed(1)}px)`;
-          if (text) { const [t] = amt(text, vh, 0.34, 0.62); text.style.opacity = t.toFixed(3); text.style.transform = t > 0.999 ? "none" : `translateY(${((1 - t) * 28 * (text.getBoundingClientRect().top > vh / 2 ? 1 : -1)).toFixed(1)}px)`; }
+          if (text) { const [t] = amt(text, vh, st ? 0.46 : 0.34, st ? 0.76 : 0.62); text.style.opacity = t.toFixed(3); text.style.transform = t > 0.999 ? "none" : `translateY(${((1 - t) * 28 * (text.getBoundingClientRect().top > vh / 2 ? 1 : -1)).toFixed(1)}px)`; }
         });
       };
       const ask = () => { if (!tick) tick = requestAnimationFrame(paint); };

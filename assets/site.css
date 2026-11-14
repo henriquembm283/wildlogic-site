@@ -84,7 +84,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
   .word-wild { width: 80vw; top: calc(var(--m) + 56px); }
   .word-logic { width: 86vw; bottom: auto; top: calc(var(--m) + 56px + 34vw); right: var(--m); }
   .hero-turn { top: auto; bottom: calc(var(--m) + 150px); right: var(--m); width: 60vw; }
-  .hero { height: 135svh; }
+  .hero { height: 100svh; }   /* phone: no pinned scene. The logo and the box simply scroll away, so there is never an empty screen */
 }
 
 /* ---------- galaxy: the code characters settle into stars; five of them are the work ---------- */
@@ -108,12 +108,15 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .stars a:focus-visible { outline: 3px solid var(--paper); outline-offset: 2px; }
 .js .galaxy { height: 100svh; min-height: 620px; padding: 0; display: block; overflow: hidden; isolation: isolate; }
 .js .galaxy canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; }
-.galaxy-back { position: absolute; inset: 0; z-index: -1; pointer-events: none; }
-.galaxy-back img { position: absolute; left: 0; top: 0; aspect-ratio: 16 / 10; height: auto; object-fit: cover; opacity: 0; scale: .92; transition: opacity 180ms var(--out), scale 180ms var(--out); }
-.galaxy-back img.on { opacity: .86; scale: 1; transition-duration: 300ms; }
-.galaxy-back img.inv { filter: invert(1) hue-rotate(180deg); }   /* white screens are flipped to dark so the section stays dark */
+.stars i img { position: absolute; left: 50%; top: 50%; width: 104px; height: 104px; max-width: none; margin: -52px 0 0 -52px; border-radius: 50%; object-fit: cover; outline: 2px solid var(--acc); translate: var(--cx, 0) 0; scale: .1; opacity: 0; transition: scale 180ms var(--out), opacity 180ms var(--out); }
+.stars span { transition: translate 240ms var(--out); }
+.stars a.pic { z-index: 2; }
+.stars a.pic::after { content: ""; position: absolute; inset: -32px -44px; z-index: -1; }   /* keeps the pointer "on" the star while the name steps aside */
+.stars a.pic i img { scale: 1; opacity: 1; transition-duration: 300ms; }
+.stars a.pic i::after { animation: none; opacity: 0; }
+.stars a.pic span { translate: var(--nx, 0) 0; }
 .js .stars a.core b { font-size: calc(var(--step-lead) * 1.45); }   /* the game is the centre of the galaxy and the lead name */
-@media (prefers-reduced-motion: reduce) { .galaxy-back img { transition: none; scale: 1; } }
+@media (prefers-reduced-motion: reduce) { .stars i img, .stars span { transition: none; } }
 .js .galaxy-head { position: absolute; left: var(--m); top: var(--m); }
 .js .stars { display: block; }
 .js .stars a { position: absolute; left: 0; top: 0; margin: -22px 0 0 -22px; will-change: transform; }
