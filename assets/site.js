@@ -71,7 +71,7 @@ void main(){
  vec3 inC=mix(ink,mix(loose,solid,sol),pres);
  gl_FragColor=vec4(mix(outC,inC,mk),1.);
 }`;
-  const GLYPHS = " .·:;-=+*/<>{}[]01LW#@";
+  const GLYPHS = /[?&]bits/.test(location.search) ? "  0101101001101001011010" : " .·:;-=+*/<>{}[]01LW#@";   // ?bits = preview of a zeros-and-ones pattern
 
   // Draws the field on `canvas`, with the given inline <svg> shapes cut out of it as the bright mass.
   function codeField(canvas, host, shapes, opt) {
@@ -196,15 +196,16 @@ void main(){
       pts.push(p);
     }
     const pins = links.map((l) => ({ l, g: l.dataset.g.split(",").map(Number), m: l.dataset.m.split(",").map(Number), x: 0, y: 0, w: 0, h: 0, flip: false }));
-    // with a mouse: pointing at a star turns it into a small round picture of that project, so you see what the name is before you click.
-    // The name steps aside to make room; where the edge of the screen leaves no room, the picture steps the other way instead.
+    // with a mouse: pointing at a star shows a small framed picture of that project beside it, so you see what the name is before you click.
     if (matchMedia("(hover: hover) and (pointer: fine)").matches) {
       links.forEach((l) => {
         if (!l.dataset.bg) return; let img = null; const pin = pins.find((q) => q.l === l);
         const on = () => {
           if (!img) { img = new Image(); img.alt = ""; img.decoding = "async"; img.src = l.dataset.bg; if (l.dataset.bgInv !== undefined) img.className = "inv"; l.querySelector("i").append(img); }
-          const m = 20, dir = pin.flip ? -1 : 1, room = pin.flip ? pin.x - pin.w + 22 - m : W - m - (pin.x - 22 + pin.w), nx = Math.max(0, Math.min(34, room));
-          l.style.setProperty("--nx", nx * dir + "px"); l.style.setProperty("--cx", -(34 - nx) * dir + "px");
+          // a framed picture sits just above its star (below when there is no room above), kept inside the section
+          const w = 184, h = 118, gr = gal.getBoundingClientRect(), ir = l.querySelector("i").getBoundingClientRect(), il = ir.left - gr.left, it = ir.top - gr.top, hr = head.getBoundingClientRect();
+          const left = Math.max(12, Math.min(W - 12 - w, pin.flip ? il + 44 - w : il)), up = it - 4 - h > (left < hr.right - gr.left + 16 ? hr.bottom - gr.top + 8 : 12), top = up ? it - 4 - h : it + 48;
+          l.style.setProperty("--tx", (left - il).toFixed(0) + "px"); l.style.setProperty("--ty", (top - it).toFixed(0) + "px"); l.style.setProperty("--to", (pin.flip ? "100% " : "0 ") + (up ? "100%" : "0"));
           requestAnimationFrame(() => requestAnimationFrame(() => l.classList.add("pic")));
         };
         const off = () => l.classList.remove("pic");

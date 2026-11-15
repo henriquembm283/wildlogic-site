@@ -76,14 +76,14 @@ home = f'''
   <canvas aria-hidden="true"></canvas>
   <div class="galaxy-head"><h2 id="work-h">What we make</h2><p>Eight things, one small studio. Pick a star.</p></div>
   <nav class="stars" aria-label="Projects">
-    <a href="#p-sk" data-bg="assets/img/shot-spires.webp" data-g="0,0" data-m=".14,.50"><i></i><span><b>Spirekeeper</b><small>Game</small></span></a>
-    <a href="#p-ar" data-bg="assets/img/ui-autorules.webp" data-bg-inv data-g="0,.44" data-m=".10,.24"><i></i><span><b>Automation Rules</b><small>Moodle plugin</small></span></a>
-    <a href="#p-tr" data-bg="assets/img/ui-teamreports.webp" data-bg-inv data-g="0,.7" data-m=".42,.37"><i></i><span><b>Team Reports</b><small>Moodle plugin</small></span></a>
-    <a href="#p-da" data-bg="assets/img/ui-domainaccess.webp" data-g="1,.36" data-m=".40,.64"><i></i><span><b>Domain Access</b><small>Moodle plugin</small></span></a>
-    <a href="#p-wow" data-bg="assets/img/ui-quickbuffs.webp" data-g="1,.56" data-m=".12,.78"><i></i><span><b>Quick Buffs</b><small>WoW add-on</small></span></a>
-    <a href="#p-it" data-bg="assets/img/ui-wecandoit-bench.webp" data-g="1,.76" data-m=".38,.90"><i></i><span><b>We can do IT</b><small>Training app</small></span></a>
-    <a href="#p-web" data-bg="assets/img/web-fotofranco.webp" data-g="0,.92" data-m=".50,.17"><i></i><span><b>Websites</b><small>For local shops</small></span></a>
-    <a href="#p-casa" data-bg="assets/img/casa-exterior.webp" data-g="1,.95" data-m=".3,.9"><i></i><span><b>House in 3D</b><small>3D visualisation</small></span></a>
+    <a href="#p-sk" data-bg="assets/img/th-sk.webp" data-g="0,0" data-m=".14,.50"><i></i><span><b>Spirekeeper</b><small>Game</small></span></a>
+    <a href="#p-ar" data-bg="assets/img/th-ar.webp" data-g="0,.44" data-m=".10,.24"><i></i><span><b>Automation Rules</b><small>Moodle plugin</small></span></a>
+    <a href="#p-tr" data-bg="assets/img/th-tr.webp" data-g="0,.7" data-m=".42,.37"><i></i><span><b>Team Reports</b><small>Moodle plugin</small></span></a>
+    <a href="#p-da" data-bg="assets/img/th-da.webp" data-g="1,.36" data-m=".40,.64"><i></i><span><b>Domain Access</b><small>Moodle plugin</small></span></a>
+    <a href="#p-wow" data-bg="assets/img/th-wow.webp" data-g="1,.56" data-m=".12,.78"><i></i><span><b>Quick Buffs</b><small>WoW add-on</small></span></a>
+    <a href="#p-it" data-bg="assets/img/th-it.webp" data-g="1,.76" data-m=".38,.90"><i></i><span><b>We can do IT</b><small>Training app</small></span></a>
+    <a href="#p-web" data-bg="assets/img/th-web.webp" data-g="0,.92" data-m=".50,.17"><i></i><span><b>Websites</b><small>For local shops</small></span></a>
+    <a href="#p-casa" data-bg="assets/img/th-casa.webp" data-g="1,.95" data-m=".3,.9"><i></i><span><b>House in 3D</b><small>3D visualisation</small></span></a>
   </nav>
 </section>
 <div class="projects">
@@ -92,33 +92,40 @@ home = f'''
       <h3 data-in><img src="assets/img/sk/logo.webp" width="1400" height="174" alt="Spirekeeper"></h3>
       <p data-in class="kind">Game · Coming soon to Steam and Android</p>
       <p data-in class="desc">A painted tower defense with a fully voiced story. Build towers of seven elements, fuse them, and stop the Hollow King.</p>
+      <ul data-in class="facts"><li><b>7 elements</b><span>Fire, Water, Earth, Air, Lightning, Nature and Dark.</span></li><li><b>9 fusions</b><span>Fuse two towers into one, then into 6 super towers.</span></li><li><b>68 levels</b><span>Ten chapters, each in its own land.</span></li><li><b>5 heroes</b><span>Each with their own powers and a skill tree.</span></li></ul>
       <a data-in class="btn" href="spirekeeper/">Enter the Spirekeeper world</a>
     </div>
     <figure class="proj-media" data-reveal><video muted loop playsinline preload="none" data-autoplay poster="assets/video/rift-poster.jpg" tabindex="-1" aria-hidden="true"><source src="assets/video/rift-loop.mp4" type="video/mp4"></video></figure>
+    <ul class="proj-strip"><li><img src="assets/img/s-sk-map.webp" width="800" height="450" alt="The Spirekeeper campaign map with its chapters and levels" loading="lazy"><span>Ten lands on one map</span></li><li><img src="assets/img/s-sk-heroes.webp" width="800" height="450" alt="The hero screen showing Ember and her skill tree" loading="lazy"><span>Heroes and skill trees</span></li><li><img src="assets/img/s-sk-temple.webp" width="800" height="450" alt="A battle in the Sunken Temple with fusion towers" loading="lazy"><span>A battle in the Sunken Temple</span></li></ul>
   </article>
   <article class="proj" id="p-ar" data-k="ar" data-ins>
     <div class="proj-text">
       <h3 data-in>Automation Rules</h3>
       <p data-in class="kind">Moodle plugin · Free and Pro</p>
       <p data-in class="desc">"When this happens, do that." Nudge learners who stop showing up, chase assignments before they are late, and enrol people in the next course on their path.</p>
+      <ul data-in class="facts"><li><b>6 triggers</b><span>Enrolled, completed a course or an activity, inactive for days, not finished in time, assignment due soon.</span></li><li><b>3 actions</b><span>Send a message, enrol in another course, add to a cohort.</span></li><li><b>Preview first</b><span>See exactly who a rule would reach before anything is sent.</span></li><li><b>5 recipes</b><span>Ready-made rules to start from, like a 7-day nudge.</span></li></ul>
       <a data-in class="btn" href="mailto:{{EMAIL}}?subject=Automation%20Rules">Ask about this plugin</a>
     </div>
     <figure class="proj-media" data-reveal><img src="assets/img/ui-autorules.webp" width="1280" height="880" alt="The Automation Rules screen in Moodle" loading="lazy"></figure>
+    <ul class="proj-strip"><li><img src="assets/img/s-ar-1.webp" width="800" height="500" alt="The list of rules in Moodle" loading="lazy"><span>Your rules in one list</span></li><li><img src="assets/img/s-ar-2.webp" width="800" height="500" alt="A preview listing the learners a rule would reach" loading="lazy"><span>Preview: who it would reach</span></li><li><img src="assets/img/s-ar-3.webp" width="800" height="500" alt="The log of what a rule did" loading="lazy"><span>A log of every action</span></li></ul>
   </article>
   <article class="proj" id="p-tr" data-k="tr" data-ins>
     <div class="proj-text">
       <h3 data-in>Team Reports</h3>
       <p data-in class="kind">Moodle plugin · Free and Pro</p>
       <p data-in class="desc">Each manager gets a short email about their own team: who started, who is overdue, who went quiet. The full list arrives as a spreadsheet.</p>
+      <ul data-in class="facts"><li><b>3 reports</b><span>Course progress, overdue learners, inactive learners.</span></li><li><b>4 ways to set teams</b><span>By manager field, shared department, cohort or course.</span></li><li><b>On a schedule</b><span>Every day, week or month, at the hour you pick.</span></li><li><b>Spreadsheet attached</b><span>The full list as a CSV file that opens cleanly in Excel.</span></li></ul>
       <a data-in class="btn" href="mailto:{{EMAIL}}?subject=Team%20Reports">Ask about this plugin</a>
     </div>
     <figure class="proj-media" data-reveal><img src="assets/img/ui-teamreports.webp" width="1300" height="890" alt="A Team Reports email and report in Moodle" loading="lazy"></figure>
+    <ul class="proj-strip"><li><img src="assets/img/s-tr-1.webp" width="800" height="500" alt="A preview of one manager's overdue training report" loading="lazy"><span>What a manager receives</span></li><li><img src="assets/img/s-tr-2.webp" width="800" height="500" alt="The list of scheduled reports in Moodle" loading="lazy"><span>Reports on a schedule</span></li><li><img src="assets/img/s-tr-3.webp" width="800" height="500" alt="The log of sent reports" loading="lazy"><span>A log of every send</span></li></ul>
   </article>
   <article class="proj" id="p-da" data-k="da" data-ins>
     <div class="proj-text">
       <h3 data-in>Domain Access</h3>
       <p data-in class="kind">Moodle plugin · Free and Pro</p>
       <p data-in class="desc">People sign up with their work email. Lists of allowed, blocked and temporary email domains decide who gets an account, so nobody approves each one by hand.</p>
+      <ul data-in class="facts"><li><b>Allow</b><span>Approved as soon as the person confirms their email.</span></li><li><b>Deny</b><span>Refused on the sign-up form, before any account exists.</span></li><li><b>Temporary</b><span>An account with an end date, and a warning email before it ends.</span></li><li><b>No list</b><span>Waits for an approver, or is refused. You choose.</span></li></ul>
       <a data-in class="btn" href="mailto:{{EMAIL}}?subject=Domain%20Access">Ask about this plugin</a>
     </div>
     <figure class="proj-media" data-reveal data-desk><pre data-ui role="img" aria-label="An example list of allowed, temporary and blocked email domains">allow      escola.example      approved
@@ -135,6 +142,7 @@ temporary  guest.example       14 days</pre></figure>
       <h3 data-in>Quick Buffs</h3>
       <p data-in class="kind">World of Warcraft add-on · Free</p>
       <p data-in class="desc">One key buffs the nearest player who is missing your buff, and refreshes the ones about to run out. No clicking, no targeting.</p>
+      <ul data-in class="facts"><li><b>One key</b><span>Bind it once. It picks who needs the buff.</span></li><li><b>Free</b><span>On CurseForge, for World of Warcraft.</span></li></ul>
       <a data-in class="btn" href="https://www.curseforge.com/wow/addons/quick-buffs" rel="noopener">Get it on CurseForge</a>
     </div>
     <figure class="proj-media duo" data-reveal><img src="assets/img/ui-quickbuffs.webp" width="1178" height="666" alt="Quick Buffs in the game: its icon and a box showing Mark of the Wild, buffs cast 1" loading="lazy"><img class="inset" src="assets/img/ui-quickbuffs-page.webp" width="947" height="592" alt="The Quick Buffs page on CurseForge" loading="lazy"></figure>
@@ -144,6 +152,7 @@ temporary  guest.example       14 days</pre></figure>
       <h3 data-in>We can do IT</h3>
       <p data-in class="kind">IT support training · In development</p>
       <p data-in class="desc">Learn IT support by working real tickets in a safe lab: a built-in Linux terminal, a 3D bench for hardware jobs, and a story about your first year on a help desk.</p>
+      <ul data-in class="facts"><li><b>10 tickets</b><span>Networking, Linux, Security and Hardware.</span></li><li><b>4 tiers</b><span>Trainee to Engineer. Hints fade as you climb.</span></li><li><b>12 articles</b><span>A small Library that points to the official docs.</span></li><li><b>Runs offline</b><span>One file on a USB stick. No install, no internet.</span></li></ul>
     </div>
     <figure class="proj-media duo wide" data-reveal><img src="assets/img/ui-wecandoit.webp" width="1280" height="724" alt="We can do IT: a ticket about an intranet that is down, with a Linux terminal showing a full disk" loading="lazy"><img class="inset" src="assets/img/ui-wecandoit-bench.webp" width="1280" height="800" alt="A hardware ticket: a 3D desktop PC on a bench, ready for a RAM upgrade" loading="lazy"></figure>
   </article>
@@ -152,29 +161,33 @@ temporary  guest.example       14 days</pre></figure>
       <h3 data-in>Websites</h3>
       <p data-in class="kind">Web design · For local shops</p>
       <p data-in class="desc">One page, made by hand, quick on a phone, with one moment people remember. Here the page is a camera: click and it takes the picture. Our design for Foto Franco, a photo studio in Caldas da Rainha since 1949.</p>
+      <ul data-in class="facts"><li><b>Phone first</b><span>Designed for the small screen, then the big one.</span></li><li><b>One moment</b><span>One thing people remember. The rest stays calm.</span></li><li><b>Easy to edit</b><span>The owner changes texts and prices from a simple panel.</span></li><li><b>Gift voucher</b><span>On Foto Franco, customers build one on the page.</span></li></ul>
       <a data-in class="btn" href="mailto:{{EMAIL}}">Ask for a website</a>
     </div>
     <figure class="proj-media duo wide" data-reveal><img src="assets/img/web-fotofranco.webp" width="1280" height="724" alt="The Foto Franco site opens like a camera viewfinder, with focus marks, exposure numbers and a shutter button" loading="lazy"><img class="inset" src="assets/img/web-fotofranco-2.webp" width="1280" height="800" alt="A gift voucher you build on the Foto Franco site" loading="lazy"></figure>
+    <ul class="proj-strip"><li><img src="assets/img/s-web-1.webp" width="800" height="500" alt="The Foto Franco history section with a large 1949" loading="lazy"><span>The story since 1949</span></li><li><img src="assets/img/s-web-2.webp" width="800" height="500" alt="The Foto Franco list of services" loading="lazy"><span>Services, clear and short</span></li><li><img src="assets/img/s-web-3.webp" width="800" height="500" alt="A film strip section on the Foto Franco site" loading="lazy"><span>A film strip of the work</span></li></ul>
   </article>
   <article class="proj" id="p-casa" data-k="casa" data-ins>
     <div class="proj-text">
       <h3 data-in>House in 3D</h3>
       <p data-in class="kind">3D visualisation · Blender</p>
       <p data-in class="desc">A whole house modelled 1:1 from its plans, garden and pool included: 29 photo-real views by day and at dusk, a two-minute video tour and a walk-through for a VR headset.</p>
+      <ul data-in class="facts"><li><b>1:1</b><span>Every wall from the measurements on the plans.</span></li><li><b>29 views</b><span>Photo-real, by day and at dusk.</span></li><li><b>2-minute tour</b><span>A video walk through every room.</span></li><li><b>VR</b><span>A walk-through for a headset.</span></li></ul>
       <a data-in class="btn" href="mailto:{{EMAIL}}?subject=3D%20visualisation">Ask about a 3D model</a>
     </div>
     <figure class="proj-media duo wide" data-reveal><img src="assets/img/casa-exterior.webp" width="1600" height="905" alt="A rendered modern house seen from its pool deck, with a parasol, sun loungers and a car under the terrace" loading="lazy"><img class="inset" src="assets/img/casa-sala.webp" width="1280" height="800" alt="The same house inside: an open living room and kitchen with white sofas and oak cabinets" loading="lazy"></figure>
+    <ul class="proj-strip"><li><img src="assets/img/s-casa-1.webp" width="800" height="450" alt="Rendered kitchen with oak cabinets and a breakfast bar" loading="lazy"><span>Kitchen</span></li><li><img src="assets/img/s-casa-2.webp" width="800" height="450" alt="Rendered bedroom suite with a wide window" loading="lazy"><span>Suite</span></li><li><img src="assets/img/s-casa-3.webp" width="800" height="450" alt="The house and pool rendered at dusk with the lights on" loading="lazy"><span>The pool at dusk</span></li></ul>
   </article>
 </div>
 
 <section class="field studio" id="studio" aria-labelledby="studio-h">
   <h2 id="studio-h">The studio</h2>
   <p class="statement">Wildlogic is a small software studio from Caldas da Rainha, Portugal. We design, build and publish our own games and tools. No ads in anything we make. No trackers. We never sell anyone's data.</p>
-  <ul class="nums" data-ins>
-    <li data-in><b data-count="68">68</b><span>levels in Spirekeeper</span></li>
-    <li data-in><b data-count="287">287</b><span>recorded voice lines</span></li>
-    <li data-in><b data-count="3">3</b><span>Moodle plugins</span></li>
-    <li data-in><b>0</b><span>ads or trackers, anywhere</span></li>
+  <ul class="nums">
+    <li><b data-count="68">68</b><span>levels in Spirekeeper</span></li>
+    <li><b data-count="287">287</b><span>recorded voice lines</span></li>
+    <li><b data-count="3">3</b><span>Moodle plugins</span></li>
+    <li><b>0</b><span>ads or trackers, anywhere</span></li>
   </ul>
   <div class="ribbon" role="img" aria-label="What we build with: JavaScript, HTML Canvas, WebGL, PixiJS, Capacitor, PHP, Moodle, Lua">
     <div aria-hidden="true">{RIBBON}{RIBBON}</div>
@@ -184,16 +197,16 @@ temporary  guest.example       14 days</pre></figure>
 <section class="company" aria-labelledby="co-h">
   <canvas aria-hidden="true"></canvas>
   <span class="mark">{svg("wl")}</span>
-  <div class="co-card" data-ins>
-    <h2 id="co-h" data-in>The company</h2>
+  <div class="co-card">
+    <h2 id="co-h">The company</h2>
     <dl>
-      <div data-in><dt>Legal name</dt><dd>{{LEGAL}}</dd></div>
-      <div data-in><dt>NIPC</dt><dd>{{NIPC}}</dd></div>
-      <div data-in><dt>Based in</dt><dd>Caldas da Rainha, Portugal</dd></div>
-      <div data-in><dt>We make</dt><dd>Games, Moodle plugins, a World of Warcraft add&#8209;on</dd></div>
-      <div data-in><dt>Where it runs</dt><dd>Steam and Android (coming soon), Moodle 4.1 or later</dd></div>
-      <div data-in><dt>Languages</dt><dd>English and Portuguese</dd></div>
-      <div data-in><dt>Privacy</dt><dd>No ads, no trackers, no data sold. <a href="privacy/">Read the policy</a></dd></div>
+      <div><dt>Legal name</dt><dd>{{LEGAL}}</dd></div>
+      <div><dt>NIPC</dt><dd>{{NIPC}}</dd></div>
+      <div><dt>Based in</dt><dd>Caldas da Rainha, Portugal</dd></div>
+      <div><dt>We make</dt><dd>Games, Moodle plugins, a World of Warcraft add&#8209;on</dd></div>
+      <div><dt>Where it runs</dt><dd>Steam and Android (coming soon), Moodle 4.1 or later</dd></div>
+      <div><dt>Languages</dt><dd>English and Portuguese</dd></div>
+      <div><dt>Privacy</dt><dd>No ads, no trackers, no data sold. <a href="privacy/">Read the policy</a></dd></div>
     </dl>
   </div>
 </section>

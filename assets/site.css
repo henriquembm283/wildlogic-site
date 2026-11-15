@@ -108,15 +108,11 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .stars a:focus-visible { outline: 3px solid var(--paper); outline-offset: 2px; }
 .js .galaxy { height: 100svh; min-height: 620px; padding: 0; display: block; overflow: hidden; isolation: isolate; }
 .js .galaxy canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; }
-.stars i img { position: absolute; left: 50%; top: 50%; width: 104px; height: 104px; max-width: none; margin: -52px 0 0 -52px; border-radius: 50%; object-fit: cover; outline: 2px solid var(--acc); translate: var(--cx, 0) 0; scale: .1; opacity: 0; transition: scale 180ms var(--out), opacity 180ms var(--out); }
-.stars span { transition: translate 240ms var(--out); }
+.stars i img { position: absolute; left: var(--tx, 0); top: var(--ty, 0); width: 176px; height: 110px; max-width: none; object-fit: cover; border: 4px solid #1c1c1c; outline: 2px solid var(--acc); box-sizing: content-box; transform-origin: var(--to, 0 100%); scale: .2; opacity: 0; pointer-events: none; transition: scale 180ms var(--out), opacity 180ms var(--out); }
 .stars a.pic { z-index: 2; }
-.stars a.pic::after { content: ""; position: absolute; inset: -32px -44px; z-index: -1; }   /* keeps the pointer "on" the star while the name steps aside */
 .stars a.pic i img { scale: 1; opacity: 1; transition-duration: 300ms; }
-.stars a.pic i::after { animation: none; opacity: 0; }
-.stars a.pic span { translate: var(--nx, 0) 0; }
 .js .stars a.core b { font-size: calc(var(--step-lead) * 1.45); }   /* the game is the centre of the galaxy and the lead name */
-@media (prefers-reduced-motion: reduce) { .stars i img, .stars span { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .stars i img { transition: none; } }
 .js .galaxy-head { position: absolute; left: var(--m); top: var(--m); }
 .js .stars { display: block; }
 .js .stars a { position: absolute; left: 0; top: 0; margin: -22px 0 0 -22px; will-change: transform; }
@@ -125,9 +121,9 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 @media (max-width: 760px) { .stars b { font-size: 1.125rem; } .js .stars a.core b { font-size: 1.375rem; } .stars small { font-size: .8125rem; } .stars span { padding: 4px 8px; } }
 
 /* ---------- projects: one screen each, the picture clear ---------- */
-.proj { --tint: #1c1c1c; background: var(--tint); color: var(--paper); padding: clamp(64px, 8vw, 120px) var(--m); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--m); row-gap: 28px; align-items: center; }
+.proj { --tint: #1c1c1c; background: var(--tint); color: var(--paper); padding: clamp(44px, 5vw, 80px) var(--m); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--m); row-gap: 28px; align-items: center; }
 .proj[data-k="sk"] { --tint: #17102a; } .proj[data-k="ar"] { --tint: #0f1d42; } .proj[data-k="tr"] { --tint: #0a2e28; } .proj[data-k="da"] { --tint: #2c1610; } .proj[data-k="wow"] { --tint: #0f1a12; } .proj[data-k="it"] { --tint: #0b2530; } .proj[data-k="web"] { --tint: #2b1023; } .proj[data-k="casa"] { --tint: #272012; }
-.proj-text { grid-column: 1 / span 4; grid-row: 1; display: grid; gap: 16px; justify-items: start; }
+.proj-text { grid-column: 1 / span 4; grid-row: 1 / span 2; display: grid; gap: 16px; justify-items: start; }
 .proj h3 { font-size: clamp(2.25rem, 1.2rem + 3.6vw, 4.75rem); line-height: .94; }
 .proj .kind { font-size: var(--step-small); font-weight: 500; }
 .proj .desc { max-width: 36ch; text-wrap: pretty; }
@@ -160,7 +156,15 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .desk-log span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .desk-log b { flex: none; font-weight: 500; color: var(--acc); }
 @media (max-width: 900px) { .js .desk { aspect-ratio: 4 / 3; } .desk-log li:nth-child(n+4) { display: none; } .stamp { top: 36%; } }
-@media (max-width: 900px) { .proj-text, .proj-media { grid-column: 1 / -1; grid-row: auto; } .proj-media { order: -1; margin: 0 calc(var(--m) * -.5); } }
+.facts { margin: 4px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; max-width: 40ch; }
+.facts li { display: grid; grid-template-columns: 9.5em 1fr; column-gap: 14px; align-items: baseline; }
+.facts b { font-weight: 600; color: var(--acc); }
+.facts span { font-size: var(--step-small); line-height: 1.4; color: rgb(244 243 239 / .86); }
+.proj-strip { grid-column: 6 / -1; grid-row: 2; margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(var(--m) * .5); }
+.proj-strip li { display: grid; gap: 8px; }
+.proj-strip img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: 0 0; background: #111; }
+.proj-strip span { font-size: var(--step-small); color: rgb(244 243 239 / .8); }
+@media (max-width: 900px) { .proj-text, .proj-media, .proj-strip { grid-column: 1 / -1; grid-row: auto; } .proj-strip { gap: 8px; } .proj-strip span { font-size: .8125rem; } .facts li { grid-template-columns: 7.5em 1fr; } .proj-media { order: -1; margin: 0 calc(var(--m) * -.5); } }
 
 /* ---------- studio: a statement you read into, the numbers, the tools, the company card ---------- */
 .studio { display: grid; gap: clamp(56px, 8vw, 120px); overflow: hidden; }
