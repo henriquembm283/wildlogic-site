@@ -35,7 +35,7 @@ precision highp float;
 #else
 precision mediump float;
 #endif
-uniform sampler2D uA,uM;uniform vec2 uRes,uLens;uniform float uCell,uR,uN,uT,uIn,uDis,uDisA,uDisB,uDim,uTex;
+uniform sampler2D uA,uM;uniform vec2 uRes,uLens;uniform float uCell,uR,uN,uT,uIn,uDis,uDisA,uDisB,uDim,uTex,uKeep;
 float h(vec2 p){p=fract(p*vec2(123.34,456.21));p+=dot(p,p+45.32);return fract(p.x*p.y);}
 float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);
  return mix(mix(h(i),h(i+vec2(1.,0.)),f.x),mix(h(i+vec2(0.,1.)),h(i+1.),f.x),f.y);}
@@ -56,9 +56,9 @@ void main(){
  float h1=h(i1),h2=h(i2+17.);
  vec2 c1=(i1+.5)*vec2(uCell,uCell*1.4);
  float m=smoothstep(uR,uR*.15,distance(c1,uLens*uRes));
- float a1=smoothstep(0.,.15,uIn*1.15-h1)*smoothstep(0.,.15,h1*.85+.15-uDis)*smoothstep(.2,1.,px.y/(uCell*8.));
+ float a1=smoothstep(0.,.15,uIn*1.15-h1)*smoothstep(0.,.15,h1*.85+.15-max(uDis,uKeep*.55*smoothstep(.5,1.,px.y/uRes.y)))*smoothstep(.2,1.,px.y/(uCell*8.))*(1.-uKeep*step(uRes.y,(i1.y+1.)*uCell*1.4));
  float sp=step(1.-(.009+.06*m)*uDim,h(i1+floor(uT*1.4+h1*9.)));
- vec3 lit=min(paper*(.16+.5*v1)*(1.+2.4*m)*uDim,paper);
+ vec3 lit=min(paper*(.16+.5*v1)*(1.+2.4*m*(1.-uKeep*smoothstep(.6,1.,px.y/uRes.y)))*uDim,paper);
  vec3 outC=mix(ink,mix(lit,acc,sp),g1*a1);
  float in2=clamp(uIn*1.7-.7,0.,1.);
  float pres=smoothstep(0.,.15,uIn*1.15-h2)*smoothstep(0.,.15,h2*.85+.15-uDisB);
@@ -93,7 +93,7 @@ void main(){
     gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, 1, 1]), gl.STATIC_DRAW);
     const loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
-    const U = {}; ["uA", "uM", "uRes", "uLens", "uCell", "uR", "uN", "uT", "uIn", "uDis", "uDisA", "uDisB", "uDim", "uTex"].forEach((k) => (U[k] = gl.getUniformLocation(pr, k)));
+    const U = {}; ["uA", "uM", "uRes", "uLens", "uCell", "uR", "uN", "uT", "uIn", "uDis", "uDisA", "uDisB", "uDim", "uTex", "uKeep"].forEach((k) => (U[k] = gl.getUniformLocation(pr, k)));
     const tex = (unit, src) => { const t = gl.createTexture(); gl.activeTexture(gl.TEXTURE0 + unit); gl.bindTexture(gl.TEXTURE_2D, t);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
@@ -133,7 +133,7 @@ void main(){
       gl.uniform1f(U.uCell, (small ? Math.max(9, opt.cell * 0.72) : opt.cell) * d);
       gl.uniform1f(U.uR, Math.min(w, hgt) * opt.r);
       gl.uniform1f(U.uT, reduce ? 3 : now / 1000);
-      gl.uniform1f(U.uIn, 1 - Math.pow(1 - tin, 3)); gl.uniform1f(U.uDim, opt.dim || 1); gl.uniform1f(U.uTex, opt.tex == null ? 1 : opt.tex);
+      gl.uniform1f(U.uIn, 1 - Math.pow(1 - tin, 3)); gl.uniform1f(U.uDim, opt.dim || 1); gl.uniform1f(U.uTex, opt.tex == null ? 1 : opt.tex); gl.uniform1f(U.uKeep, opt.keep ? 1 : 0);
       gl.uniform1f(U.uDis, smooth(0.08, 0.9, p) * (opt.keep ? 0.58 : 1));   // keep: the field thins out but never empties, so it can carry on into the next section gl.uniform1f(U.uDisA, smooth(0.3, 0.82, p)); gl.uniform1f(U.uDisB, smooth(0.5, 1, p));
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       host.classList.add("gl");
@@ -215,16 +215,18 @@ void main(){
     // the zeros and ones of the hero carry on into the top of this section and thin out to nothing, so the two sections read as one sky
     const bits = document.createElement("canvas"), bctx = bits.getContext("2d"); let bitsAt = -1e9, bitsW = 0, bitsN = 0;
     const bitsPaint = (now) => {
-      bitsAt = now; bitsW = W; bitsN++; const cw = W < 700 ? 9 : 11, ch = cw * 1.4, fh = Math.min(H * 0.5, 460), hr = head.getBoundingClientRect(), gr = gal.getBoundingClientRect();
+      bitsAt = now; bitsW = W; bitsN++; const cw = W < 700 ? 9 : 11, ch = cw * 1.4, fh = Math.min(H * 0.55, 500), hr = head.getBoundingClientRect(), gr = gal.getBoundingClientRect();
+      const y0 = 0;                                                    // whole rows only on both sides of the join (the hero drops its cut-off last row), so no line shows
       bits.width = W * dpr; bits.height = Math.ceil(fh) * dpr; bctx.setTransform(dpr, 0, 0, dpr, 0, 0); bctx.clearRect(0, 0, W, fh);
       bctx.font = "700 " + (cw * 1.15).toFixed(1) + 'px "Bricolage Grotesque", sans-serif'; bctx.textAlign = "center"; bctx.textBaseline = "middle"; bctx.fillStyle = "#f4f3ef";
-      const hx = hr.right - gr.left + 14, hy = hr.bottom - gr.top + 10, hh = (ix, iy, k) => { const v = Math.sin(ix * 12.9898 + iy * 78.233 + k * 37.719) * 43758.5453; return v - Math.floor(v); };
-      for (let iy = 0; iy * ch < fh; iy++) { const t = 1 - (iy * ch) / fh, keep = t * t * 0.62;
-        for (let ix = 0; ix * cw < W; ix++) { const x = ix * cw + cw / 2, y = iy * ch + ch / 2;
-          if (x < hx && y < hy) continue;                               // nothing behind the heading
+      const hx = hr.right - gr.left, hy = hr.bottom - gr.top, hh = (ix, iy, k) => { const v = Math.sin(ix * 12.9898 + iy * 78.233 + k * 37.719) * 43758.5453; return v - Math.floor(v); };
+      for (let iy = 0; y0 + iy * ch < fh; iy++) { const y = y0 + iy * ch + ch / 2, t = clamp01(1 - y / fh), keep = 0.5 * t * t;
+        for (let ix = 0; ix * cw < W; ix++) { const x = ix * cw + cw / 2;
           if (hh(ix, iy, 1) > keep) continue;                            // fewer and fewer the further down
+          const near = clamp01(Math.max(x - hx, y - hy, 0) / 90);        // fades out softly towards the heading instead of stopping at a box
+          if (near <= 0) continue;
           const flip = hh(ix, iy, 2) < 0.12 ? bitsN : 0;                 // a few change now and then
-          bctx.globalAlpha = (0.14 + 0.3 * hh(ix, iy, 3)) * (0.35 + 0.65 * t); bctx.fillText(hh(ix, iy, 4 + flip) > 0.5 ? "1" : "0", x, y); } }
+          bctx.globalAlpha = (0.2 + 0.4 * hh(ix, iy, 3)) * (0.3 + 0.7 * t) * near; bctx.fillText(hh(ix, iy, 4 + flip) > 0.5 ? "1" : "0", x, y); } }
     };
     let W = 0, H = 0, dpr = 1, rx = 0, ry = 0, raf = 0, vis = false, born = 0, mx = 0, my = 0, ox = 0, oy = 0, tilt = 0, cx0 = 0, cy0 = 0;
     const spot = (r, a, rot, grow) => { const x = Math.cos(a + rot) * r * rx * grow, y = Math.sin(a + rot) * r * ry * grow, ct = Math.cos(tilt), st = Math.sin(tilt); return [x * ct - y * st, x * st + y * ct]; };
