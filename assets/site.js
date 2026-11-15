@@ -56,7 +56,7 @@ void main(){
  float h1=h(i1),h2=h(i2+17.);
  vec2 c1=(i1+.5)*vec2(uCell,uCell*1.4);
  float m=smoothstep(uR,uR*.15,distance(c1,uLens*uRes));
- float a1=smoothstep(0.,.15,uIn*1.15-h1)*smoothstep(0.,.15,h1*.85+.15-uDis);
+ float a1=smoothstep(0.,.15,uIn*1.15-h1)*smoothstep(0.,.15,h1*.85+.15-uDis)*smoothstep(.2,1.,px.y/(uCell*8.));
  float sp=step(1.-(.009+.06*m)*uDim,h(i1+floor(uT*1.4+h1*9.)));
  vec3 lit=min(paper*(.16+.5*v1)*(1.+2.4*m)*uDim,paper);
  vec3 outC=mix(ink,mix(lit,acc,sp),g1*a1);
@@ -71,7 +71,7 @@ void main(){
  vec3 inC=mix(ink,mix(loose,solid,sol),pres);
  gl_FragColor=vec4(mix(outC,inC,mk),1.);
 }`;
-  const GLYPHS = /[?&]bits/.test(location.search) ? "  0101101001101001011010" : " .·:;-=+*/<>{}[]01LW#@";   // ?bits = preview of a zeros-and-ones pattern
+  const GLYPHS = "  0101101001101001011010";   // zeros and ones, light to dense: this is an IT company
 
   // Draws the field on `canvas`, with the given inline <svg> shapes cut out of it as the bright mass.
   function codeField(canvas, host, shapes, opt) {
@@ -130,11 +130,11 @@ void main(){
       state.prog = reduce ? state.progT : state.prog + (state.progT - state.prog) * 0.09;
       const small = host.clientWidth < 700, p = state.prog, tin = reduce ? 1 : clamp01((now - state.t0) / 1800);
       gl.uniform2f(U.uRes, w, hgt); gl.uniform2f(U.uLens, L.x, L.y);
-      gl.uniform1f(U.uCell, (small ? opt.cell * 0.72 : opt.cell) * d);
+      gl.uniform1f(U.uCell, (small ? Math.max(9, opt.cell * 0.72) : opt.cell) * d);
       gl.uniform1f(U.uR, Math.min(w, hgt) * opt.r);
       gl.uniform1f(U.uT, reduce ? 3 : now / 1000);
       gl.uniform1f(U.uIn, 1 - Math.pow(1 - tin, 3)); gl.uniform1f(U.uDim, opt.dim || 1); gl.uniform1f(U.uTex, opt.tex == null ? 1 : opt.tex);
-      gl.uniform1f(U.uDis, smooth(0.08, 0.9, p)); gl.uniform1f(U.uDisA, smooth(0.3, 0.82, p)); gl.uniform1f(U.uDisB, smooth(0.5, 1, p));
+      gl.uniform1f(U.uDis, smooth(0.08, 0.9, p) * (opt.keep ? 0.58 : 1));   // keep: the field thins out but never empties, so it can carry on into the next section gl.uniform1f(U.uDisA, smooth(0.3, 0.82, p)); gl.uniform1f(U.uDisB, smooth(0.5, 1, p));
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       host.classList.add("gl");
     };
@@ -161,7 +161,7 @@ void main(){
     const stage = hero.querySelector(".hero-stage");
     const say = stage.querySelector(".hero-say"), turn = stage.querySelector(".hero-turn");
     const fieldH = codeField(stage.querySelector("canvas"), stage, [...stage.querySelectorAll(".word svg")],
-      innerWidth < 700 ? { cell: 15, r: 0.42, lx: 0.55, ly: 0.52, wx: 0.3, wy: 0.12 } : { cell: 15, r: 0.34, lx: 0.66, ly: 0.42, wx: 0.24, wy: 0.2 });
+      innerWidth < 700 ? { cell: 12.5, keep: 1, r: 0.42, lx: 0.55, ly: 0.52, wx: 0.3, wy: 0.12 } : { cell: 11, keep: 1, r: 0.34, lx: 0.66, ly: 0.42, wx: 0.24, wy: 0.2 });
     const onScroll = () => {
       const prog = hero.offsetHeight <= innerHeight + 2 ? 0 : progressOf(hero);   // phone: the hero is one screen tall and does not dissolve
       if (fieldH) { fieldH.progT = prog; if (reduce) fieldH.render(0); }
@@ -212,6 +212,20 @@ void main(){
         l.addEventListener("pointerenter", on); l.addEventListener("pointerleave", off); l.addEventListener("focus", on); l.addEventListener("blur", off);
       });
     }
+    // the zeros and ones of the hero carry on into the top of this section and thin out to nothing, so the two sections read as one sky
+    const bits = document.createElement("canvas"), bctx = bits.getContext("2d"); let bitsAt = -1e9, bitsW = 0, bitsN = 0;
+    const bitsPaint = (now) => {
+      bitsAt = now; bitsW = W; bitsN++; const cw = W < 700 ? 9 : 11, ch = cw * 1.4, fh = Math.min(H * 0.5, 460), hr = head.getBoundingClientRect(), gr = gal.getBoundingClientRect();
+      bits.width = W * dpr; bits.height = Math.ceil(fh) * dpr; bctx.setTransform(dpr, 0, 0, dpr, 0, 0); bctx.clearRect(0, 0, W, fh);
+      bctx.font = "700 " + (cw * 1.15).toFixed(1) + 'px "Bricolage Grotesque", sans-serif'; bctx.textAlign = "center"; bctx.textBaseline = "middle"; bctx.fillStyle = "#f4f3ef";
+      const hx = hr.right - gr.left + 14, hy = hr.bottom - gr.top + 10, hh = (ix, iy, k) => { const v = Math.sin(ix * 12.9898 + iy * 78.233 + k * 37.719) * 43758.5453; return v - Math.floor(v); };
+      for (let iy = 0; iy * ch < fh; iy++) { const t = 1 - (iy * ch) / fh, keep = t * t * 0.62;
+        for (let ix = 0; ix * cw < W; ix++) { const x = ix * cw + cw / 2, y = iy * ch + ch / 2;
+          if (x < hx && y < hy) continue;                               // nothing behind the heading
+          if (hh(ix, iy, 1) > keep) continue;                            // fewer and fewer the further down
+          const flip = hh(ix, iy, 2) < 0.12 ? bitsN : 0;                 // a few change now and then
+          bctx.globalAlpha = (0.14 + 0.3 * hh(ix, iy, 3)) * (0.35 + 0.65 * t); bctx.fillText(hh(ix, iy, 4 + flip) > 0.5 ? "1" : "0", x, y); } }
+    };
     let W = 0, H = 0, dpr = 1, rx = 0, ry = 0, raf = 0, vis = false, born = 0, mx = 0, my = 0, ox = 0, oy = 0, tilt = 0, cx0 = 0, cy0 = 0;
     const spot = (r, a, rot, grow) => { const x = Math.cos(a + rot) * r * rx * grow, y = Math.sin(a + rot) * r * ry * grow, ct = Math.cos(tilt), st = Math.sin(tilt); return [x * ct - y * st, x * st + y * ct]; };
     // where the seven names sit: on the arms, then nudged apart so no two names, the heading or the edges ever touch, at any window size
@@ -246,6 +260,7 @@ void main(){
       ox += (mx - ox) * 0.05; oy += (my - oy) * 0.05;
       const dk = W < 480 ? 0 : 1, cx = cx0 + ox * 18 * dk, cy = cy0 + oy * 12 * dk;   // no drift on a narrow screen: there is no room to spare at the edges
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+      if (now - bitsAt > 1600 || bitsW !== W) bitsPaint(now); ctx.globalAlpha = e; ctx.drawImage(bits, 0, 0, bits.width / dpr, bits.height / dpr); ctx.globalAlpha = 1;
       for (const p of pts) {
         let r = p.r, a = p.a, fade = 1;
         if (p.k === 0) { const u = (p.u + flow * (0.6 + 0.8 * p.s)) % 1; r = armR(u) + p.jr; a = armA(p.arm, r) + p.ja * (1 - 0.45 * u); fade = Math.min(1, u * 14, (1 - u) * 18); }   // drifts out along its arm, fading in and out at the ends
