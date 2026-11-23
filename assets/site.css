@@ -166,6 +166,32 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .proj-strip span { font-size: var(--step-small); color: rgb(244 243 239 / .8); }
 @media (max-width: 900px) { .proj-text, .proj-media, .proj-strip { grid-column: 1 / -1; grid-row: auto; } .proj-strip { gap: 8px; } .proj-strip span { font-size: .8125rem; } .facts li { grid-template-columns: 7.5em 1fr; } .proj-media { order: -1; margin: 0 calc(var(--m) * -.5); } }
 
+/* PC stage: all eight projects in one screen. Names on the left, the picked project on the right. */
+.projects.stage { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--m); align-items: start; min-height: min(100svh, 780px); padding: clamp(40px, 8vh, 96px) var(--m) clamp(40px, 6vh, 88px); transition: background-color 400ms var(--out); }
+.stage-list { grid-column: 1 / span 3; display: grid; gap: 2px; align-content: start; }   /* starts at the top and never moves, so the name under the pointer stays put while projects of different heights swap */
+.stage-tab { appearance: none; background: none; border: 0; margin: 0; padding: 8px 0; min-height: 44px; font: inherit; color: var(--paper); text-align: left; cursor: pointer; display: grid; grid-template-columns: 22px minmax(0, 1fr); column-gap: 12px; align-items: center; }
+.stage-tab::before { content: ""; grid-row: 1; width: 10px; height: 10px; background: var(--acc); scale: 0; transition: scale 200ms var(--out); }
+.stage-tab b { color: rgb(244 243 239 / .6); transition: color 200ms var(--out); grid-column: 2; font-size: clamp(1.25rem, .8rem + 1.1vw, 2rem); font-weight: 600; letter-spacing: -0.03em; line-height: 1.1; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.stage-tab small { grid-column: 2; font-size: var(--step-small); color: var(--muted-on-ink); }
+.stage-tab:hover b { color: var(--paper); }
+.stage-tab[aria-pressed="true"]::before { scale: 1; } .stage-tab[aria-pressed="true"] b { color: var(--acc); }
+.stage-tab:focus-visible { outline: 3px solid var(--paper); outline-offset: 2px; }
+.projects.stage .stage-list { grid-row: 1; }
+.projects.stage .proj { visibility: hidden; grid-row: 1; grid-column: 4 / -1; padding: 0; grid-template-columns: repeat(9, minmax(0, 1fr)); row-gap: calc(var(--m) * .5); }
+.projects.stage .proj.on { visibility: visible; }
+.projects.stage .proj { align-items: start; }
+.projects.stage .proj-text { grid-column: 1 / span 4; }
+.projects.stage .proj-media, .projects.stage .proj-strip { grid-column: 5 / -1; }
+.projects.stage .proj .desc { max-width: none; }
+.js .projects.stage .desk { aspect-ratio: 4 / 3; } .projects.stage .stamp { top: 34%; }
+.projects.stage .proj h3 { font-size: clamp(2rem, 1rem + 2.2vw, 3.5rem); }
+.projects.stage .facts { gap: 8px; } .projects.stage .facts li { grid-template-columns: 8em 1fr; }
+.projects.stage .proj.on .proj-media { animation: stage-wipe 380ms var(--out) both; }
+.projects.stage .proj.on .proj-strip, .projects.stage .proj.on .proj-text { animation: stage-fade 300ms var(--out) both; }
+@keyframes stage-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+@keyframes stage-fade { from { opacity: 0; } to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .projects.stage .proj.on .proj-media, .projects.stage .proj.on .proj-strip, .projects.stage .proj.on .proj-text { animation: none; } .stage-tab b, .stage-tab::before { transition: none; } }
+
 /* ---------- studio: a statement you read into, the numbers, the tools, the company card ---------- */
 .studio { display: grid; gap: clamp(56px, 8vw, 120px); overflow: hidden; }
 .studio > h2 { font-size: var(--step-lead); font-weight: 500; letter-spacing: -0.01em; line-height: 1.2; margin-bottom: calc(clamp(56px, 8vw, 120px) * -.6); }

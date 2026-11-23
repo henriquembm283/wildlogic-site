@@ -296,8 +296,41 @@ void main(){
   // the ground colour blends from one project to the next instead of cutting
   const projWrap = document.querySelector(".projects");
   if (projWrap) {
-    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) projWrap.style.backgroundColor = getComputedStyle(e.target).getPropertyValue("--tint").trim(); }), { rootMargin: "-50% 0px -50% 0px" });
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting && !projWrap.classList.contains("stage")) projWrap.style.backgroundColor = getComputedStyle(e.target).getPropertyValue("--tint").trim(); }), { rootMargin: "-50% 0px -50% 0px" });
     projWrap.querySelectorAll(".proj").forEach((p) => io.observe(p));
+    // PC: the eight projects share one stage. A list of names on the left; the picked project fills the right. (Phones keep the stacked panels.)
+    const mqStage = matchMedia("(min-width: 1100px)");
+    if (/[?&]stage/.test(location.search)) {
+      const projs = [...projWrap.querySelectorAll(".proj")], list = document.createElement("div");
+      list.className = "stage-list"; list.setAttribute("role", "group"); list.setAttribute("aria-label", "Projects");
+      const tabs = projs.map((p) => { const h = p.querySelector("h3"), name = h.textContent.trim() || h.querySelector("img").alt, b = document.createElement("button");
+        b.type = "button"; b.className = "stage-tab"; b.id = "t-" + p.id; b.setAttribute("aria-controls", p.id); b.setAttribute("aria-label", name);
+        const n = document.createElement("b"), k = document.createElement("small"); n.textContent = name; k.textContent = p.querySelector(".kind").textContent.split("·")[0].trim(); b.append(n, k); b.dataset.name = name; list.append(b); return b; });
+      let cur = 0, dec = 0, on = false, hov = 0;
+      // the picked name is typed out of zeros and ones: 420 ms, once per pick, so the switch reads as the machine fetching it
+      const decode = (el, name) => { cancelAnimationFrame(dec); if (reduce) { el.textContent = name; return; } const t0 = performance.now();
+        const step = (now) => { const k = clamp01((now - t0) / 420), n = Math.floor(k * name.length); let t = name.slice(0, n); for (let i = n; i < name.length; i++) t += name[i] === " " ? " " : Math.random() < 0.5 ? "0" : "1"; el.textContent = t; if (k < 1) dec = requestAnimationFrame(step); };
+        dec = requestAnimationFrame(step); };
+      const pick = (i, focus, quiet) => { if (i === cur && projs[i].classList.contains("on")) { if (focus) tabs[i].focus(); return; }
+        tabs[cur].firstChild.textContent = tabs[cur].dataset.name; cur = i;
+        projs.forEach((p, j) => { p.classList.toggle("on", j === i); tabs[j].setAttribute("aria-pressed", j === i ? "true" : "false"); });
+        projWrap.style.backgroundColor = getComputedStyle(projs[i]).getPropertyValue("--tint").trim();
+        projs[i].querySelectorAll("[data-reveal]").forEach((f) => { f.style.clipPath = ""; }); projs[i].querySelectorAll(".proj-text").forEach((t) => { t.style.opacity = ""; t.style.transform = ""; });
+        if (!quiet) decode(tabs[i].firstChild, tabs[i].dataset.name); if (focus) tabs[i].focus(); };
+      tabs.forEach((b, i) => {
+        b.addEventListener("click", () => pick(i));
+        b.addEventListener("pointerenter", (e) => { if (e.pointerType !== "mouse") return; clearTimeout(hov); hov = setTimeout(() => pick(i), 90); });   // a short pause, so crossing the list does not flicker through every project
+        b.addEventListener("pointerleave", () => clearTimeout(hov));
+        b.addEventListener("keydown", (e) => { const k = e.key, to = k === "ArrowDown" ? (i + 1) % tabs.length : k === "ArrowUp" ? (i + tabs.length - 1) % tabs.length : k === "Home" ? 0 : k === "End" ? tabs.length - 1 : -1; if (to >= 0) { e.preventDefault(); pick(to, true); } });
+      });
+      const set = () => { const want = mqStage.matches; if (want === on) return; on = want; projWrap.classList.toggle("stage", on);
+        if (on) { projWrap.prepend(list); pick(cur, false, true); }
+        else { list.remove(); projs.forEach((p) => p.classList.remove("on")); } };
+      set(); mqStage.addEventListener("change", set);
+      const go = (id, smoothly) => { const i = projs.findIndex((p) => p.id === id); if (i < 0 || !on) return false; pick(i); projWrap.scrollIntoView({ behavior: smoothly && !reduce ? "smooth" : "auto", block: "start" }); return true; };
+      document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest('a[href^="#p-"]'); if (a && go(a.getAttribute("href").slice(1), true)) e.preventDefault(); });
+      if (location.hash.indexOf("#p-") === 0) go(location.hash.slice(1), false);
+    }
   }
   // Domain Access: made-up sign-ups arrive one by one; the lists decide and a stamp lands
   document.querySelectorAll("[data-desk]").forEach((fig) => {
@@ -389,6 +422,7 @@ void main(){
       let tick = 0;
       const paint = () => {
         tick = 0; const vh = innerHeight;
+        if (projWrap && projWrap.classList.contains("stage")) return;   // on the stage nothing is tied to the scroll
         morphs.forEach(({ fig, text }) => {
           const pr = fig.parentElement.getBoundingClientRect();
           if (pr.bottom < 0 || pr.top > vh) { fig.style.clipPath = "none"; if (text) { text.style.opacity = ""; text.style.transform = "none"; } return; }   // off screen: rest open, so print and full-page captures are whole
