@@ -331,7 +331,7 @@ void main(){
         ground(); arrive(); if (dataG !== gT) gRaf = requestAnimationFrame(glide); };
       const onScroll = () => { const gal = galEl; if (!gal || !on || reduce) { dataG = gT = 0; if (gal) gal.style.backgroundColor = ""; arrive(); return; }
         const r = gal.getBoundingClientRect(); gT = clamp01(-r.top / r.height); if (gT > 0.995) gT = 1;
-        if (gFirst) { gFirst = false; dataG = gT; ground(); arrive(); return; }                       // on load there is nothing to glide from
+        if (gFirst || Math.abs(gT - dataG) > 0.6) { gFirst = false; dataG = gT; ground(); arrive(); return; }                       // on load, or after a jump of most of a screen, there is nothing to glide from
         if (!gRaf) { gAt = performance.now(); gRaf = requestAnimationFrame(glide); } };
       // between projects: the picture breaks into zeros and ones (200 ms), the project changes underneath, and the digits clear from left to right (700 ms) to show the new one
       const cover = document.createElement("canvas"), cctx = cover.getContext("2d"); cover.className = "stage-cover"; cover.setAttribute("aria-hidden", "true");
