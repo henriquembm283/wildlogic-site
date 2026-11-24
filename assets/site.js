@@ -322,7 +322,10 @@ void main(){
         const n = document.createElement("b"), k = document.createElement("small"); n.textContent = name; k.textContent = p.querySelector(".kind").textContent.split("·")[0].trim(); b.append(n, k); b.dataset.name = name; list.append(b); return b; });
       let cur = 0, dec = 0, on = false, hov = 0;
       const tintOf = (i) => getComputedStyle(projs[i]).getPropertyValue("--tint").trim();
-      const ground = () => { projWrap.style.backgroundColor = dataG > 0 && dataG < 0.5 ? "#1c1c1c" : tintOf(cur); };   // the stage starts as the same night as the galaxy and takes its colour once it is half in
+      const galEl = document.querySelector(".galaxy"), hex = (h) => [1, 3, 5].map((n) => parseInt(h.slice(n, n + 2), 16));
+      // no line between the galaxy and the stage: while both are on screen they share one ground colour, which slides from the galaxy's night to the picked project's colour as you scroll
+      const ground = () => { const t = hex(tintOf(cur)), n = [28, 28, 28], k = dataG > 0 && dataG < 1 ? smooth(0.1, 0.9, dataG) : 1, c = "rgb(" + n.map((v, i) => Math.round(v + (t[i] - v) * k)).join(" ") + ")";
+        projWrap.style.backgroundColor = c; if (galEl) galEl.style.backgroundColor = on && dataG > 0 && dataG < 1 ? c : ""; };
       // galaxy to stage: digits rain down the stage and the content appears behind their front line. Tied to the scroll (plus a slow constant fall), so it runs both ways and never plays on its own.
       const rain = document.createElement("canvas"), rctx = rain.getContext("2d"); rain.className = "stage-rain"; rain.setAttribute("aria-hidden", "true");
       let rW = 0, rH = 0, rdpr = 1, rraf = 0, padT = 0;
@@ -339,7 +342,7 @@ void main(){
             rctx.globalAlpha = (d < 0 ? (1 + d / 26) * 0.9 : 0.25 + 0.6 * Math.exp(-d / 240)) * out;
             rctx.drawImage(digit(hsh(ix, id, 4) > 0.5, hsh(ix, id, 5) < 0.07), ix * cw + 2, y - 7.5, 10, 15); } }
         rraf = requestAnimationFrame(rainDraw); };
-      const onScroll = () => { const gal = document.querySelector(".galaxy"); if (!gal || !on || reduce) { dataG = 0; return; }
+      const onScroll = () => { const gal = galEl; if (!gal || !on || reduce) { dataG = 0; if (gal) gal.style.backgroundColor = ""; return; }
         const r = gal.getBoundingClientRect(); dataG = clamp01(-r.top / r.height); if (dataG > 0.995) dataG = 1; ground(); if (!rraf) rraf = requestAnimationFrame(rainDraw); };
       // between projects: the picture breaks into zeros and ones (110 ms), the project changes underneath, and the digits clear from left to right (360 ms) to show the new one
       const cover = document.createElement("canvas"), cctx = cover.getContext("2d"); cover.className = "stage-cover"; cover.setAttribute("aria-hidden", "true");

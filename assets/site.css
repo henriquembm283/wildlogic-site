@@ -188,6 +188,7 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .projects.stage .facts { gap: 8px; } .projects.stage .facts li { grid-template-columns: 8em 1fr; }
 .projects.stage { position: relative; }
 .projects.stage .proj.on .proj-text { animation: stage-fade 300ms var(--out) both; }
+.js .galaxy { transition: background-color 400ms var(--out); }   /* moves in step with the stage below it */
 .stage-rain, .stage-cover { position: absolute; pointer-events: none; z-index: 3; }
 .stage-rain { inset: 0; width: 100%; height: 100%; }
 /* while the stage is being built by the falling digits, its content shows only above their front line */
