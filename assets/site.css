@@ -367,3 +367,18 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
   .ribbon > div { animation: none; flex-wrap: wrap; width: auto; padding: 0 var(--m); row-gap: 12px; }
   .bg { transform: none; }
 }
+
+/* RIDE preview: the galaxy stays on screen while the page scrolls past; each project opens beside its star */
+.ride-track { background: #1c1c1c; }
+.ride-track > .galaxy { position: sticky; top: 0; }
+.projects.stage.ride { position: absolute; inset: 0; display: block; padding: 0; min-height: 0; background: none; pointer-events: none; transition: none; }
+.projects.stage.ride .proj { position: absolute; left: 34%; right: var(--m); top: 50%; translate: 0 -50%; pointer-events: none; }
+.projects.stage.ride .proj.on { pointer-events: auto; }
+.projects.stage.ride .proj.on .proj-text { animation: none; }
+.ride-status { display: grid; grid-template-columns: auto 1fr; gap: 4px 16px; margin: 0; padding: 12px 14px; font-size: 13px; font-weight: 500; letter-spacing: .04em; font-variant-numeric: tabular-nums; line-height: 1.4; background: rgb(244 243 239 / .06); }
+.ride-status dt { color: var(--muted-on-ink); text-transform: uppercase; }
+.ride-status dd { margin: 0; color: var(--paper); }
+.ride-status dd:last-child { color: var(--acc); }
+.projects.stage.ride .proj { transform-origin: 0 50%; }
+.js .stars a span { transition: opacity 400ms var(--out); }
+.js .stars a.focus span { opacity: 0; }   /* at a stop the project's own heading names it; the star stays lit */

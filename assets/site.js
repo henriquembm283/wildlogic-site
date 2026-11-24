@@ -179,6 +179,8 @@ void main(){
 
   // "everything is data": how far the galaxy has scrolled away (0 to 1). The stars use it to turn into falling digits, the stage uses it to build itself.
   let dataG = 0;
+  // ride preview: a camera over the galaxy (where it looks, how close, where that point sits on screen). The galaxy draws through it when set.
+  let cam = null, rideTick = null, galGeo = null;
   const hsh = (a, b, c) => { const v = Math.sin(a * 12.9898 + b * 78.233 + c * 37.719) * 43758.5453; return v - Math.floor(v); };
   const sprites = {};
   const digit = (one, acc) => { const key = (one ? "1" : "0") + (acc ? "a" : "p"); let c = sprites[key]; if (c) return c;
@@ -265,32 +267,36 @@ void main(){
     };
     const size = () => { W = gal.clientWidth; H = gal.clientHeight; dpr = Math.min(devicePixelRatio || 1, 2); cv.width = W * dpr; cv.height = H * dpr;
       const tall = H > W; rx = tall ? Math.min(H * 0.5, W * 1.25) : Math.min(W * 0.46, H * 0.94); ry = tall ? Math.min(W * 0.47, rx * 0.62) : rx * 0.52; tilt = tall ? -1.25 : -0.3; cx0 = W * 0.5; cy0 = H * (tall ? 0.56 : 0.54); place(); };
+    galGeo = () => ({ W, H, cx0, cy0, pins });
     const draw = (now) => {
+      if (rideTick) rideTick(now);
       const f = reduce || !born ? 1 : clamp01((now - born) / 1700), e = 1 - Math.pow(1 - f, 3);            // forms once, ease-out
       const rot = -(1 - e) * 0.9, grow = 0.5 + 0.5 * e, flow = reduce ? 0 : now * 0.0000045, spin = reduce ? 0 : now * 0.00003;
       const g = dataG, zoom = 1 + g * g * 4.5, sink = g * H * 0.42, away = 1 - smooth(0.5, 1, g);   // scrolling on, you fly into the galaxy: it swells from its middle, the stars rush past and thin out, and the projects are what is behind them
       ox += (mx - ox) * 0.05; oy += (my - oy) * 0.05;
       const dk = W < 480 ? 0 : 1, cx = cx0 + ox * 18 * dk, cy = cy0 + oy * 12 * dk;   // no drift on a narrow screen: there is no room to spare at the edges
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
-      if (now - bitsAt > 1600 || bitsW !== W) bitsPaint(now); ctx.globalAlpha = e; ctx.drawImage(bits, 0, 0, bits.width / dpr, bits.height / dpr); ctx.globalAlpha = 1;
+      if (now - bitsAt > 1600 || bitsW !== W) bitsPaint(now); ctx.globalAlpha = cam ? e * (1 - cam.k) : e; ctx.drawImage(bits, 0, 0, bits.width / dpr, bits.height / dpr); ctx.globalAlpha = 1;
       let pi = 0;
       for (const p of pts) { pi++;
         let r = p.r, a = p.a, fade = 1;
         if (p.k === 0) { const u = (p.u + flow * (0.6 + 0.8 * p.s)) % 1; r = armR(u) + p.jr; a = armA(p.arm, r) + p.ja * (1 - 0.45 * u); fade = Math.min(1, u * 14, (1 - u) * 18); }   // drifts out along its arm, fading in and out at the ends
         else if (p.k === 1) a += spin * (1.4 - p.r * 4);                                                     // the middle turns on itself
-        const q = spot(r, a, rot, grow), x = cx + q[0] * zoom, y = cy + q[1] * zoom + sink;
+        const q = spot(r, a, rot, grow), x = cam ? cam.ax + (cx - cx0) + (q[0] - cam.fx) * cam.z : cx + q[0] * zoom, y = cam ? cam.ay + (cy - cy0) + (q[1] - cam.fy) * cam.z : cy + q[1] * zoom + sink;
         if (x < -6 || y < -6 || x > W + 6 || y > H + 6) continue;
         const tw = reduce ? 1 : 0.72 + 0.28 * Math.sin(now * 0.0011 * (0.5 + p.s) + p.s * 40);
-        const al = e * away * fade * tw * (p.acc || p.big ? 0.95 : p.k === 2 ? 0.12 + 0.3 * p.s : 0.26 + 0.8 * p.s * (1.3 - 0.5 * Math.min(1, r)));
-        const d = (p.acc ? 2.6 : p.big ? 2.8 : p.k === 2 ? 0.9 + p.s * 1.1 : 0.9 + p.s * p.s * 2.1) * (1 + g * 1.2);
+        const al = e * away * (cam && x > cam.ax * 1.9 ? 1 - 0.7 * cam.k : 1) * fade * tw * (p.acc || p.big ? 0.95 : p.k === 2 ? 0.12 + 0.3 * p.s : 0.26 + 0.8 * p.s * (1.3 - 0.5 * Math.min(1, r)));
+        const d = (p.acc ? 2.6 : p.big ? 2.8 : p.k === 2 ? 0.9 + p.s * 1.1 : 0.9 + p.s * p.s * 2.1) * (cam ? 1 + (cam.z - 1) * 0.3 : 1 + g * 1.2);
         ctx.globalAlpha = al; ctx.fillStyle = p.acc ? "#ccff3d" : "#f4f3ef";
         if (d > 1.7) { ctx.beginPath(); ctx.arc(x, y, d / 2, 0, TAU); ctx.fill(); } else ctx.fillRect(x - d / 2, y - d / 2, d, d);
         if (p.big) { const n = 5 + 4 * tw; ctx.globalAlpha = al * 0.55; ctx.fillRect(x - n, y - 0.5, n * 2, 1); ctx.fillRect(x - 0.5, y - n, 1, n * 2); }
       }
       ctx.globalAlpha = 1;
       for (const p of pins) { const k = reduce ? 0 : now * 0.0004 + p.m[0] * 9;
-        const x = cx0 + (p.x - cx0) * zoom + Math.sin(k) * 4 + ox * 18 * dk + (1 - e) * (cx0 - p.x) * 0.5, y = cy0 + (p.y - cy0) * zoom + sink + Math.cos(k * 0.8) * 4 + oy * 12 * dk + (1 - e) * (cy0 - p.y) * 0.5;
-        p.l.style.opacity = g > 0 ? e * (1 - smooth(0.2, 0.6, g)) : e;
+        const lx = cam ? cam.ax + (p.x - cx0 - cam.fx) * cam.z : cx0 + (p.x - cx0) * zoom, ly = cam ? cam.ay + (p.y - cy0 - cam.fy) * cam.z : cy0 + (p.y - cy0) * zoom + sink;
+        const x = lx + Math.sin(k) * 4 + ox * 18 * dk + (1 - e) * (cx0 - p.x) * 0.5, y = ly + Math.cos(k * 0.8) * 4 + oy * 12 * dk + (1 - e) * (cy0 - p.y) * 0.5;
+        p.l.style.opacity = cam ? e * (p === cam.pin ? 1 : 1 - smooth(0.45, 0.95, cam.k)) : g > 0 ? e * (1 - smooth(0.2, 0.6, g)) : e;
+        if (cam) p.l.style.pointerEvents = cam.k > 0.5 && p !== cam.pin ? "none" : "";
         p.l.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)" + (p.flip ? " translateX(-100%)" : ""); }
     };
     const loop = (now) => { raf = 0; draw(now); if (vis && !document.hidden && !reduce) raf = requestAnimationFrame(loop); };
@@ -311,6 +317,37 @@ void main(){
     projWrap.querySelectorAll(".proj").forEach((p) => io.observe(p));
     // PC: the eight projects share one stage. A list of names on the left; the picked project fills the right. (Phones keep the stacked panels.)
     const mqStage = matchMedia("(min-width: 1100px)");
+    // RIDE preview (?ride, PC): no separate projects section. Scrolling flies the camera from star to star; at each stop that project opens beside its star.
+    if (/[?&]ride/.test(location.search) && mqStage.matches && !reduce && galGeo && document.querySelector(".galaxy")) {
+      const gal = document.querySelector(".galaxy"), head = gal.querySelector(".galaxy-head"), projs = [...projWrap.querySelectorAll(".proj")], N = projs.length, LEAD = 0.6, HOLD = 0.6;
+      const track = document.createElement("div"); track.className = "ride-track"; gal.before(track); track.append(gal); gal.append(projWrap); projWrap.classList.add("stage", "ride"); projWrap.style.backgroundColor = "";
+      track.style.height = "calc(100svh + " + ((N + LEAD) * 62).toFixed(0) + "vh)";
+      const THIRD = { "p-ar": "Price", "p-tr": "Price", "p-da": "Price", "p-wow": "Price", "p-web": "For", "p-casa": "Made in" };
+      projs.forEach((p, i) => { p.querySelectorAll("[data-reveal]").forEach((f) => { f.style.clipPath = ""; }); p.querySelectorAll(".proj-text").forEach((t) => { t.style.opacity = ""; t.style.transform = ""; });
+        // status panel: the facts the page already states, set like an instrument read-out
+        const kind = p.querySelector(".kind"), parts = kind.textContent.split("·").map((x) => x.trim()), panel = document.createElement("dl"); panel.className = "ride-status"; panel.dataset.ui = "";
+        [["No.", String(i + 1).padStart(2, "0") + " / " + String(N).padStart(2, "0")], ["Type", parts[0]], [THIRD[p.id] || "Status", (parts.slice(1).join(" · ") || "Live").replace(/^For l/, "L")]].forEach(([k, v]) => { const dt = document.createElement("dt"), dd = document.createElement("dd"); dt.textContent = k; dd.textContent = v; panel.append(dt, dd); });
+        kind.after(panel); kind.hidden = true; });
+      const hex = (h) => [1, 3, 5].map((n) => parseInt(h.slice(n, n + 2), 16)), tints = projs.map((p) => hex(getComputedStyle(p).getPropertyValue("--tint").trim()));
+      const pinOf = (i) => { const G = galGeo(); return G.pins.find((q) => q.l.getAttribute("href") === "#" + projs[i].id); };
+      let uT = 0, u = 0, at = 0, first = true;
+      const read = () => { const r = track.getBoundingClientRect(), span = r.height - innerHeight; uT = span > 0 ? clamp01(-r.top / span) * (N + LEAD) : 0; };
+      const stop = (i) => { const G = galGeo(), p = pinOf(i); return { fx: p ? p.x - G.cx0 : 0, fy: p ? p.y - G.cy0 : 0, z: 2.3, ax: G.W * 0.17, ay: G.H * 0.5, k: 1 }; };
+      const mix = (a, b, t) => ({ fx: a.fx + (b.fx - a.fx) * t, fy: a.fy + (b.fy - a.fy) * t, z: a.z + (b.z - a.z) * t, ax: a.ax + (b.ax - a.ax) * t, ay: a.ay + (b.ay - a.ay) * t, k: a.k + (b.k - a.k) * t });
+      // the scroll says where the camera should be; the camera glides after it (about half a second), holds on each star for most of a step and travels in the rest
+      rideTick = (now) => { read(); const dt = Math.min(64, now - at); at = now; if (first || Math.abs(uT - u) > 2.5) { u = uT; first = false; } else u += (uT - u) * (1 - Math.exp(-dt / 300));
+        const G = galGeo(), wide = { fx: 0, fy: 0, z: 1, ax: G.cx0, ay: G.cy0, k: 0 }; let c, show = -1, w = 0, from = -1, to = 0, t = 0;
+        if (u < LEAD) { t = smooth(0.3, 1, u / LEAD); c = mix(wide, stop(0), t); to = 0; }
+        else { const sgm = u - LEAD, i = Math.min(N - 1, Math.floor(sgm)), f = i === N - 1 ? 0 : sgm - i; from = i; to = Math.min(N - 1, i + 1); t = smooth(HOLD, 1, f); c = t > 0 ? mix(stop(i), stop(to), t) : stop(i); if (t > 0) { c.z -= Math.sin(t * Math.PI) * 0.7; c.k = 1 - Math.sin(t * Math.PI) * 0.6; } }   // pulls back a little while travelling, so you see where you are going
+        if (from < 0) { show = 0; w = smooth(0.7, 1, t); } else if (t < 0.5) { show = from; w = 1 - smooth(0, 0.35, t); } else { show = to; w = smooth(0.65, 1, t); }
+        c.pin = pinOf(show); cam = c; G.pins.forEach((q) => q.l.classList.toggle("focus", q === c.pin && c.k > 0.6));
+        projs.forEach((p, j) => { const on = j === show && w > 0.01; p.classList.toggle("on", on); if (on) { if (p._fitH !== G.H) { p._fitH = G.H; p.style.scale = Math.min(1, (G.H - 40) / p.offsetHeight).toFixed(3); } p.style.opacity = w.toFixed(3); p.style.translate = "0 calc(-50% + " + ((1 - w) * 28).toFixed(1) + "px)"; } });
+        head.style.opacity = (1 - c.k * 1.6).toFixed(3); head.style.visibility = c.k > 0.62 ? "hidden" : "";
+        const tn = tints[show], n = [28, 28, 28], kk = c.k * w; gal.style.backgroundColor = "rgb(" + n.map((v, j) => Math.round(v + (tn[j] - v) * kk)).join(" ") + ")"; };
+      const jump = (id) => { const i = projs.findIndex((p) => p.id === id); if (i < 0) return false; const r = track.getBoundingClientRect(), span = r.height - innerHeight; scrollTo({ top: scrollY + r.top + span * (LEAD + i + 0.2) / (N + LEAD), behavior: "smooth" }); return true; };
+      document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest('a[href^="#p-"]'); if (a && jump(a.getAttribute("href").slice(1))) e.preventDefault(); });
+      mqStage.addEventListener("change", () => location.reload());
+    } else
     if (/[?&]stage/.test(location.search)) {
       const projs = [...projWrap.querySelectorAll(".proj")], list = document.createElement("div");
       list.className = "stage-list"; list.setAttribute("role", "group"); list.setAttribute("aria-label", "Projects");
