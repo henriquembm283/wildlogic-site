@@ -186,11 +186,14 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .js .projects.stage .desk { aspect-ratio: 4 / 3; } .projects.stage .stamp { top: 34%; }
 .projects.stage .proj h3 { font-size: clamp(2rem, 1rem + 2.2vw, 3.5rem); }
 .projects.stage .facts { gap: 8px; } .projects.stage .facts li { grid-template-columns: 8em 1fr; }
-.projects.stage .proj.on .proj-media { animation: stage-wipe 380ms var(--out) both; }
-.projects.stage .proj.on .proj-strip, .projects.stage .proj.on .proj-text { animation: stage-fade 300ms var(--out) both; }
-@keyframes stage-wipe { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+.projects.stage { position: relative; }
+.projects.stage .proj.on .proj-text { animation: stage-fade 300ms var(--out) both; }
+.stage-rain, .stage-cover { position: absolute; pointer-events: none; z-index: 3; }
+.stage-rain { inset: 0; width: 100%; height: 100%; }
+/* while the stage is being built by the falling digits, its content shows only above their front line */
+.projects.stage.building .stage-list, .projects.stage.building .proj.on { clip-path: inset(0 0 max(0px, calc(100% - var(--fy, 9999px))) 0); }
 @keyframes stage-fade { from { opacity: 0; } to { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { .projects.stage .proj.on .proj-media, .projects.stage .proj.on .proj-strip, .projects.stage .proj.on .proj-text { animation: none; } .stage-tab b, .stage-tab::before { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .projects.stage .proj.on .proj-text { animation: none; } .stage-tab b, .stage-tab::before { transition: none; } }
 
 /* ---------- studio: a statement you read into, the numbers, the tools, the company card ---------- */
 .studio { display: grid; gap: clamp(56px, 8vw, 120px); overflow: hidden; }
