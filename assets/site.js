@@ -268,32 +268,29 @@ void main(){
     const draw = (now) => {
       const f = reduce || !born ? 1 : clamp01((now - born) / 1700), e = 1 - Math.pow(1 - f, 3);            // forms once, ease-out
       const rot = -(1 - e) * 0.9, grow = 0.5 + 0.5 * e, flow = reduce ? 0 : now * 0.0000045, spin = reduce ? 0 : now * 0.00003;
+      const g = dataG, zoom = 1 + g * g * 4.5, sink = g * H * 0.42, away = 1 - smooth(0.5, 1, g);   // scrolling on, you fly into the galaxy: it swells from its middle, the stars rush past and thin out, and the projects are what is behind them
       ox += (mx - ox) * 0.05; oy += (my - oy) * 0.05;
       const dk = W < 480 ? 0 : 1, cx = cx0 + ox * 18 * dk, cy = cy0 + oy * 12 * dk;   // no drift on a narrow screen: there is no room to spare at the edges
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
       if (now - bitsAt > 1600 || bitsW !== W) bitsPaint(now); ctx.globalAlpha = e; ctx.drawImage(bits, 0, 0, bits.width / dpr, bits.height / dpr); ctx.globalAlpha = 1;
-      const g = dataG; let pi = 0;
+      let pi = 0;
       for (const p of pts) { pi++;
         let r = p.r, a = p.a, fade = 1;
         if (p.k === 0) { const u = (p.u + flow * (0.6 + 0.8 * p.s)) % 1; r = armR(u) + p.jr; a = armA(p.arm, r) + p.ja * (1 - 0.45 * u); fade = Math.min(1, u * 14, (1 - u) * 18); }   // drifts out along its arm, fading in and out at the ends
         else if (p.k === 1) a += spin * (1.4 - p.r * 4);                                                     // the middle turns on itself
-        const q = spot(r, a, rot, grow), x = cx + q[0]; let y = cy + q[1], gt = 0;
-        if (g > 0) { gt = g - 0.05 - 0.5 * hsh(pi, 1, 1); if (gt > 0) y += gt * gt * H * 2.6 * (0.5 + p.s); }     // scrolling on: star after star lets go and falls towards the projects
+        const q = spot(r, a, rot, grow), x = cx + q[0] * zoom, y = cy + q[1] * zoom + sink;
         if (x < -6 || y < -6 || x > W + 6 || y > H + 6) continue;
         const tw = reduce ? 1 : 0.72 + 0.28 * Math.sin(now * 0.0011 * (0.5 + p.s) + p.s * 40);
-        const al = e * fade * tw * (p.acc || p.big ? 0.95 : p.k === 2 ? 0.12 + 0.3 * p.s : 0.26 + 0.8 * p.s * (1.3 - 0.5 * Math.min(1, r)));
-        const d = p.acc ? 2.6 : p.big ? 2.8 : p.k === 2 ? 0.9 + p.s * 1.1 : 0.9 + p.s * p.s * 2.1;
-        if (gt > 0) {                                                                                         // a falling star is a zero or a one (one in three; the rest just fade)
-          if (pi % 3) { if (gt > 0.12) continue; ctx.globalAlpha = al * (1 - gt / 0.12); ctx.fillStyle = "#f4f3ef"; ctx.fillRect(x - d / 2, y - d / 2, d, d); continue; }
-          ctx.globalAlpha = Math.min(0.85, 0.3 + al) * e; ctx.drawImage(digit(pi % 2, p.acc || pi % 23 === 0), x - 5, y - 7.5, 10, 15); continue; }
+        const al = e * away * fade * tw * (p.acc || p.big ? 0.95 : p.k === 2 ? 0.12 + 0.3 * p.s : 0.26 + 0.8 * p.s * (1.3 - 0.5 * Math.min(1, r)));
+        const d = (p.acc ? 2.6 : p.big ? 2.8 : p.k === 2 ? 0.9 + p.s * 1.1 : 0.9 + p.s * p.s * 2.1) * (1 + g * 1.2);
         ctx.globalAlpha = al; ctx.fillStyle = p.acc ? "#ccff3d" : "#f4f3ef";
         if (d > 1.7) { ctx.beginPath(); ctx.arc(x, y, d / 2, 0, TAU); ctx.fill(); } else ctx.fillRect(x - d / 2, y - d / 2, d, d);
         if (p.big) { const n = 5 + 4 * tw; ctx.globalAlpha = al * 0.55; ctx.fillRect(x - n, y - 0.5, n * 2, 1); ctx.fillRect(x - 0.5, y - n, 1, n * 2); }
       }
       ctx.globalAlpha = 1;
       for (const p of pins) { const k = reduce ? 0 : now * 0.0004 + p.m[0] * 9;
-        const x = p.x + Math.sin(k) * 4 + ox * 18 * dk + (1 - e) * (cx0 - p.x) * 0.5, y = p.y + Math.cos(k * 0.8) * 4 + oy * 12 * dk + (1 - e) * (cy0 - p.y) * 0.5;
-        p.l.style.opacity = g > 0 ? e * (1 - smooth(0.3, 0.75, g)) : e;
+        const x = cx0 + (p.x - cx0) * zoom + Math.sin(k) * 4 + ox * 18 * dk + (1 - e) * (cx0 - p.x) * 0.5, y = cy0 + (p.y - cy0) * zoom + sink + Math.cos(k * 0.8) * 4 + oy * 12 * dk + (1 - e) * (cy0 - p.y) * 0.5;
+        p.l.style.opacity = g > 0 ? e * (1 - smooth(0.2, 0.6, g)) : e;
         p.l.style.transform = "translate(" + x.toFixed(1) + "px," + y.toFixed(1) + "px)" + (p.flip ? " translateX(-100%)" : ""); }
     };
     const loop = (now) => { raf = 0; draw(now); if (vis && !document.hidden && !reduce) raf = requestAnimationFrame(loop); };
@@ -326,24 +323,10 @@ void main(){
       // no line between the galaxy and the stage: while both are on screen they share one ground colour, which slides from the galaxy's night to the picked project's colour as you scroll
       const ground = () => { const t = hex(tintOf(cur)), n = [28, 28, 28], k = dataG > 0 && dataG < 1 ? smooth(0.1, 0.9, dataG) : 1, c = "rgb(" + n.map((v, i) => Math.round(v + (t[i] - v) * k)).join(" ") + ")";
         projWrap.style.backgroundColor = c; if (galEl) galEl.style.backgroundColor = on && dataG > 0 && dataG < 1 ? c : ""; };
-      // galaxy to stage: digits rain down the stage and the content appears behind their front line. Tied to the scroll (plus a slow constant fall), so it runs both ways and never plays on its own.
-      const rain = document.createElement("canvas"), rctx = rain.getContext("2d"); rain.className = "stage-rain"; rain.setAttribute("aria-hidden", "true");
-      let rW = 0, rH = 0, rdpr = 1, rraf = 0, padT = 0;
-      const rainSize = () => { rW = projWrap.clientWidth; rH = projWrap.clientHeight; rdpr = Math.min(devicePixelRatio || 1, 2); rain.width = rW * rdpr; rain.height = rH * rdpr; padT = parseFloat(getComputedStyle(projWrap).paddingTop) || 0; };
-      const rainDraw = (now) => { rraf = 0; const g = dataG, live = on && g > 0 && g < 1;
-        rctx.setTransform(rdpr, 0, 0, rdpr, 0, 0); rctx.clearRect(0, 0, rW, rH);
-        projWrap.classList.toggle("building", live); if (!live) return;
-        const seen = Math.min(rH, g * innerHeight + 30), yF = smooth(0.2, 0.96, g) * (rH + 60), cw = 14, ch = 20, fall = g * 1100 + now * 0.05, out = 1 - smooth(0.9, 1, g);
-        projWrap.style.setProperty("--fy", Math.max(0, yF - padT).toFixed(0) + "px");
-        for (let ix = 0; ix * cw < rW; ix++) { const sp = 0.6 + 0.8 * hsh(ix, 0, 1), f = yF + (hsh(ix, 0, 2) - 0.5) * 80, sh = fall * sp, off = sh % ch, base = Math.floor(sh / ch);
-          for (let iy = Math.max(0, Math.floor((f - 30) / ch)); iy * ch + off - ch < seen; iy++) { const y = iy * ch + off - ch / 2, d = y - f, id = iy - base;
-            if (d < -26) continue;
-            const thick = d < 0 ? 1 : 0.22 + 0.78 * Math.exp(-d / 170); if (hsh(ix, id, 3) > thick) continue;
-            rctx.globalAlpha = (d < 0 ? (1 + d / 26) * 0.9 : 0.25 + 0.6 * Math.exp(-d / 240)) * out;
-            rctx.drawImage(digit(hsh(ix, id, 4) > 0.5, hsh(ix, id, 5) < 0.07), ix * cw + 2, y - 7.5, 10, 15); } }
-        rraf = requestAnimationFrame(rainDraw); };
-      const onScroll = () => { const gal = galEl; if (!gal || !on || reduce) { dataG = 0; if (gal) gal.style.backgroundColor = ""; return; }
-        const r = gal.getBoundingClientRect(); dataG = clamp01(-r.top / r.height); if (dataG > 0.995) dataG = 1; ground(); if (!rraf) rraf = requestAnimationFrame(rainDraw); };
+      // galaxy to stage: the list and the picked project rise into place as the galaxy flies past. Tied to the scroll, so it runs both ways and never plays on its own.
+      const arrive = () => { const g = dataG, live = on && g > 0 && g < 1; projWrap.classList.toggle("building", live); if (live) projWrap.style.setProperty("--in", smooth(0.3, 0.9, g).toFixed(3)); };
+      const onScroll = () => { const gal = galEl; if (!gal || !on || reduce) { dataG = 0; if (gal) gal.style.backgroundColor = ""; arrive(); return; }
+        const r = gal.getBoundingClientRect(); dataG = clamp01(-r.top / r.height); if (dataG > 0.995) dataG = 1; ground(); arrive(); };
       // between projects: the picture breaks into zeros and ones (110 ms), the project changes underneath, and the digits clear from left to right (360 ms) to show the new one
       const cover = document.createElement("canvas"), cctx = cover.getContext("2d"); cover.className = "stage-cover"; cover.setAttribute("aria-hidden", "true");
       let craf = 0, cT = 0, cPhase = 0, cFrom = 0, cW = 0, cH = 0, cSeed = 0, cThen = null;
@@ -384,11 +367,11 @@ void main(){
         b.addEventListener("keydown", (e) => { const k = e.key, to = k === "ArrowDown" ? (i + 1) % tabs.length : k === "ArrowUp" ? (i + tabs.length - 1) % tabs.length : k === "Home" ? 0 : k === "End" ? tabs.length - 1 : -1; if (to >= 0) { e.preventDefault(); pick(to, true); } });
       });
       const set = () => { const want = mqStage.matches; if (want === on) return; on = want; projWrap.classList.toggle("stage", on);
-        if (on) { projWrap.prepend(list); pick(cur, false, true); if (!reduce) { projWrap.append(rain); rainSize(); } }
-        else { list.remove(); rain.remove(); cover.remove(); cancelAnimationFrame(craf); craf = 0; cPhase = 0; cThen = null; projWrap.classList.remove("building"); projs.forEach((p) => p.classList.remove("on")); }
+        if (on) { projWrap.prepend(list); pick(cur, false, true); }
+        else { list.remove(); cover.remove(); cancelAnimationFrame(craf); craf = 0; cPhase = 0; cThen = null; projWrap.classList.remove("building"); projs.forEach((p) => p.classList.remove("on")); }
         onScroll(); };
       set(); mqStage.addEventListener("change", set);
-      addEventListener("scroll", onScroll, { passive: true }); addEventListener("resize", () => { if (on && !reduce) { rainSize(); onScroll(); } });
+      addEventListener("scroll", onScroll, { passive: true }); addEventListener("resize", onScroll);
       const go = (id, smoothly) => { const i = projs.findIndex((p) => p.id === id); if (i < 0 || !on) return false; pick(i); projWrap.scrollIntoView({ behavior: smoothly && !reduce ? "smooth" : "auto", block: "start" }); return true; };
       document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest('a[href^="#p-"]'); if (a && go(a.getAttribute("href").slice(1), true)) e.preventDefault(); });
       if (location.hash.indexOf("#p-") === 0) go(location.hash.slice(1), false);

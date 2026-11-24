@@ -189,10 +189,9 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .projects.stage { position: relative; }
 .projects.stage .proj.on .proj-text { animation: stage-fade 300ms var(--out) both; }
 .js .galaxy { transition: background-color 400ms var(--out); }   /* moves in step with the stage below it */
-.stage-rain, .stage-cover { position: absolute; pointer-events: none; z-index: 3; }
-.stage-rain { inset: 0; width: 100%; height: 100%; }
-/* while the stage is being built by the falling digits, its content shows only above their front line */
-.projects.stage.building .stage-list, .projects.stage.building .proj.on { clip-path: inset(0 0 max(0px, calc(100% - var(--fy, 9999px))) 0); }
+.stage-cover { position: absolute; pointer-events: none; z-index: 3; }
+/* while the galaxy flies past, the stage's content rises into place with the scroll */
+.projects.stage.building .stage-list, .projects.stage.building .proj.on { opacity: var(--in, 1); translate: 0 calc((1 - var(--in, 1)) * 56px); }
 @keyframes stage-fade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .projects.stage .proj.on .proj-text { animation: none; } .stage-tab b, .stage-tab::before { transition: none; } }
 
