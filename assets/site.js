@@ -324,17 +324,23 @@ void main(){
       const ground = () => { const t = hex(tintOf(cur)), n = [28, 28, 28], k = dataG > 0 && dataG < 1 ? smooth(0.1, 0.9, dataG) : 1, c = "rgb(" + n.map((v, i) => Math.round(v + (t[i] - v) * k)).join(" ") + ")";
         projWrap.style.backgroundColor = c; if (galEl) galEl.style.backgroundColor = on && dataG > 0 && dataG < 1 ? c : ""; };
       // galaxy to stage: the list and the picked project rise into place as the galaxy flies past. Tied to the scroll, so it runs both ways and never plays on its own.
-      const arrive = () => { const g = dataG, live = on && g > 0 && g < 1; projWrap.classList.toggle("building", live); if (live) projWrap.style.setProperty("--in", smooth(0.3, 0.9, g).toFixed(3)); };
-      const onScroll = () => { const gal = galEl; if (!gal || !on || reduce) { dataG = 0; if (gal) gal.style.backgroundColor = ""; arrive(); return; }
-        const r = gal.getBoundingClientRect(); dataG = clamp01(-r.top / r.height); if (dataG > 0.995) dataG = 1; ground(); arrive(); };
-      // between projects: the picture breaks into zeros and ones (110 ms), the project changes underneath, and the digits clear from left to right (360 ms) to show the new one
+      const arrive = () => { const g = dataG, live = on && g > 0 && g < 1; projWrap.classList.toggle("building", live); if (galEl) galEl.classList.toggle("building", live); if (live) projWrap.style.setProperty("--in", smooth(0.3, 0.9, g).toFixed(3)); };
+      // the scroll sets where the fly-in should be; the picture glides after it (about half a second to catch up), so a wheel click or a fast flick still reads as one slow, flowing move
+      let gT = 0, gRaf = 0, gAt = 0, gFirst = true;
+      const glide = (now) => { gRaf = 0; const dt = Math.min(64, now - gAt); gAt = now; dataG += (gT - dataG) * (1 - Math.exp(-dt / 260)); if (Math.abs(gT - dataG) < 0.0015) dataG = gT;
+        ground(); arrive(); if (dataG !== gT) gRaf = requestAnimationFrame(glide); };
+      const onScroll = () => { const gal = galEl; if (!gal || !on || reduce) { dataG = gT = 0; if (gal) gal.style.backgroundColor = ""; arrive(); return; }
+        const r = gal.getBoundingClientRect(); gT = clamp01(-r.top / r.height); if (gT > 0.995) gT = 1;
+        if (gFirst) { gFirst = false; dataG = gT; ground(); arrive(); return; }                       // on load there is nothing to glide from
+        if (!gRaf) { gAt = performance.now(); gRaf = requestAnimationFrame(glide); } };
+      // between projects: the picture breaks into zeros and ones (200 ms), the project changes underneath, and the digits clear from left to right (700 ms) to show the new one
       const cover = document.createElement("canvas"), cctx = cover.getContext("2d"); cover.className = "stage-cover"; cover.setAttribute("aria-hidden", "true");
       let craf = 0, cT = 0, cPhase = 0, cFrom = 0, cW = 0, cH = 0, cSeed = 0, cThen = null;
       const coverFit = (a, b) => { const w = projWrap.getBoundingClientRect(); let l = 1e9, t = 1e9, r2 = 0, bt = 0;
         [a, b].forEach((p) => p.querySelectorAll(".proj-media, .proj-strip").forEach((m) => { const q = m.getBoundingClientRect(); if (!q.width) return; l = Math.min(l, q.left); t = Math.min(t, q.top); r2 = Math.max(r2, q.right); bt = Math.max(bt, q.bottom); }));
         cW = Math.ceil(r2 - l) + 16; cH = Math.ceil(bt - t) + 16; const d = Math.min(devicePixelRatio || 1, 2); cover.width = cW * d; cover.height = cH * d;
         cover.style.cssText = "left:" + (l - w.left - 8).toFixed(0) + "px;top:" + (t - w.top - 8).toFixed(0) + "px;width:" + cW + "px;height:" + cH + "px"; cctx.setTransform(d, 0, 0, d, 0, 0); };
-      const coverDraw = (now) => { craf = 0; const dur = cPhase === 1 ? 110 : 360, k = clamp01((now - cT) / dur), cw = 14, ch = 20, bg = getComputedStyle(projWrap).backgroundColor;
+      const coverDraw = (now) => { craf = 0; const dur = cPhase === 1 ? 200 : 700, k = clamp01((now - cT) / dur), cw = 14, ch = 20, bg = getComputedStyle(projWrap).backgroundColor;
         const lvl = cPhase === 1 ? cFrom + (1 - cFrom) * k : (1 - k) * (1 - k);                  // how much is covered: fills fast, clears with an ease-out
         cctx.clearRect(0, 0, cW, cH);
         for (let ix = 0; ix * cw < cW; ix++) for (let iy = 0; iy * ch < cH; iy++) {
@@ -345,9 +351,9 @@ void main(){
         if (k < 1) { craf = requestAnimationFrame(coverDraw); return; }
         if (cPhase === 1) { const then = cThen; cThen = null; then(); cPhase = 2; cT = now; cSeed += 7; craf = requestAnimationFrame(coverDraw); }
         else { cPhase = 0; cover.remove(); } };
-      // the picked name is typed out of zeros and ones: 420 ms, once per pick, so the switch reads as the machine fetching it
+      // the picked name is typed out of zeros and ones: 700 ms, once per pick, so the switch reads as the machine fetching it
       const decode = (el, name) => { cancelAnimationFrame(dec); if (reduce) { el.textContent = name; return; } const t0 = performance.now();
-        const step = (now) => { const k = clamp01((now - t0) / 420), n = Math.floor(k * name.length); let t = name.slice(0, n); for (let i = n; i < name.length; i++) t += name[i] === " " ? " " : Math.random() < 0.5 ? "0" : "1"; el.textContent = t; if (k < 1) dec = requestAnimationFrame(step); };
+        const step = (now) => { const k = clamp01((now - t0) / 700), n = Math.floor(k * name.length); let t = name.slice(0, n); for (let i = n; i < name.length; i++) t += name[i] === " " ? " " : Math.random() < 0.5 ? "0" : "1"; el.textContent = t; if (k < 1) dec = requestAnimationFrame(step); };
         dec = requestAnimationFrame(step); };
       const show = (i) => { projs.forEach((p, j) => p.classList.toggle("on", j === i)); ground();
         projs[i].querySelectorAll("[data-reveal]").forEach((f) => { f.style.clipPath = ""; }); projs[i].querySelectorAll(".proj-text").forEach((t) => { t.style.opacity = ""; t.style.transform = ""; }); };
@@ -357,7 +363,7 @@ void main(){
         tabs.forEach((t, j) => t.setAttribute("aria-pressed", j === i ? "true" : "false"));
         if (quiet || reduce || was < 0) show(i);
         else { coverFit(projs[was], projs[i]); if (!cover.isConnected) projWrap.append(cover);
-          cFrom = cPhase === 2 ? clamp01(1 - (performance.now() - cT) / 360) * 0.6 : cPhase === 1 ? cFrom : 0; if (cPhase !== 1) { cPhase = 1; cT = performance.now(); }
+          cFrom = cPhase === 2 ? clamp01(1 - (performance.now() - cT) / 700) * 0.6 : cPhase === 1 ? cFrom : 0; if (cPhase !== 1) { cPhase = 1; cT = performance.now(); }
           cThen = () => show(cur); if (!craf) craf = requestAnimationFrame(coverDraw); }
         if (!quiet) decode(tabs[i].firstChild, tabs[i].dataset.name); if (focus) tabs[i].focus(); };
       tabs.forEach((b, i) => {
