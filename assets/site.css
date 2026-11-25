@@ -382,3 +382,40 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .projects.stage.ride .proj { transform-origin: 0 50%; }
 .js .stars a span { transition: opacity 400ms var(--out); }
 .js .stars a.focus span { opacity: 0; }   /* at a stop the project's own heading names it; the star stays lit */
+
+/* OS preview: the galaxy is the desktop, each project a window */
+.projects.os { position: absolute; inset: 0; pointer-events: none; background: none !important; }
+.projects.os .proj { display: none; position: absolute; width: min(900px, 64vw); padding: 0 0 22px; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 20px; row-gap: 14px; align-items: start; background: var(--tint); outline: 2px solid var(--paper); pointer-events: auto; transform-origin: 0 0; }
+.projects.os .proj.open { display: grid; animation: os-open 260ms var(--out) both; }
+.projects.os .proj:not(.front) { outline-color: rgb(244 243 239 / .35); }
+.projects.os .proj:focus { outline-color: var(--acc); }
+@keyframes os-open { from { opacity: 0; translate: 0 14px; } to { opacity: 1; translate: 0 0; } }
+.os-top { grid-row: 1; grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 40px; padding: 0 6px 0 14px; background: var(--paper); color: var(--ink); font-size: var(--step-small); font-weight: 600; cursor: grab; touch-action: none; user-select: none; }
+.proj.drag .os-top { cursor: grabbing; }
+.os-top span::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-right: 10px; background: var(--ink); }
+.proj.front .os-top span::before { background: #5c7a00; }
+.os-x { appearance: none; border: 0; background: none; width: 44px; height: 40px; cursor: pointer; position: relative; }
+.os-x::before, .os-x::after { content: ""; position: absolute; left: 14px; top: 19px; width: 16px; height: 2px; background: var(--ink); rotate: 45deg; }
+.os-x::after { rotate: -45deg; }
+.os-x:hover { background: var(--ink); } .os-x:hover::before, .os-x:hover::after { background: var(--paper); }
+.os-x:focus-visible { outline: 3px solid var(--ink); outline-offset: -3px; }
+.os-name { grid-row: 2; grid-column: 1 / -1; overflow: hidden; margin: 4px 22px 0; font-size: clamp(5rem, 9.4vw, 8.75rem); font-weight: 800; letter-spacing: -0.035em; line-height: .86; text-transform: uppercase; white-space: nowrap; background-size: cover; background-position: center; -webkit-background-clip: text; background-clip: text; /* taste-skill-ignore: a real picture of the project shows through its name, not a gradient */ color: transparent; filter: brightness(1.45) saturate(1.15); }
+.os-name.long { font-size: clamp(3rem, 5.6vw, 5.25rem); }
+.projects.os .os-h { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+.projects.os .proj-text { grid-row: 3 / span 2; grid-column: 1 / span 6; padding-left: 22px; display: grid; gap: 12px; align-content: start; }
+.projects.os .proj-media { grid-row: 3; grid-column: 7 / -1; margin: 0 22px 0 0; }
+.projects.os .proj-strip { grid-row: 4; grid-column: 7 / -1; margin-right: 22px; }
+.projects.os .proj .desc { max-width: none; font-size: 1rem; }
+.projects.os .facts { max-width: none; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 18px; }
+.projects.os .facts li { display: block; }
+.projects.os .facts b { display: block; }
+.projects.os .facts li.num b em { display: block; font-style: normal; font-size: 3.5rem; font-weight: 700; letter-spacing: -0.05em; line-height: .9; font-variant-numeric: tabular-nums; }
+.projects.os .facts li.num b i { font-style: normal; }
+.js .projects.os .desk { aspect-ratio: 4 / 3; }
+.os-bar { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; display: flex; align-items: stretch; gap: 2px; height: 48px; padding: 0 var(--m); background: #0e0e0e; }
+.os-bar span { display: flex; align-items: center; margin-right: 18px; font-weight: 700; letter-spacing: -0.02em; color: var(--acc); }
+.os-bar button { appearance: none; border: 0; background: none; color: rgb(244 243 239 / .72); font: inherit; font-size: var(--step-small); font-weight: 500; padding: 0 14px; min-width: 44px; cursor: pointer; border-top: 3px solid transparent; transition: color 160ms var(--out), background-color 160ms var(--out); }
+.os-bar button:hover { color: var(--paper); background: rgb(244 243 239 / .08); }
+.os-bar button[aria-pressed="true"] { color: var(--paper); border-top-color: var(--acc); }
+.os-bar button:focus-visible { outline: 3px solid var(--paper); outline-offset: -3px; }
+@media (prefers-reduced-motion: reduce) { .projects.os .proj.open { animation: none; } .os-bar button { transition: none; } }

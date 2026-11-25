@@ -318,6 +318,56 @@ void main(){
     // PC: the eight projects share one stage. A list of names on the left; the picked project fills the right. (Phones keep the stacked panels.)
     const mqStage = matchMedia("(min-width: 1100px)");
     // RIDE preview (?ride, PC): no separate projects section. Scrolling flies the camera from star to star; at each stop that project opens beside its star.
+    // OS preview (?os, PC): the galaxy is the desktop. Each project is a window: its name in huge letters filled with its own picture, its facts as big numbers. Stars and the bar at the bottom open windows; windows drag.
+    if (/[?&]os/.test(location.search) && mqStage.matches && document.querySelector(".galaxy")) {
+      const gal = document.querySelector(".galaxy"), projs = [...projWrap.querySelectorAll(".proj")], links = [...gal.querySelectorAll(".stars a")];
+      gal.append(projWrap); projWrap.classList.add("os"); projWrap.style.backgroundColor = "";
+      const bar = document.createElement("div"); bar.className = "os-bar"; bar.setAttribute("role", "group"); bar.setAttribute("aria-label", "Projects");
+      const mark = document.createElement("span"); mark.textContent = "Wildlogic"; bar.append(mark);
+      let zTop = 10, order = [];
+      const wins = projs.map((p, i) => { const h = p.querySelector("h3"), name = h.textContent.trim() || h.querySelector("img").alt, link = links.find((l) => l.getAttribute("href") === "#" + p.id);
+        p.querySelectorAll("[data-reveal]").forEach((f) => { f.style.clipPath = ""; }); p.querySelectorAll(".proj-text").forEach((t) => { t.style.opacity = ""; t.style.transform = ""; });
+        p.setAttribute("role", "dialog"); p.setAttribute("aria-label", name); p.tabIndex = -1;
+        // title bar: drag handle, name, close
+        const top = document.createElement("div"), ttl = document.createElement("span"), x = document.createElement("button"); top.className = "os-top"; ttl.textContent = name; x.type = "button"; x.className = "os-x"; x.setAttribute("aria-label", "Close " + name); top.append(ttl, x); p.prepend(top);
+        // the name, huge, with the project's own picture showing through the letters
+        const big = document.createElement("div"); big.className = "os-name"; big.setAttribute("aria-hidden", "true"); big.textContent = name; { const im = p.querySelector(".proj-media img, .proj-strip img"); big.style.backgroundImage = "url(" + (p.id === "p-sk" ? "assets/img/sk-sky.webp" : im ? im.getAttribute("src") : link ? link.dataset.bg : "") + ")"; } if (name.length > 12) big.classList.add("long");
+        top.after(big); h.classList.add("os-h");
+        // facts that start with a number become big numbers
+        p.querySelectorAll(".facts b").forEach((b) => { const m = b.textContent.match(/^(\d+)\s(.+)$/); if (!m) return; b.textContent = ""; const n = document.createElement("em"), r = document.createElement("i"); n.textContent = m[1]; n.dataset.to = m[1]; r.textContent = m[2].trim(); b.append(n, r); b.parentNode.classList.add("num"); });
+        const tab = document.createElement("button"); tab.type = "button"; tab.textContent = name; tab.setAttribute("aria-pressed", "false"); bar.append(tab);
+        return { p, tab, top, x, name, i }; });
+      gal.append(bar);
+      const front = (w) => { w.p.style.zIndex = ++zTop; wins.forEach((q) => q.p.classList.toggle("front", q === w)); };
+      // numbers count up once each time a window opens: 700 ms, ease-out. It draws the eye to the facts.
+      const count = (w) => { if (reduce) return; const t0 = performance.now(); const step = (now) => { const k = clamp01((now - t0) / 700), e = 1 - Math.pow(1 - k, 3); w.p.querySelectorAll(".facts em").forEach((n) => { n.textContent = Math.round(+n.dataset.to * e); }); if (k < 1 && w.p.classList.contains("open")) requestAnimationFrame(step); else w.p.querySelectorAll(".facts em").forEach((n) => { n.textContent = n.dataset.to; }); }; requestAnimationFrame(step); };
+      const close = (w, quiet) => { w.p.classList.remove("open", "front"); w.tab.setAttribute("aria-pressed", "false"); order = order.filter((q) => q !== w); const v = w.p.querySelector("video"); if (v) v.pause(); if (!quiet) { if (order.length) front(order[order.length - 1]); w.tab.focus({ preventScroll: true }); } };
+      const open = (w, slot, focus) => { if (!w.p.classList.contains("open")) {
+          if (order.length >= 3) close(order[0], true);                                                          // three at most, so the desktop never fills up
+          const W = gal.clientWidth, H = gal.clientHeight, n = slot === undefined ? order.length : slot;
+          w.p.style.scale = ""; w.p.style.left = Math.round(W - Math.min(900, W * 0.64) - 28 - 150 * n) + "px"; w.p.style.top = Math.round(56 + 34 * n) + "px";
+          w.p.classList.add("open"); w.tab.setAttribute("aria-pressed", "true"); order.push(w);
+          { const nm = w.p.querySelector(".os-name"); nm.style.fontSize = ""; const over = nm.scrollWidth / nm.clientWidth; if (over > 1) nm.style.fontSize = (parseFloat(getComputedStyle(nm).fontSize) / over * 0.98).toFixed(1) + "px"; }
+          const fit = Math.min(1, (H - 56 - 34 * n - 70) / w.p.offsetHeight); if (fit < 1) w.p.style.scale = fit.toFixed(3);
+          const v = w.p.querySelector("video"); if (v && !reduce) v.play().catch(() => {}); count(w); }
+        else { order = order.filter((q) => q !== w); order.push(w); }
+        front(w); if (focus) w.p.focus({ preventScroll: true }); };
+      wins.forEach((w) => {
+        w.tab.addEventListener("click", () => { if (w.p.classList.contains("front")) close(w); else open(w, undefined, true); });
+        w.x.addEventListener("click", () => close(w));
+        w.p.addEventListener("pointerdown", () => front(w));
+        w.p.addEventListener("keydown", (e) => { if (e.key === "Escape") close(w); });
+        // drag by the title bar; the window stays on the desktop
+        w.top.addEventListener("pointerdown", (e) => { if (e.target === w.x || e.button) return; e.preventDefault(); const r = w.p.getBoundingClientRect(), g = gal.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top; w.top.setPointerCapture(e.pointerId); w.p.classList.add("drag");
+          const move = (ev) => { w.p.style.left = Math.round(Math.max(-r.width + 120, Math.min(g.width - 120, ev.clientX - g.left - dx))) + "px"; w.p.style.top = Math.round(Math.max(0, Math.min(g.height - 90, ev.clientY - g.top - dy))) + "px"; };
+          const up = () => { w.top.removeEventListener("pointermove", move); w.top.removeEventListener("pointerup", up); w.top.removeEventListener("pointercancel", up); w.p.classList.remove("drag"); };
+          w.top.addEventListener("pointermove", move); w.top.addEventListener("pointerup", up); w.top.addEventListener("pointercancel", up); });
+      });
+      document.addEventListener("click", (e) => { const a = e.target.closest && e.target.closest('a[href^="#p-"]'); if (!a) return; const w = wins.find((q) => "#" + q.p.id === a.getAttribute("href")); if (!w) return; e.preventDefault(); gal.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }); open(w, undefined, true); });
+      const by = (id) => wins.find((q) => q.p.id === id);
+      open(by("p-tr"), 2); open(by("p-casa"), 1); open(by("p-sk"), 0);                                         // a desktop already in use: three open, the game in front
+      mqStage.addEventListener("change", () => location.reload());
+    } else
     if (/[?&]ride/.test(location.search) && mqStage.matches && !reduce && galGeo && document.querySelector(".galaxy")) {
       const gal = document.querySelector(".galaxy"), head = gal.querySelector(".galaxy-head"), projs = [...projWrap.querySelectorAll(".proj")], N = projs.length, LEAD = 0.6, HOLD = 0.6;
       const track = document.createElement("div"); track.className = "ride-track"; gal.before(track); track.append(gal); gal.append(projWrap); projWrap.classList.add("stage", "ride"); projWrap.style.backgroundColor = "";
@@ -510,7 +560,7 @@ void main(){
       let tick = 0;
       const paint = () => {
         tick = 0; const vh = innerHeight;
-        if (projWrap && projWrap.classList.contains("stage")) return;   // on the stage nothing is tied to the scroll
+        if (projWrap && (projWrap.classList.contains("stage") || projWrap.classList.contains("os"))) return;   // on the stage nothing is tied to the scroll
         morphs.forEach(({ fig, text }) => {
           const pr = fig.parentElement.getBoundingClientRect();
           if (pr.bottom < 0 || pr.top > vh) { fig.style.clipPath = "none"; if (text) { text.style.opacity = ""; text.style.transform = "none"; } return; }   // off screen: rest open, so print and full-page captures are whole
