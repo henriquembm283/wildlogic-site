@@ -317,8 +317,8 @@ void main(){
     projWrap.querySelectorAll(".proj").forEach((p) => io.observe(p));
     // PC: the eight projects share one stage. A list of names on the left; the picked project fills the right. (Phones keep the stacked panels.)
     const mqStage = matchMedia("(min-width: 1100px)");
-    // MOSAIC preview (?os, PC): no galaxy. The eight projects are a mosaic of tiles; some show a picture with the name on a solid band, some spell the name in huge letters with the project's picture inside them. A tile opens one window with the rest.
-    if (/[?&]os/.test(location.search) && mqStage.matches && document.querySelector(".galaxy")) {
+    // MOSAIC preview (?os): no galaxy. The eight projects are a mosaic of tiles; some show a picture with the name on a solid band, some spell the name in huge letters with the project's picture inside them. A tile opens one window with the rest.
+    if (/[?&]os/.test(location.search) && document.querySelector(".galaxy")) {
       const gal = document.querySelector(".galaxy"), projs = [...projWrap.querySelectorAll(".proj")];
       const IMG = { sk: "sk-sky", ar: "ui-autorules", tr: "ui-teamreports", da: "ui-domainaccess", wow: "ui-quickbuffs", it: "ui-wecandoit", web: "web-fotofranco", casa: "casa-exterior" }, LETTERS = { sk: 1, wow: 1, web: 1, casa: 1 };
       const el = (tag, cls, txt) => { const n = document.createElement(tag); if (cls) n.className = cls; if (txt) n.textContent = txt; return n; };
@@ -326,7 +326,7 @@ void main(){
       gal.hidden = true; gal.style.display = "none"; gal.removeAttribute("id"); sec.id = "work"; sec.setAttribute("aria-labelledby", "work-h"); head.append(h2, el("p", "", "Eight things, one small studio. Pick one to see more.")); sec.append(head, grid); gal.before(sec);
       // letters filled with a picture must stay readable: a dark picture sits on paper, a light picture on ink. Measured from the picture itself.
       const tone = (src, then) => { const im = new Image(); im.onload = () => { const c = document.createElement("canvas"); c.width = c.height = 24; const x = c.getContext("2d"); x.drawImage(im, 0, 0, 24, 24); const d = x.getImageData(0, 0, 24, 24).data; let l = 0; for (let k = 0; k < d.length; k += 4) l += 0.2126 * d[k] + 0.7152 * d[k + 1] + 0.0722 * d[k + 2]; then(l / (d.length / 4) / 255 < 0.5); }; im.src = src; };
-      const fitName = (n) => { n.style.fontSize = ""; const box = n.parentNode, w = box.clientWidth, hgt = box.clientHeight || 1e4, over = Math.max(n.scrollWidth / w, n.scrollHeight / hgt); if (over > 1) n.style.fontSize = (parseFloat(getComputedStyle(n).fontSize) / over * 0.97).toFixed(1) + "px"; };
+      const fitName = (n) => { n.style.fontSize = ""; const box = n.parentNode, cs = getComputedStyle(box), w = box.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight), hgt = (box.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom)) || 1e4, over = Math.max(n.scrollWidth / w, n.scrollHeight / hgt); if (over > 1) n.style.fontSize = (parseFloat(getComputedStyle(n).fontSize) / over * 0.93).toFixed(1) + "px"; };
       const lettered = (name, src, two) => { const band = el("span", "pic-name"), n = el("span", "", two && name.indexOf(" ") > 0 ? name.replace(" ", "\n") : name); n.style.backgroundImage = "url(" + src + ")"; band.append(n); band.setAttribute("aria-hidden", "true"); tone(src, (dark) => band.classList.add(dark ? "on-paper" : "on-ink")); return band; };
       projWrap.classList.add("os"); projWrap.style.backgroundColor = ""; const shade = el("div", "os-shade"); projWrap.prepend(shade);
       let cur = null, opener = null; const fits = [];
@@ -345,17 +345,18 @@ void main(){
         return { p: win, id: p.id, tile, top, x, big }; });
       // numbers count up once each time the window opens: 700 ms, ease-out. It draws the eye to the facts.
       const count = (w) => { if (reduce) return; const t0 = performance.now(); const step = (now) => { const k = clamp01((now - t0) / 700), e = 1 - Math.pow(1 - k, 3), live = cur === w; w.p.querySelectorAll(".facts em").forEach((n) => { n.textContent = live && k < 1 ? Math.round(+n.dataset.to * e) : n.dataset.to; }); if (k < 1 && live) requestAnimationFrame(step); }; requestAnimationFrame(step); };
-      const close = (back) => { if (!cur) return; const w = cur; cur = null; w.p.classList.remove("open"); projWrap.classList.remove("has-open"); const v = w.p.querySelector("video"); if (v) v.pause(); if (back !== false && opener) opener.focus({ preventScroll: true }); };
+      const close = (back) => { if (!cur) return; const w = cur; cur = null; w.p.classList.remove("open"); projWrap.classList.remove("has-open"); document.documentElement.style.overflow = ""; const v = w.p.querySelector("video"); if (v) v.pause(); if (back !== false && opener) opener.focus({ preventScroll: true }); };
       const open = (w, from) => { if (cur === w) return; if (cur) close(false); opener = from || w.tile; cur = w;                          // one window at a time
         w.p.style.scale = ""; w.p.classList.add("open"); projWrap.classList.add("has-open"); fitName(w.big.firstChild);
-        const vw = innerWidth, vh = innerHeight, fit = Math.min(1, (vh - 32) / w.p.offsetHeight); if (fit < 1) w.p.style.scale = fit.toFixed(3);
-        w.p.style.left = Math.round((vw - w.p.offsetWidth * fit) / 2) + "px"; w.p.style.top = Math.round(Math.max(16, (vh - w.p.offsetHeight * fit) / 2)) + "px";
+        if (mqStage.matches) { const vw = innerWidth, vh = innerHeight, fit = Math.min(1, (vh - 32) / w.p.offsetHeight); if (fit < 1) w.p.style.scale = fit.toFixed(3);
+          w.p.style.left = Math.round((vw - w.p.offsetWidth * fit) / 2) + "px"; w.p.style.top = Math.round(Math.max(16, (vh - w.p.offsetHeight * fit) / 2)) + "px"; }
+        else { w.p.style.left = w.p.style.top = ""; w.p.scrollTop = 0; document.documentElement.style.overflow = "hidden"; }                 // phone: the window is a full-screen sheet that scrolls on its own
         const v = w.p.querySelector("video"); if (v && !reduce) v.play().catch(() => {}); count(w); w.p.focus({ preventScroll: true }); };
       wins.forEach((w) => {
         w.tile.addEventListener("click", () => open(w)); w.x.addEventListener("click", () => close());
         w.p.addEventListener("keydown", (e) => { if (e.key === "Escape") { close(); return; } if (e.key !== "Tab") return;                // the keyboard stays inside the open window
           const f = [...w.p.querySelectorAll("a[href], button")].filter((n) => n.offsetParent), a = f[0], z = f[f.length - 1]; if (e.shiftKey && (document.activeElement === a || document.activeElement === w.p)) { e.preventDefault(); z.focus(); } else if (!e.shiftKey && document.activeElement === z) { e.preventDefault(); a.focus(); } });
-        w.top.addEventListener("pointerdown", (e) => { if (e.target === w.x || e.button) return; e.preventDefault(); const r = w.p.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top; w.top.setPointerCapture(e.pointerId); w.p.classList.add("drag");
+        w.top.addEventListener("pointerdown", (e) => { if (e.target === w.x || e.button || !mqStage.matches) return; e.preventDefault(); const r = w.p.getBoundingClientRect(), dx = e.clientX - r.left, dy = e.clientY - r.top; w.top.setPointerCapture(e.pointerId); w.p.classList.add("drag");
           const move = (ev) => { w.p.style.left = Math.round(Math.max(-r.width + 120, Math.min(innerWidth - 120, ev.clientX - dx))) + "px"; w.p.style.top = Math.round(Math.max(0, Math.min(innerHeight - 60, ev.clientY - dy))) + "px"; };
           const up = () => { w.top.removeEventListener("pointermove", move); w.top.removeEventListener("pointerup", up); w.top.removeEventListener("pointercancel", up); w.p.classList.remove("drag"); };
           w.top.addEventListener("pointermove", move); w.top.addEventListener("pointerup", up); w.top.addEventListener("pointercancel", up); });

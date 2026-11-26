@@ -387,9 +387,12 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .mosaic { background: #1c1c1c; color: var(--paper); padding: clamp(40px, 7vh, 88px) var(--m); display: grid; gap: 28px; }
 .mosaic-head { display: flex; align-items: baseline; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
 .mosaic-head h2 { font-size: var(--step-head); } .mosaic-head p { color: var(--muted-on-ink); }
-.mosaic-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: clamp(170px, 22vh, 230px); gap: 12px; }
-.tile { appearance: none; border: 0; margin: 0; padding: 0; font: inherit; color: var(--paper); text-align: left; cursor: pointer; position: relative; overflow: hidden; display: grid; grid-template-rows: minmax(0, 1fr) auto; background: #111; grid-column: span 3; transition: scale 160ms var(--out); }
-.tile.t-sk { grid-column: span 6; grid-row: span 2; } .tile.t-it, .tile.t-web, .tile.t-casa { grid-column: span 4; }
+.mosaic-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-auto-rows: clamp(150px, 42vw, 240px); gap: 8px; }
+@media (min-width: 1100px) { .mosaic-grid { grid-template-columns: repeat(12, minmax(0, 1fr)); grid-auto-rows: clamp(170px, 22vh, 230px); gap: 12px; } }
+.tile { appearance: none; border: 0; margin: 0; padding: 0; font: inherit; color: var(--paper); text-align: left; cursor: pointer; position: relative; overflow: hidden; display: grid; grid-template-rows: minmax(0, 1fr) auto; background: #111; transition: scale 160ms var(--out); }
+.tile.letters { grid-column: span 2; }
+@media (min-width: 1100px) { .tile, .tile.letters { grid-column: span 3; } }
+@media (min-width: 1100px) { .tile.t-sk { grid-column: span 6; grid-row: span 2; } .tile.t-it, .tile.t-web, .tile.t-casa { grid-column: span 4; } }
 .tile:active { scale: .985; }
 .tile:focus-visible { outline: 3px solid var(--acc); outline-offset: 3px; }
 .tile.shot img { width: 100%; height: 100%; object-fit: cover; object-position: 0 0; transition: scale 400ms var(--out); }
@@ -436,3 +439,16 @@ h1, h2, h3 { margin: 0; font-weight: 600; letter-spacing: -0.04em; line-height: 
 .js .projects.os .desk { aspect-ratio: 4 / 3; }
 @media (prefers-reduced-motion: reduce) { .projects.os .win.open { animation: none; } .tile, .tile.shot img, .pic-name span, .tile-cap i, .os-shade { transition: none; } }
 .js .projects.os [data-in] { opacity: 1 !important; transform: none !important; translate: none !important; transition: none !important; }   /* a window shows its text at once; the scroll reveal has no meaning here */
+/* phone and tablet: the window is a full-screen sheet, one column, scrolling on its own */
+@media (max-width: 1099px) {
+  .tile-cap { padding: 8px 10px; } .tile-cap b { font-size: 1.125rem; } .tile-cap small { font-size: 1rem; } .mosaic-head p { font-size: 1rem; } .pic-name { padding: 8px 12px; }
+  .projects.os .win { position: fixed; inset: 0; width: auto; outline: 0; overflow-y: auto; overscroll-behavior: contain; padding-bottom: 32px; }
+  .projects.os .win.open { display: block; }
+  .projects.os .win > .proj > * { margin-bottom: 16px; }
+  .pic-name.os-name { display: block; }
+  .os-top { position: sticky; top: 0; z-index: 2; height: 48px; cursor: default; } .os-x { width: 48px; height: 48px; } .os-x::before, .os-x::after { left: 16px; top: 23px; }
+  .os-name { margin-top: -16px; padding: 14px 16px; }
+  .projects.os .facts span, .projects.os .kind { font-size: 1rem; }
+  .projects.os .proj-text { padding: 0 16px; } .projects.os .proj-media { margin: 0 16px; order: 0; } .projects.os .proj-strip { margin: 0 16px; }
+  @keyframes os-open { from { opacity: 0; translate: 0 24px; } to { opacity: 1; translate: 0 0; } }
+}
